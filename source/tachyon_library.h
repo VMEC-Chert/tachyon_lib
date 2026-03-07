@@ -1806,7 +1806,8 @@ namespace tyon
 
         isize stride_bytes()
         {
-            return (simd_padded ? memory_align_typed<t_pixel>( size.x, 4) : size.x);
+            i64 row_width = sizeof(t_pixel) * size.x;
+            return (simd_padded ? memory_align_typed<t_pixel>( row_width, 4) : row_width);
         }
 
         isize size_pixels()
