@@ -138,13 +138,9 @@ struct generic_search_result
     bool match_found = false;
 };
 
-/** A standard rgba color container.
-
-    It's more convenient to use it abgra because that's the little endian
-representation and it also means it plainly.  WARNING: This breaks on big endian
-systems. Things like Vulkan plainly only support */
-
 #if (REFLECTION_LITTLE_ENDIAN)
+/** A standard rgba color container.
+*/
 struct rgba
 {
     union {
@@ -157,10 +153,49 @@ struct rgba
 {
     union {
         struct { u8 r; u8 g; u8 b; u8 a };
-        u32 hex;
+        u32 hex = 0;
     };
 };
 #endif // REFLECTION_LITTLE_ENDIAN
+static_assert( sizeof(rgba) == 4, "Can't do packed operations if size is off" );
+
+struct rgba_byte_ordered
+{
+    u8 r=0, g=0, b=0, a=0;
+};
+static_assert( sizeof(rgba_byte_ordered) == 4, "Can't do packed operations if size is off" );
+
+/** Common format used internally by graphics cards / mmonitors */
+struct bgra
+{
+    u8 b=0, g=0, r=0, a=0;
+};
+static_assert( sizeof(bgra) == 4, "Can't do packed operations if size is off" );
+
+template <typename t_color_out, typename t_color_in>
+PROC image_color_reorder_inplace( image<t_color_in> arg ) -> image<t_color_out>
+{
+    static_assert( sizeof(t_color_in) == sizeof(t_color_in),
+                   "Input and output color must bother have the same size and RGBA components" );
+    static_assert( std::is_same_v<t_color_out, t_color_in> == false,
+                   "Having the same input and output type both is likely a bug" );
+    t_color_in temp = {};
+    t_color_in* read = arg.data;
+    t_color_out* write = raw_pointer( arg.data );
+    i64 i_limit = arg.size_pixels();
+    for (i64 i_pixel=0; i_pixel < i_limit; ++i_pixel)
+    {
+        temp = read[ i_pixel ];
+        write[ i_pixel ].r = temp.r;
+        write[ i_pixel ].g = temp.g;
+        write[ i_pixel ].b = temp.b;
+        write[ i_pixel ].a = temp.a;
+    };
+    image<t_color_out> result;
+    result.data = raw_pointer(arg.data);
+    result.size = arg.size;
+    return result;
+}
 
 template <typename T>
 struct array
