@@ -1793,21 +1793,26 @@ namespace tyon
     };
     using e_color_format = color_format;
 
+    /** Non-owning view of an image */
     template <typename t_pixel>
     struct image
     {
         t_pixel* data = nullptr;
         vec2_i64 size = 0;
         e_color_format format = color_format::rgba8;
-        bool simd_padded = false;
+        /** Override if this is a view of an unusual image*/
+        i64 stride_bytes_ = 0;
+        /** SIMD / threading alignment, 32 for AVX2 + cache lines by default */
+        u8 alignment = 0;
         // Damaged, corrupted or otherwise problematic to treat a whole image
-        bool incomplete = true;
-        bool corrupted = false;
+        bool incomplete = false;
 
+        /** NOTE: Calculates the length of rows in bytes with padding if
+         applicable OR an override set in 'stride_bytes_' */
         isize stride_bytes()
         {
-            i64 row_width = sizeof(t_pixel) * size.x;
-            return (simd_padded ? memory_align_typed<t_pixel>( row_width, 4) : row_width);
+            i64 row_width = (stride_bytes_ ? stride_bytes_ : sizeof(t_pixel) * size.x);
+            return (alignment ? memory_align( row_width, alignment) : row_width);
         }
 
         isize size_pixels()

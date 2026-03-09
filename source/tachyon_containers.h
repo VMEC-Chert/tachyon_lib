@@ -170,11 +170,17 @@ struct bgra
 {
     u8 b=0, g=0, r=0, a=0;
 };
+/** Common format used internally by graphics cards / mmonitors */
+struct argb
+{
+    u8 b=0, g=0, r=0, a=0;
+};
 static_assert( sizeof(bgra) == 4, "Can't do packed operations if size is off" );
 
 template <typename t_color_out, typename t_color_in>
 PROC image_color_reorder_inplace( image<t_color_in> arg ) -> image<t_color_out>
 {
+    PROFILE_SCOPE_FUNCTION();
     static_assert( sizeof(t_color_in) == sizeof(t_color_in),
                    "Input and output color must bother have the same size and RGBA components" );
     static_assert( std::is_same_v<t_color_out, t_color_in> == false,
@@ -194,6 +200,33 @@ PROC image_color_reorder_inplace( image<t_color_in> arg ) -> image<t_color_out>
     image<t_color_out> result;
     result.data = raw_pointer(arg.data);
     result.size = arg.size;
+    return result;
+}
+
+template <typename t_pixel>
+PROC image_packed_from_simd( image<t_pixel> arg ) -> image<t_pixel>
+{
+    PROFILE_SCOPE_FUNCTION();
+    image<t_pixel> result;
+    if (arg.alignment == 0 && arg.stride_bytes_ == 0) { return arg; }
+    i64 simd_stride = arg.stride_bytes();
+    i32 width = arg.size.x;
+    i64 width_bytes = width * sizeof(t_pixel);
+    i32 height = arg.size.y;
+
+    result.data = memory_allocate<t_pixel>( arg.size_pixels() );
+    result.size = arg.size;
+
+    raw_pointer read_start = arg.data;
+    raw_pointer readhead = arg.data;
+    t_pixel* writehead = result.data;
+    for (i32 i_y=0; i_y < height; ++i_y)
+    {
+        // Copy a row at a time to the new buffer
+        readhead = read_start + (i_y * simd_stride);
+        writehead = result.data + (i_y * width);
+        memory_copy_raw( writehead, readhead, width_bytes );
+    }
     return result;
 }
 
