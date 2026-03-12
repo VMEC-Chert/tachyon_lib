@@ -203,7 +203,7 @@ namespace tyon
         entity_init( _b );                        // ERROR: User defined entity implimented incorrectly
 
         entity_type type;                         // ERROR: User defined entity implimented incorrectly
-        t_entity*   context;                      // ERROR: User defined entity implimented incorrectly
+        t_entity*   context = nullptr;            // ERROR: User defined entity implimented incorrectly
         unused(context);
     };
 

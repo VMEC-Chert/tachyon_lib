@@ -97,6 +97,7 @@ namespace tyon
 
         proc_LogicalProcessorInformationEx dyn_GetLogicalProcessorInformationEx = nullptr;
         raw_pointer info_list = memory_allocate<SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX>( 1024 );
+        unused( dyn_GetLogicalProcessorInformationEx );
 
         // Get/Call dynamic function from system
         // HMODULE kernel = GetModuleHandle( "kernel32.dll" );
@@ -295,6 +296,7 @@ namespace tyon
 
         stdioHandle = (u64)GetStdHandle( STD_OUTPUT_HANDLE );
         auto wstdout = stdioHandle;
+        unused( wstdout );
         consoleHandleW = _open_osfhandle( stdioHandle, _O_TEXT );
         fptr = _fdopen( consoleHandleW, "w" );
         *stdout = *fptr;
