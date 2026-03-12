@@ -533,7 +533,7 @@ namespace tyon
                 buffer new_block;
                 // TODO: This is broken, it's supposed to round up to the
                 // nearest page size to minimize wastage
-                isize allocation = (block_size * ceil(f32(size) / block_size));
+                isize allocation = isize(block_size * ceil(f32(size) / block_size));
                 new_block.data = reinterpret_cast<byte*>(std::malloc( allocation ));
                 new_block.size = allocation;
                 new_block.head = 0;

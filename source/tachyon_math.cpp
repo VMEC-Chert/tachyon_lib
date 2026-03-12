@@ -3021,67 +3021,6 @@ namespace tyon
                 return a;
             }
 
-
-
-            // Min
-            TYON_CUDA_SHARED
-            PROC minimum(const f32& a, const f32& b) -> f32
-            {
-                if(a < b)
-                {
-                    return a;
-                }
-                
-                return b;
-            }
-
-            TYON_CUDA_SHARED
-            PROC minimum(const f64& a, const f64& b) -> f64
-            {
-                if(a < b)
-                {
-                    return a;
-                }
-                
-                return b;
-            }
-
-            TYON_CUDA_SHARED
-            PROC minimum( v2_f32 a,  v2_f32  b ) -> v2_f32
-            {   return v2_f32 { (a.x < b.x ? a.x : b.x),
-                                (a.y < b.y ? a.y : b.y) };
-            }
-
-            TYON_CUDA_SHARED
-            PROC minimum( v2_f64 a,  v2_f64  b ) -> v2_f64
-            {   return v2_f64 { (a.x < b.x ? a.x : b.x),
-                                (a.y < b.y ? a.y : b.y) };
-            }
-
-
-            // Max
-            TYON_CUDA_SHARED
-            PROC maximum(const f32& a, const f32& b) -> f32
-            {
-                if(a > b)
-                {
-                    return a;
-                }
-                
-                return b;
-            }
-
-            TYON_CUDA_SHARED
-            PROC maximum(const f64& a, const f64& b) -> f64
-            {
-                if(a > b)
-                {
-                    return a;
-                }
-                
-                return b;
-            }
-
             TYON_CUDA_SHARED
             PROC maximum( v2_f32 a,  v2_f32  b ) -> v2_f32
             {   return v2_f32 { (a.x > b.x ? a.x : b.x),

@@ -316,7 +316,7 @@ namespace tyon
         constexpr bool debug = true;
         for (i32 i=0; i < destroy_stack.size(); ++i)
         {
-            i32 i_reverse = (destroy_stack.size() - i - 1);
+            i64 i_reverse = (destroy_stack.size() - i - 1);
             destroy_stack[i_reverse].invoke();
             if constexpr (debug)
             {

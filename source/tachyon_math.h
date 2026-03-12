@@ -1239,14 +1239,13 @@ namespace tyon
             TYON_CUDA_SHARED
             PROC clamp_range(const f64& edge0, const f64& edge1, const f64& a) -> f64;
 
-
-
-            // Min
-            TYON_CUDA_SHARED
-            PROC minimum(const f32& a, const f32& b) -> f32;
-
-            TYON_CUDA_SHARED
-            PROC minimum(const f64& a, const f64& b) -> f64;
+            // NOTE: This template replaces multiple minimum functions
+            template <typename T> TYON_CUDA_SHARED constexpr inline
+            PROC minimum(const T& a, const T& b) -> T
+            {   if(a < b)
+                { return a; }
+                return b;
+            }
 
             /* DOCS NOTE: I don't use const for 4 main reasons,
                1 - it's noisy and makes small amounts of code harder to read
@@ -1283,19 +1282,13 @@ namespace tyon
                But in my view, always expensive is a better tradeoff than
                "sometimes" faster.
             */
-            TYON_CUDA_SHARED
-            PROC minimum( v2_f32 a,  v2_f32  b ) -> v2_f32;
 
-            TYON_CUDA_SHARED
-            PROC minimum( v2_f64 a,  v2_f64  b ) -> v2_f64;
-
-
-            // Max
-            TYON_CUDA_SHARED
-            PROC maximum(const f32& a, const f32& b) -> f32;
-
-            TYON_CUDA_SHARED
-            PROC maximum(const f64& a, const f64& b) -> f64;
+            template <typename T> TYON_CUDA_SHARED constexpr inline
+            PROC maximum(const T& a, const T& b) -> T
+            {   if(a > b)
+                { return a; }
+                return b;
+            }
 
             TYON_CUDA_SHARED
             PROC maximum( v2_f32 a,  v2_f32  b ) -> v2_f32;

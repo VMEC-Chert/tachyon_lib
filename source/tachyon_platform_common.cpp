@@ -52,7 +52,8 @@ namespace tyon
         out_buffer->size = max_size;
 
         // reset read/write pointer to stream poistion
-        fseek( file_ref, minimum( 0, arg->stream_readhead ), SEEK_SET );
+        u64 seek_point = u64(minimum<i64>( 0, arg->stream_readhead ));
+        fseek( file_ref, seek_point, SEEK_SET );
         // It's a success if anything was read at all, since we don't really assume file size
         i64 bytes_read = fread( out_buffer->data, max_size, 1, file_ref );
         if (bytes_read <= 0)
