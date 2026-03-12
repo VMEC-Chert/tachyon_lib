@@ -67,6 +67,8 @@
 #include <utility>
 #include <vector>
 
+#pragma warning ( disable: 4068, justification : "Unknown pragma is noisy because of different compilers" )
+
 /* NOTE: DO NOT TOUCH the order on these includes, their order is baked by
    dependency resolution order. */
 #include "tachyon_code_helpers.h"
@@ -97,7 +99,7 @@
 #define TYON_FMT_UNICODE_OFF 1
 #if (REFLECTION_COMPILER_CUDA || TYON_FMT_UNICODE_OFF)
     #define FMT_UNICODE 0
-    #pragma warning "Unicode not supported on CUDA compiler so can't use FMT_UNICODE"
+    // NOTE"Unicode not supported on CUDA compiler so can't use FMT_UNICODE"
 #endif // REFLECTION_COMPILER_CUDA
 
 

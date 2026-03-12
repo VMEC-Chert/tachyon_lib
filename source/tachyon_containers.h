@@ -874,8 +874,8 @@ struct linked_list
                      "A node from outside this container has been used as an argument" );
         bool prev_valid = (arg->prev >= 0);
         bool next_valid = (arg->next >= 0);
-        i32 next_of = arg->next;
-        i32 prev_of = arg->prev;
+        i64 next_of = arg->next;
+        i64 prev_of = arg->prev;
         if (prev_valid && next_valid)
         {   // pass old references to prev and next
             // 1 - 2 - 3

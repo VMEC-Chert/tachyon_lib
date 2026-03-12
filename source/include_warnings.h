@@ -116,3 +116,11 @@
 
 // Newer clang error, is an issue in a 3rd party library
 #pragma clang diagnostic error "-Wcharacter-conversion"
+
+// SECTION: MSVC Warnings
+
+// Disable warnings
+// TODO: Guard pragmas with ifdef
+
+/* #pragma warning ( disable: 4068, justification : "reason" ) */
+#pragma warning ( disable: 2931, justification : "Error on foat conversin maths writing math annoying" )

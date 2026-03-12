@@ -1610,19 +1610,19 @@ namespace tyon
 
     inline i64
     operator ""_KB( literal_integer arg )
-    { return arg * std::pow( 10, 3 ); }
+    { return i64(arg * std::pow( 10, 3 )); }
 
     inline i64
     operator ""_MB( literal_integer arg )
-    { return arg * std::pow( 10, 6 ); }
+    { return i64(arg * std::pow( 10, 6 )); }
 
     inline i64
     operator ""_GB( literal_integer arg )
-    { return arg * std::pow( 10, 9 ); }
+    { return i64(arg * std::pow( 10, 9 )); }
 
     inline i64
     operator ""_TB( literal_integer arg )
-    { return arg * std::pow( 10, 12 ); }
+    { return i64(arg * std::pow( 10, 12 )); }
 
     /* Generates a u128 UUID out of a UUID string in this format 'f1e9148d-2b4f-4c57-8d30-4a5e98187489'
        NOTE: This always runs at compile time may need to be changed for C++17 or lower

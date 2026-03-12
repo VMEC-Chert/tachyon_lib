@@ -390,10 +390,10 @@ namespace tyon
         u64 microseconds =  (_elapsed_ns / 1'000); _elapsed_ns %= 1'000;
         u64 nanoseconds = _elapsed_ns;
 
-        char buffer[64];
-        snprintf( buffer, 64, "[%3.0lu %3.0lu %3.0lu ns]", milliseconds, microseconds, nanoseconds );
+        fstring time = fmt::format( "[%3.0lu %3.0lu %3.0lu ns]",
+                                    milliseconds, microseconds, nanoseconds );
         TYON_BASE_LOGF( "Tachyon Profiler", "{} [{}] {}",
-                        buffer, name, description );
+                        time, name, description );
         log_flush();
     }
 
@@ -435,12 +435,11 @@ namespace tyon
             u64 microseconds = (_elapsed_ns / 1'000); _elapsed_ns %= 1'000;
             u64 nanoseconds = _elapsed_ns;
 
-            char buffer[64];
-            snprintf(
-                buffer, 64, "[%lu s %3.0lu %3.0lu %3.0lu ns]",
+            auto time = fmt::format(
+                "[%lu s %3.0lu %3.0lu %3.0lu ns]",
                 seconds, miliseconds, microseconds, nanoseconds );
             TYON_BASE_LOGF( "Tachyon Profiler", "{} [{}] {}",
-                            buffer, name, description );
+                            time, name, description );
         }
     }
 
