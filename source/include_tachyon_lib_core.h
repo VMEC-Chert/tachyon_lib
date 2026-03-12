@@ -68,6 +68,9 @@
 #include <vector>
 
 #pragma warning ( disable: 4068, justification : "Unknown pragma is noisy because of different compilers" )
+// NOTE: Don't complain about long doubles in device code, we don't translate them
+#pragma nv_diag_suppress = 20208
+
 
 /* NOTE: DO NOT TOUCH the order on these includes, their order is baked by
    dependency resolution order. */

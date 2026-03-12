@@ -204,6 +204,7 @@ namespace tyon
 
         entity_type type;                         // ERROR: User defined entity implimented incorrectly
         t_entity*   context;                      // ERROR: User defined entity implimented incorrectly
+        unused(context);
     };
 
     template <typename t_entity>

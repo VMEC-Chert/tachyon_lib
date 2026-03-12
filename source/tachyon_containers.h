@@ -56,7 +56,6 @@ struct pointer final
         this->data = reinterpret_cast<t_any*>( rhs.data );
         this->allocator = reinterpret_cast<t_any*>( allocator );
         this->weakly_shared = true;
-        int share_cap = 100;
 
         this->next = rhs.next;
         rhs.next = this;

@@ -123,3 +123,5 @@
 // TODO: Guard pragmas with ifdef
 
 /* #pragma warning ( disable: 4068, justification : "reason" ) */
+
+// SECTION: CUDA warnings
