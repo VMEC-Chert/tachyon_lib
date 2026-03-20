@@ -3,6 +3,28 @@
 
 #define PROC auto
 
+/** TODO: I want a error-condition creating function. Something like this
+    bool invalid = invalid_flag(condition == bad_value);
+
+    Or perhaps a macro
+    TYON_INVALID( name, condition == bad_value)
+
+    This could come with mandatory documentation
+    TYON_INVALID( name, condition == bad_value, "Bad conditions might lead to data corruption" )
+
+    Which could then be consumed like so.
+    if (invalid) { ... }
+    if (name) { ... }
+
+    We could also cut down on a branch for documented errors with a helper.
+    TYON_INVALID_FAST_DOCS( name, condition == bad_value, "Bad conditions may lead to error" )
+    if (invalid)
+    {
+        TYON_LOG_INVALID( name );
+        ...
+    }
+*/
+
 /// Internal dependencies
 // #include <atomic>
 // #include <vector>
@@ -638,11 +660,23 @@ namespace tyon
     void
     FUNCTION memory_copy_raw( void* dest, const void* src, u64 bytes);
 
+    /** Does a byte wise copy between two pointers, size is inferred from type of 'source'.
+
+     - It is valid to pass 'nullptr' to either destination or source.
+     - If 'destination' is valid and 'source' is nullptr, then dest shall be filled with zeros
+     - If 'destination' is nullptr*/
     template <typename T>
     void
-    FUNCTION memory_copy( void* dest, T* src, u64 count)
+    FUNCTION memory_copy( void* dest, T* src, i64 count )
     {
-        memcpy( dest, src, count* sizeof(T) );
+        i64 bytes = count * sizeof(T);
+        bool bad_count = (count <= 0);
+        bool bad_dest = (dest == nullptr);
+        if (bad_count || bad_dest) [[unlikely]] { return; }
+        if (bad_dest) [[unlikely]]
+        {   memory_zero_raw( dest, bytes); }
+        else
+        {   memcpy( dest, src, bytes); }
     }
 
     /** Type unsafe variant of 'memory_copy' */
