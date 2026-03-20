@@ -673,7 +673,7 @@ namespace tyon
         bool bad_count = (count <= 0);
         bool bad_dest = (dest == nullptr);
         if (bad_count || bad_dest) [[unlikely]] { return; }
-        if (bad_dest) [[unlikely]]
+        if (src == nullptr) [[unlikely]]
         {   memory_zero_raw( dest, bytes); }
         else
         {   memcpy( dest, src, bytes); }
