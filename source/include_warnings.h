@@ -39,6 +39,11 @@
 #pragma clang diagnostic error "-Wdesignated-initializers"
 #pragma clang diagnostic error "-Wreorder-init-list"
 
+// Severe arithmatic error and possible undefined behaviour
+#pragma GCC diagnostic error "-Wshift-count-overflow"
+#pragma GCC diagnostic error "-Wshift-count-negative"
+#pragma GCC diagnostic error "-Wshift-overflow"
+
 
 // -- Temporary Debug Errors --
 // Useful for cleaning up dead code or finding accidentilly unused stuff

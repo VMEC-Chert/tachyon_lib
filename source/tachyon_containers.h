@@ -240,12 +240,6 @@ struct array
     bool bounded = true;
     // Enforce RAII
     bool autofree = true;
-    /** Only do operations on the active array portion, ie head to
-        tail. This makes memory management manual, DON'T use this if you
-        have no idea how you're managing memory.
-
-        TODO: Not implemented fully yet*/
-    bool active_range = true;
 
     /** Default Constructor */
     CONSTRUCTOR array() {}
@@ -289,6 +283,8 @@ struct array
         i_memory_allocator* allocator = (data.allocator ? data.allocator : g_allocator);
         T* new_storage = allocator->allocate_raw( count * sizeof(T), alignof(T) );
         ERROR_GUARD( new_storage != nullptr, "Allocation failed" );
+        // TODO: Does this really make sense to placement new the full range?
+        // This could just be the active range
         new(new_storage) T[count] {};
         if (data)
         {
@@ -549,6 +545,8 @@ struct array
                 break;
             }
         }
+        if (result.match_found == false)
+        {   result.index = -1; }
         return result;
     }
 
@@ -609,10 +607,19 @@ struct array
     void
     cleanup()
     {
-        i64 start_i = (active_range ? head : 0);
-        i64 end_i = (active_range ? size_ : (head + head_size));
+        i64 array_limit = (1ll << 50);
+        i64 start_i = this->head;
+        i64 end_i = ((head + head_size > array_limit) ? (head + head_size) : array_limit );
+        if (head + head_size > array_limit) [[unlikely]]
+        {   TYON_ERRORF( "Tried to traverse unrealistically large {} entries, leaking resources. {}",
+                         head_size, uid("199f1e05-1b40-4896-8a30-07de6534309f"_uuid) );
+            return;
+        }
+
         for (i64 i=start_i; i < end_i; ++i )
-        { this->data[i].~T(); }
+        {   this->data[i].~T(); }
+        // C++17 alternative
+        // std::destroy_n( this->data, this->head_size );
     }
 
     DESTRUCTOR ~array()
