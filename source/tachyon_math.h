@@ -1286,7 +1286,7 @@ namespace tyon
             }
 
             constexpr TYON_CUDA_SHARED
-            PROC clamp_i32( i32 arg )
+            PROC clamp_i32( i64 arg )
             {   using T = decltype(arg);
                 // Unsigned can never be negative, don't need a low clamp
                 T type_max = INT32_MAX;
