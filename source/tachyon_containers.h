@@ -209,9 +209,9 @@ PROC image_packed_from_simd( image<t_pixel> arg ) -> image<t_pixel>
     image<t_pixel> result;
     if (arg.alignment == 0 && arg.stride_bytes_ == 0) { return arg; }
     i64 simd_stride = arg.stride_bytes();
-    i32 width = arg.size.x;
+    i64 width = arg.size.x;
     i64 width_bytes = width * sizeof(t_pixel);
-    i32 height = arg.size.y;
+    i64 height = arg.size.y;
 
     result.data = memory_allocate<t_pixel>( arg.size_pixels() );
     result.size = arg.size;
@@ -219,7 +219,7 @@ PROC image_packed_from_simd( image<t_pixel> arg ) -> image<t_pixel>
     raw_pointer read_start = arg.data;
     raw_pointer readhead = arg.data;
     t_pixel* writehead = result.data;
-    for (i32 i_y=0; i_y < height; ++i_y)
+    for (i64 i_y=0; i_y < height; ++i_y)
     {
         // Copy a row at a time to the new buffer
         readhead = read_start + (i_y * simd_stride);

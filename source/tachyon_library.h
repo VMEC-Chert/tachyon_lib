@@ -1596,7 +1596,7 @@ namespace tyon
             // TODO: need to cast to silence conversion warning, we're hardcapped at 16
             high = hex_value[ i32(buf[ i*2 +0 ]) ];
             low  = hex_value[ i32(buf[ i*2 +1 ]) ];
-            result.d[i] = (high << 4) | low;
+            result.d[i] = char(high << 4) | low;
             if  ((high == -1) || ( low == -1 ))
             {   throw( "Invalid character found in UUID.\n"
                        "Valid characters are hexidecimal '0123456789ABCDE' and '-' " );

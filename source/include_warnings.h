@@ -44,6 +44,9 @@
 #pragma GCC diagnostic error "-Wshift-count-negative"
 #pragma GCC diagnostic error "-Wshift-overflow"
 
+// Switch case fallthroughs are quite rare to need in practice and usually indicative of a bug
+#pragma GCC diagnostic error "-Wimplicit-fallthrough"
+
 
 // -- Temporary Debug Errors --
 // Useful for cleaning up dead code or finding accidentilly unused stuff

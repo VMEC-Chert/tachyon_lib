@@ -12,7 +12,7 @@ namespace tyon
         none            = 0,
         any             = 1,
         cpu             = 2,
-        cpu__efficiency = 3,
+        cpu_efficiency  = 3,
         gpu             = 4
     };
     using e_processor_core = processor_core;

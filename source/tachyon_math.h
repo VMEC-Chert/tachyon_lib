@@ -1218,11 +1218,11 @@ namespace tyon
 
             template <> TYON_CUDA_SHARED inline
             PROC absolute<i8>( const i8& arg ) -> i8
-            {   return abs( arg ); }
+            {   return static_cast<i8>( abs( arg ) ); }
 
             template <> TYON_CUDA_SHARED inline
             PROC absolute<i16>( const i16& arg ) -> i16
-            {   return abs( arg ); }
+            {   return static_cast<i16>( abs( arg ) ); }
 
             template <> TYON_CUDA_SHARED inline
             PROC absolute<i32>( const i32& arg ) -> i32
@@ -1238,6 +1238,76 @@ namespace tyon
 
             TYON_CUDA_SHARED
             PROC clamp_range(const f64& edge0, const f64& edge1, const f64& a) -> f64;
+
+            /** Clamp i64 to stay inside range of a u32, used for deterministic casting.
+
+                NOTE:  This  is  not  guranteed to  give  your  algorithms  correct
+                behaviour,  it  is  just  *deterministic* behaviour.  It  is  never
+                undefined behaviour to use this function and all values will map to
+                a consistent value. */
+            constexpr TYON_CUDA_SHARED
+            PROC clamp_u32( i64 arg )
+            {   using T = i64;
+                T low_clamp = (arg > 0 ? arg : 0 );
+                T type_max = UINT32_MAX;
+                T high_low_clamp = (low_clamp < type_max ? low_clamp : type_max);
+                return static_cast<u32>( high_low_clamp );
+            }
+
+            /** Clamp i64 to stay inside range of a u32, used for deterministic casting.
+
+                NOTE:  This  is  not  guranteed to  give  your  algorithms  correct
+                behaviour,  it  is  just  *deterministic* behaviour.  It  is  never
+                undefined behaviour to use this function and all values will map to
+                a consistent value. */
+            constexpr TYON_CUDA_SHARED
+            PROC clamp_u32( u64 arg )
+            {   using T = u64;
+                T low_clamp = (arg > 0 ? arg : 0 );
+                T type_max = UINT32_MAX;
+                T high_low_clamp = (low_clamp < type_max ? low_clamp : type_max);
+                return static_cast<u32>( high_low_clamp );
+            }
+
+
+            /** Clamp u32 to stay inside range of a u32, used for deterministic casting.
+
+                NOTE:  This  is  not  guranteed to  give  your  algorithms  correct
+                behaviour,  it  is  just  *deterministic* behaviour.  It  is  never
+                undefined behaviour to use this function and all values will map to
+                a consistent value. */
+            constexpr TYON_CUDA_SHARED
+            PROC clamp_i32( u32 arg )
+            {   using T = decltype(arg);
+                // Unsigned can never be negative, don't need a low clamp
+                T type_max = INT32_MAX;
+                T high_low_clamp = (arg < type_max ? arg : type_max);
+                return static_cast<i32>( high_low_clamp );
+            }
+
+            constexpr TYON_CUDA_SHARED
+            PROC clamp_i32( i32 arg )
+            {   using T = decltype(arg);
+                // Unsigned can never be negative, don't need a low clamp
+                T type_max = INT32_MAX;
+                T high_low_clamp = (arg < type_max ? arg : type_max);
+                return static_cast<i32>( high_low_clamp );
+            }
+
+            /** Clamp u64 to stay inside range of a i64, used for deterministic casting.
+
+                NOTE:  This  is  not  guranteed to  give  your  algorithms  correct
+                behaviour,  it  is  just  *deterministic* behaviour.  It  is  never
+                undefined behaviour to use this function and all values will map to
+                a consistent value. */
+            constexpr TYON_CUDA_SHARED
+            PROC clamp_i64( u64 arg )
+            {   using T = decltype(arg);
+                // Unsigned can never be negative, don't need a low clamp
+                T type_max = INT64_MAX;
+                T high_low_clamp = (arg < type_max ? arg : type_max);
+                return static_cast<i64>( high_low_clamp );
+            }
 
             // NOTE: This template replaces multiple minimum functions
             template <typename T> TYON_CUDA_SHARED constexpr inline
