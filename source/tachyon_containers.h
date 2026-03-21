@@ -609,7 +609,7 @@ struct array
     {
         i64 array_limit = (1ll << 50);
         i64 start_i = this->head;
-        i64 end_i = ((head + head_size > array_limit) ? (head + head_size) : array_limit );
+        i64 end_i = ((head + head_size < array_limit) ? (head + head_size) : array_limit );
         if (head + head_size > array_limit) [[unlikely]]
         {   TYON_ERRORF( "Tried to traverse unrealistically large {} entries, leaking resources. {}",
                          head_size, uid("199f1e05-1b40-4896-8a30-07de6534309f"_uuid) );
