@@ -1955,6 +1955,16 @@ namespace tyon
         logger_write_message( g_logger, category, message, e_log_entry::error, location );
     }
 
+    // NOTE: Needs to be here because of resolution order
+    constexpr TYON_CUDA_SHARED
+    PROC clamp_range_i64( i64 edge0, i64 edge1, i64 a1 ) -> i64
+    {
+        using T = i64;
+        T low_clamp = (a1 > edge0 ? a1 : edge0 );
+        T high_low_clamp = (low_clamp < edge1 ? low_clamp : edge1);
+        return high_low_clamp;
+    }
+
     template <typename T>
     struct thread_pointer
     {
@@ -2011,22 +2021,33 @@ namespace tyon
     struct gpu_pointer
     {
         using t_self = gpu_pointer<T>;
-        T* value;
+        T* value = nullptr;
+        i64 size = 0;
 
-        explicit CONSTRUCTOR gpu_pointer( T* arg = nullptr ) : value(arg) {}
-        CONSTRUCTOR gpu_pointer( void* arg ) : value((T*)arg) {}
+        CONSTRUCTOR gpu_pointer() = default;
+
+        explicit TYON_CUDA_SHARED
+        CONSTRUCTOR gpu_pointer( T* arg, i64 count = 1 ) : value(arg), size(count){}
+        TYON_CUDA_SHARED
+        CONSTRUCTOR gpu_pointer( void* arg, i64 count = 1 ) : value((T*)arg), size(count) {}
 
         // Derference Operator
+        TYON_CUDA_SHARED
         PROC operator* ()  -> T&
         {   return (*value); }
 
+        TYON_CUDA_SHARED
         PROC operator-> () -> T*
-        {   return (value) ;}
+        {   return (value)  ;}
+
+        TYON_CUDA_SHARED
+        PROC operator[] ( i64 i ) -> T&
+        {   return value[ clamp_range_i64(0, size, i) ]; }
 
         /* Cast to any other pointer or pointer wrapper type, just returns the typed pointer
 
            Explicit to prevent auto-casts. Still pretty safe but convenient */
-        template <typename t_pointer>
+        template <typename t_pointer> TYON_CUDA_SHARED inline
         explicit operator t_pointer()
         {
             return t_pointer { this->value };

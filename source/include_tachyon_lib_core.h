@@ -144,9 +144,9 @@
    dependency resolution order. */
 #include "tachyon_library.h"
 #include "tachyon_safety.h"
+#include "tachyon_math.h"
 #include "tachyon_containers.h"
 #include "tachyon_threading.h"
-#include "tachyon_math.h"
 
 /** SECTION: Platform Specific Includes. */
 #include "tachyon_platform_common.h"

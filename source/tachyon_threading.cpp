@@ -7,10 +7,12 @@ thread_local thread_context* g_thread = nullptr;
 
 PROC thread_self_init( thread_options options ) -> fresult
 {
+    TYON_LOGF( "Initializing new thread '{}'", options.name );
     g_thread = memory_allocate<thread_context>( 1 );
     g_thread->options = options;
     // Initialize ID
     g_thread->id = uuid_generate();
+    TYON_LOGF( "Thread ID {}", g_thread->id );
 
     tyon::thread_self_name( options.short_name );
     // >0 is "less priority" == 0 means normal priority
