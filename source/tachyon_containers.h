@@ -4,107 +4,6 @@
 namespace tyon
 {
 
-template <typename t_any>
-struct pointer final
-{
-    using t_self = pointer<t_any>;
-    t_any* data = nullptr;
-    /** This denotes the allocator the memory belongs to. If it belongs to
-        an allocator it can arbitrarily relocate the data pointer, so don't
-        copy it to a raw pointer. Pointers managed this was are trivially
-        serializable 0x0. allocator means system memory */
-    i_memory_allocator* allocator = nullptr;
-    t_self* next = nullptr;
-    /** This is the primary manager for the underlying object and will propagate
-        changes correctly where required */
-    bool manager = false;
-    /** When true this will call the destructor of the managed resource when done */
-    bool scoped_resource = false;
-    /** If another pointer is copied to the current pointer it is considered
-        weakly shared, and is at the mercy any reallocaitons and destruction the
-        other pointer. If the pointer changed it will be reflected in weakly
-        shared pointers */
-    bool weakly_shared = false;
-    /** If a raw pointer absolutely needs access to a smart pointer, like
-        through sysaclls, it will have to be bound in-place, so it shouldn't realloc or
-        be destroyed for as long as possible, such pointers are marked as borrowed */
-    bool borrowed = false;
-
-    TYON_FORCEINLINE t_any&
-    operator *() { return (*data); }
-    TYON_FORCEINLINE t_any&
-    operator []( isize i ) { return data[i]; }
-
-    TYON_FORCEINLINE t_any&
-    operator []( isize i ) const { return data[i]; }
-
-    TYON_FORCEINLINE
-    CONSTRUCTOR pointer( std::nullptr_t rhs )
-    {
-        this->data = rhs;
-        this->next = nullptr;
-        this->allocator = nullptr;
-        this->weakly_shared = false;
-
-        propagate_data();
-    }
-
-    template <typename t_other>
-    TYON_FORCEINLINE t_self&
-    operator =( pointer<t_other>& rhs )
-    {
-        this->data = reinterpret_cast<t_any*>( rhs.data );
-        this->allocator = reinterpret_cast<t_any*>( allocator );
-        this->weakly_shared = true;
-
-        this->next = rhs.next;
-        rhs.next = this;
-        propagate_data();
-        return *this;
-    }
-
-    TYON_FORCEINLINE t_self&
-    operator =( t_any* rhs )
-    {
-        this->data = rhs;
-        this->next = nullptr;
-        this->allocator = nullptr;
-        this->weakly_shared = false;
-
-        propagate_data();
-        return *this;
-    }
-
-    CONVERSION operator t_any*()
-    { return data; };
-
-    /** Destroys scoped resources if necessary
-        If the pointer needs to be invalidated for any reason this should be
-        done manually before the smart pointer goes out of scope. With unscoped
-        resources weak pointers remain valid until the external memory manager
-        cleans it up */
-    DESTRUCTOR ~pointer()
-    {
-        if (scoped_resource) { delete data; data = nullptr; propagate_data(); }
-    }
-
-    void
-    FUNCTION propagate_data()
-    {
-        if (manager == false) { return; }
-        t_self* x_ptr = next;
-
-        int share_cap = 100;
-        for (int i=0; i<share_cap; ++i)
-        {
-            if (x_ptr == nullptr) { break; }
-            x_ptr = x_ptr->next;
-            x_ptr->data = this->data;
-            x_ptr->allocator = allocator;
-        }
-    }
-};
-
 template <typename T>
 struct search_result
 {
@@ -269,7 +168,7 @@ struct array
     bool
     change_allocation( i_memory_allocator* allocator, isize count )
     {
-        data.allocator = allocator;
+        data.allocator_set( allocator );
         return change_allocation( count );
     }
 
@@ -280,7 +179,7 @@ struct array
     bool
     change_allocation( isize count )
     {
-        i_memory_allocator* allocator = (data.allocator ? data.allocator : g_allocator);
+        i_memory_allocator* allocator = (data.allocator() ? data.allocator() : g_allocator);
         T* new_storage = allocator->allocate_raw( count * sizeof(T), alignof(T) );
         ERROR_GUARD( new_storage != nullptr, "Allocation failed" );
         // TODO: Does this really make sense to placement new the full range?
@@ -292,7 +191,7 @@ struct array
             {
                 new_storage[i] = std::move( data[i] );
             }
-            allocator->deallocate( data );
+            allocator->deallocate( (void*)(data) );
         }
         if (new_storage)
         {
@@ -428,7 +327,7 @@ struct array
 
     T*
     tail_address()
-    { return (data + head+head_size -1); }
+    { return (T*)(data + (head+head_size -1)); }
 
     PROC tail_index() -> i64
     { return (head+head_size -1); }
@@ -443,7 +342,7 @@ struct array
     PROC address( isize i ) -> T*
     {
         ERROR_GUARD( (i >= 0) || (i < size_), "Tried to access index ouside of bounds" );
-        return data + std::clamp<i64>( i, 0, size_ );
+        return (T*)(data + std::clamp<i64>( i, 0, size_ ));
     }
 
     t_self&

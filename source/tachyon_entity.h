@@ -157,7 +157,7 @@ namespace tyon
         t_entity* x_entity;
         for (i64 i=0; i < entity_list.size(); ++i)
         {
-            x_entity = entity_list.data + i;
+            x_entity = (t_entity*)(entity_list.data + i);
             if (x_entity->id == arg)
             {   result.value = x_entity;
                 result.error = false;
@@ -177,7 +177,7 @@ namespace tyon
         t_entity* x_entity;
         for (i64 i=0; i < entity_list.size(); ++i)
         {
-            x_entity = entity_list.data + i;
+            x_entity = (t_entity*)(entity_list.data + i);
             if (x_entity->name == name)
             {   result.value = x_entity;
                 result.error = false;

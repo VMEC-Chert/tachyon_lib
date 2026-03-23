@@ -1965,55 +1965,112 @@ namespace tyon
         return high_low_clamp;
     }
 
+    /** This is a std::span-like fat pointer. It carries a size with some error checking
+
+        NOTE: I tried to make a much more complicated and featured pointer class
+        but I couldn't make it work with the much faster and simpler no-destructor arena
+        based allocation system. Instead I would need double indrection and persist the
+        pointer through arena destruction.  */
     template <typename T>
     struct pointer
     {
-        using t_self = span_pointer<T>;
-        T* value = nullptr;
+        using t_self = pointer<T>;
+        T* data = nullptr;
         i64 size = 0;
+        i_memory_allocator* allocator_ = nullptr;
 
-        CONSTRUCTOR span_pointer() = default;
+        CONSTRUCTOR pointer() = default;
 
         explicit TYON_CUDA_SHARED
-        CONSTRUCTOR span_pointer( T* arg, i64 count = 1 ) : value(arg), size(count){}
+        CONSTRUCTOR pointer( T* arg ) : data(arg) {}
+
+        explicit TYON_CUDA_SHARED
+        CONSTRUCTOR pointer( T* arg, i64 count ) : data(arg), size(count){}
+
+        explicit TYON_CUDA_SHARED
+        CONSTRUCTOR pointer( void* arg, i64 count = 1 ) : data((T*)arg), size(count) {}
+
+        explicit TYON_CUDA_SHARED
+        COPY_CONSTRUCTOR pointer( t_self& arg ) : data(arg.data), size(arg.size) {}
 
         TYON_CUDA_SHARED
-        CONSTRUCTOR span_pointer( void* arg, i64 count = 1 ) : value((T*)arg), size(count) {}
+        COPY_CONSTRUCTOR pointer( const std::nullptr_t& _arg ) : data(nullptr), size(0) {}
 
-        TYON_CUDA_SHARED
-        CONSTRUCTOR span_pointer( const t_self& arg ) : value(arg.value), size(arg.size) {}
+        PROC operator= (T* arg ) -> t_self& { data = arg; size = 1; return *this; }
+        PROC operator= ( std::nullptr_t _arg ) -> t_self& { data = nullptr; size = 0; return *this; }
 
         // Derference Operator
         TYON_CUDA_SHARED
         PROC operator* ()  -> T&
-        {   return (*value); }
+        {   return (*data); }
 
         TYON_CUDA_SHARED
         PROC operator-> () -> T*
-        {   return (value)  ;}
+        {   return (data)  ;}
 
         TYON_CUDA_SHARED
         PROC operator[] ( i64 i ) -> T&
-        {   return value[ clamp_range_i64(0, size, i) ]; }
+        {   return data[ clamp_range_i64(0, size, i) ]; }
 
-        /* Cast to any other pointer or pointer wrapper type, just returns the typed pointer
+        /** Return a fat pointer copy with an offset applied, shrinking the size appropriately.
 
-           Explicit to prevent auto-casts. Still pretty safe but convenient */
-        template <typename t_pointer> TYON_CUDA_SHARED inline
-        explicit operator t_pointer()
-        {
-            return t_pointer { this->value };
+            NOTE: When a negative offset is passed pointer size will always be null. */
+        PROC operator+ ( i64 arg ) const -> t_self
+        {   t_self result = t_self { data + arg, size - arg };
+            if (arg <= 0)
+            {   result.data = nullptr;
+                result.size = 0;
+            }
+            return t_self {};
         }
+
+        PROC operator+ ( i32 arg ) const -> t_self { return (*this + i64(arg)); }
+        PROC operator+= ( i64 arg ) const -> t_self& { return *this = (*this + arg); }
+
+        PROC slicing_move( t_self& other, i64 offset, i64 new_size = 0 ) -> t_self
+        {   T* address = this->data + offset;
+            i64 final_size = 0;
+
+            i64 desired_size = (new_size ? new_size : this->size);
+            // Calculate where we are relative to the other span
+            i64 other_diff = (address - other.data);
+            // Calculate how far it would be to the end of the array
+            i64 distance_to_end = other.size - (other_diff + other.size);
+            // This slice can't possible be valid the address compeltely below the other's range
+            bool address_within_other = (other_diff >= 0);
+            bool range_left_of_end = (distance_to_end - desired_size) >= 0;
+
+            // This no longer affects logic, we can just take the remaining size verbatim and fix it
+            final_size = distance_to_end;
+            if (address_within_other == false || range_left_of_end == false)
+            {   address = nullptr;
+                final_size = 0;
+            }
+
+            return t_self { address, final_size };
+        }
+
+        PROC get() const -> T* { return data; }
+        operator T*() const { return data; }
+        explicit operator void*() const { return data; }
+
+        operator bool() const { return (data && (size > 0)); }
 
 #ifdef __cpp_lib_span
         operator std::span<T>()
-        {   return std::span<T> { value, size }; }
+        {   return std::span<T> { data, size }; }
+
+        PROC allocator() const -> i_allocator*
+        {   return allocator_; }
+
+        PROC allocator_set( i_allocator* arg ) -> void
+        {   allocator_ = arg; }
 #endif
     };
 
 
     template <typename T>
-    struct thread_pointer final : span_pointer<T>
+    struct thread_pointer final : pointer<T>
     {
         using t_self = thread_pointer<T>;
     };
