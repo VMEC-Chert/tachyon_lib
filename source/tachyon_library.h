@@ -1966,29 +1966,56 @@ namespace tyon
     }
 
     template <typename T>
-    struct thread_pointer
+    struct pointer
     {
-        using t_self = thread_pointer<T>;
-        T* value;
+        using t_self = span_pointer<T>;
+        T* value = nullptr;
+        i64 size = 0;
 
-        explicit CONSTRUCTOR thread_pointer( T* arg = nullptr ) : value(arg) {}
-        CONSTRUCTOR thread_pointer( void* arg ) : value((T*)arg) {}
+        CONSTRUCTOR span_pointer() = default;
+
+        explicit TYON_CUDA_SHARED
+        CONSTRUCTOR span_pointer( T* arg, i64 count = 1 ) : value(arg), size(count){}
+
+        TYON_CUDA_SHARED
+        CONSTRUCTOR span_pointer( void* arg, i64 count = 1 ) : value((T*)arg), size(count) {}
+
+        TYON_CUDA_SHARED
+        CONSTRUCTOR span_pointer( const t_self& arg ) : value(arg.value), size(arg.size) {}
 
         // Derference Operator
+        TYON_CUDA_SHARED
         PROC operator* ()  -> T&
         {   return (*value); }
 
+        TYON_CUDA_SHARED
         PROC operator-> () -> T*
-        {   return (value) ;}
+        {   return (value)  ;}
+
+        TYON_CUDA_SHARED
+        PROC operator[] ( i64 i ) -> T&
+        {   return value[ clamp_range_i64(0, size, i) ]; }
 
         /* Cast to any other pointer or pointer wrapper type, just returns the typed pointer
 
            Explicit to prevent auto-casts. Still pretty safe but convenient */
-        template <typename t_pointer>
+        template <typename t_pointer> TYON_CUDA_SHARED inline
         explicit operator t_pointer()
         {
             return t_pointer { this->value };
         }
+
+#ifdef __cpp_lib_span
+        operator std::span<T>()
+        {   return std::span<T> { value, size }; }
+#endif
+    };
+
+
+    template <typename T>
+    struct thread_pointer final : span_pointer<T>
+    {
+        using t_self = thread_pointer<T>;
     };
 
     template <typename T>
