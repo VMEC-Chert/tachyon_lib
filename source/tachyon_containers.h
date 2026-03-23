@@ -195,7 +195,8 @@ struct array
         }
         if (new_storage)
         {
-            data = new_storage;
+            data.data = new_storage;
+            data.size_ = count;
             size_ = count;
             head = std::min( head, count );
             head_size = std::min( head_size, count );
@@ -327,7 +328,7 @@ struct array
 
     T*
     tail_address()
-    { return (T*)(data + (head+head_size -1)); }
+    { return (data.get() + (head+head_size -1)); }
 
     PROC tail_index() -> i64
     { return (head+head_size -1); }

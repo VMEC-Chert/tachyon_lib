@@ -1976,7 +1976,7 @@ namespace tyon
     {
         using t_self = pointer<T>;
         T* data = nullptr;
-        i64 size = 0;
+        i64 size_ = 0;
         i_memory_allocator* allocator_ = nullptr;
 
         CONSTRUCTOR pointer() = default;
@@ -1984,22 +1984,22 @@ namespace tyon
         /** NOTE: Don't try to construct with 'pointer<T> foo = pointer'.
             C++ explicit construction rules don't allow this. */
         explicit TYON_CUDA_SHARED
-        CONSTRUCTOR pointer( T* arg ) : data(arg), size(0) {}
+        CONSTRUCTOR pointer( T* arg ) : data(arg), size_(0) {}
 
         explicit TYON_CUDA_SHARED
-        CONSTRUCTOR pointer( T* arg, i64 count ) : data(arg), size(count){}
+        CONSTRUCTOR pointer( T* arg, i64 count ) : data(arg), size_(count){}
 
         explicit TYON_CUDA_SHARED
-        CONSTRUCTOR pointer( void* arg, i64 count = 1 ) : data((T*)arg), size(count) {}
+        CONSTRUCTOR pointer( void* arg, i64 count = 1 ) : data((T*)arg), size_(count) {}
 
         explicit TYON_CUDA_SHARED
-        COPY_CONSTRUCTOR pointer( t_self& arg ) : data(arg.data), size(arg.size) {}
+        COPY_CONSTRUCTOR pointer( t_self& arg ) : data(arg.data), size_(arg.size_) {}
 
         TYON_CUDA_SHARED
-        COPY_CONSTRUCTOR pointer( const std::nullptr_t& _arg ) : data(nullptr), size(0) {}
+        COPY_CONSTRUCTOR pointer( const std::nullptr_t& _arg ) : data(nullptr), size_(0) {}
 
-        PROC operator= ( T* arg ) -> t_self& { data = arg; size = 1; return *this; }
-        PROC operator= ( std::nullptr_t _arg ) -> t_self& { data = nullptr; size = 0; return *this; }
+        PROC operator= ( T* arg ) -> t_self& { data = arg; size_ = 1; return *this; }
+        PROC operator= ( std::nullptr_t _arg ) -> t_self& { data = nullptr; size_ = 0; return *this; }
 
         // Derference Operator
         TYON_CUDA_SHARED
@@ -2012,18 +2012,18 @@ namespace tyon
 
         TYON_CUDA_SHARED
         PROC operator[] ( i64 i ) -> T&
-        {   return data[ clamp_range_i64(0, size, i) ]; }
+        {   return data[ clamp_range_i64(0, size_, i) ]; }
 
-        /** Return a fat pointer copy with an offset applied, shrinking the size appropriately.
+        /** Return a fat pointer copy with an offset applied, shrinking the size_ appropriately.
 
-            NOTE: When a negative offset is passed pointer size will always be null. */
+            NOTE: When a negative offset is passed pointer size_ will always be null. */
         PROC operator+ ( i64 arg ) const -> t_self
-        {   t_self result = t_self { data + arg, size - arg };
-            if (arg <= 0)
+        {   t_self result = t_self { data + arg, size_ - arg };
+            if (this->size_ < 0 || arg < 0)
             {   result.data = nullptr;
-                result.size = 0;
+                result.size_ = 0;
             }
-            return t_self {};
+            return t_self {result};
         }
 
         PROC operator+ ( i32 arg ) const -> t_self { return (*this + i64(arg)); }
@@ -2033,16 +2033,16 @@ namespace tyon
         {   T* address = this->data + offset;
             i64 final_size = 0;
 
-            i64 desired_size = (new_size ? new_size : this->size);
+            i64 desired_size = (new_size ? new_size : this->size_);
             // Calculate where we are relative to the other span
             i64 other_diff = (address - other.data);
             // Calculate how far it would be to the end of the array
-            i64 distance_to_end = other.size - (other_diff + other.size);
+            i64 distance_to_end = other.size_ - (other_diff + other.size_);
             // This slice can't possible be valid the address compeltely below the other's range
             bool address_within_other = (other_diff >= 0);
             bool range_left_of_end = (distance_to_end - desired_size) >= 0;
 
-            // This no longer affects logic, we can just take the remaining size verbatim and fix it
+            // This no longer affects logic, we can just take the remaining size_ verbatim and fix it
             final_size = distance_to_end;
             if (address_within_other == false || range_left_of_end == false)
             {   address = nullptr;
@@ -2053,17 +2053,18 @@ namespace tyon
         }
 
         PROC get() const -> T* { return data; }
+        PROC size() const -> i64 { return size_; }
         operator T*() const { return data; }
         explicit operator void*() const { return data; }
 
         template <typename t_span> explicit
-        operator t_span() const { return t_span{ this->data, this->size }; }
+        operator t_span() const { return t_span{ this->data, this->size_ }; }
 
-        operator bool() const { return (data && (size > 0)); }
+        operator bool() const { return (data && (size_ > 0)); }
 
 #ifdef __cpp_lib_span
         operator std::span<T>()
-        {   return std::span<T> { data, size }; }
+        {   return std::span<T> { data, size_ }; }
 #endif
         PROC allocator() const -> i_allocator*
         {   return allocator_; }
