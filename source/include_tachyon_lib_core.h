@@ -58,6 +58,9 @@
 // #include <iostream>
 #include <memory>
 #include <mutex>
+#ifdef __cpp_lib_span
+    #include <span>
+#endif
 #include <string>
 #include <string_view>
 

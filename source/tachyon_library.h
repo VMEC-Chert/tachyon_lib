@@ -2064,13 +2064,12 @@ namespace tyon
 #ifdef __cpp_lib_span
         operator std::span<T>()
         {   return std::span<T> { data, size }; }
-
+#endif
         PROC allocator() const -> i_allocator*
         {   return allocator_; }
 
         PROC allocator_set( i_allocator* arg ) -> void
         {   allocator_ = arg; }
-#endif
     };
 
 
