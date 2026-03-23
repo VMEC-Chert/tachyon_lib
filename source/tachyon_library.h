@@ -1981,8 +1981,10 @@ namespace tyon
 
         CONSTRUCTOR pointer() = default;
 
+        /** NOTE: Don't try to construct with 'pointer<T> foo = pointer'.
+            C++ explicit construction rules don't allow this. */
         explicit TYON_CUDA_SHARED
-        CONSTRUCTOR pointer( T* arg ) : data(arg) {}
+        CONSTRUCTOR pointer( T* arg ) : data(arg), size(0) {}
 
         explicit TYON_CUDA_SHARED
         CONSTRUCTOR pointer( T* arg, i64 count ) : data(arg), size(count){}
@@ -1996,7 +1998,7 @@ namespace tyon
         TYON_CUDA_SHARED
         COPY_CONSTRUCTOR pointer( const std::nullptr_t& _arg ) : data(nullptr), size(0) {}
 
-        PROC operator= (T* arg ) -> t_self& { data = arg; size = 1; return *this; }
+        PROC operator= ( T* arg ) -> t_self& { data = arg; size = 1; return *this; }
         PROC operator= ( std::nullptr_t _arg ) -> t_self& { data = nullptr; size = 0; return *this; }
 
         // Derference Operator
@@ -2054,6 +2056,9 @@ namespace tyon
         operator T*() const { return data; }
         explicit operator void*() const { return data; }
 
+        template <typename t_span> explicit
+        operator t_span() const { return t_span{ this->data, this->size }; }
+
         operator bool() const { return (data && (size > 0)); }
 
 #ifdef __cpp_lib_span
@@ -2073,95 +2078,29 @@ namespace tyon
     struct thread_pointer final : pointer<T>
     {
         using t_self = thread_pointer<T>;
+        using pointer<T>::pointer;
     };
 
     template <typename T>
-    struct cpu_pointer
+    struct cpu_pointer : pointer<T>
     {
         using t_self = cpu_pointer<T>;
-        T* value;
-
-        explicit CONSTRUCTOR cpu_pointer( T* arg = nullptr ) : value(arg) {}
-        CONSTRUCTOR cpu_pointer( void* arg ) : value((T*)arg) {}
-
-        // Derference Operator
-        PROC operator* ()  -> T&
-        {   return (*value); }
-
-        PROC operator-> () -> T*
-        {   return (value) ;}
-
-        /* Cast to any other pointer or pointer wrapper type, just returns the typed pointer
-
-           Explicit to prevent auto-casts. Still pretty safe but convenient */
-        template <typename t_pointer>
-        explicit operator t_pointer()
-        {
-            return t_pointer { this->value };
-        }
+        using pointer<T>::pointer; // Inherit constructor
     };
 
     template <typename T>
-    struct gpu_pointer
+    struct gpu_pointer  : pointer<T>
     {
         using t_self = gpu_pointer<T>;
-        T* value = nullptr;
-        i64 size = 0;
-
-        CONSTRUCTOR gpu_pointer() = default;
-
-        explicit TYON_CUDA_SHARED
-        CONSTRUCTOR gpu_pointer( T* arg, i64 count = 1 ) : value(arg), size(count){}
-        TYON_CUDA_SHARED
-        CONSTRUCTOR gpu_pointer( void* arg, i64 count = 1 ) : value((T*)arg), size(count) {}
-
-        // Derference Operator
-        TYON_CUDA_SHARED
-        PROC operator* ()  -> T&
-        {   return (*value); }
-
-        TYON_CUDA_SHARED
-        PROC operator-> () -> T*
-        {   return (value)  ;}
-
-        TYON_CUDA_SHARED
-        PROC operator[] ( i64 i ) -> T&
-        {   return value[ clamp_range_i64(0, size, i) ]; }
-
-        /* Cast to any other pointer or pointer wrapper type, just returns the typed pointer
-
-           Explicit to prevent auto-casts. Still pretty safe but convenient */
-        template <typename t_pointer> TYON_CUDA_SHARED inline
-        explicit operator t_pointer()
-        {
-            return t_pointer { this->value };
-        }
+        using pointer<T>::pointer; // Inherit constructor
+        using pointer<T>::operator=;
     };
 
     template <typename T>
-    struct unified_pointer
+    struct unified_pointer : pointer<T>
     {
         using t_self = unified_pointer<T>;
-        T* value;
-
-        explicit CONSTRUCTOR unified_pointer( T* arg = nullptr ) : value(arg) {}
-        CONSTRUCTOR unified_pointer( void* arg ) : value((T*)arg) {}
-
-        // Derference Operator
-        PROC operator* ()  -> T&
-        {   return (*value); }
-
-        PROC operator-> () -> T*
-        {   return (value) ;}
-
-        /* Cast to any other pointer or pointer wrapper type, just returns the typed pointer
-
-           Explicit to prevent auto-casts. Still pretty safe but convenient */
-        template <typename t_pointer>
-        explicit operator t_pointer()
-        {
-            return t_pointer { this->value };
-        }
+        using pointer<T>::pointer; // Inherit constructor
     };
 
 }
