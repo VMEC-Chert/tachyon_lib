@@ -101,11 +101,11 @@ void force_syntax_check() {
     Iter a, b;
     using Traits = std::iterator_traits<Iter>;
     typename std::iterator_traits<Iter>::difference_type n = 5;
-    using v_type = typename Traits::value_type;
-    using d_type = typename Traits::difference_type;
-    using p_type = typename Traits::pointer;
-    using r_type = typename Traits::reference;
-    using c_tag  = typename Traits::iterator_category;
+    using v_type = typename Traits::value_type;         (void)v_type{};
+    using d_type = typename Traits::difference_type;    (void)d_type{};
+    using p_type = typename Traits::pointer;            (void)p_type{};
+    using r_type = typename Traits::reference;          v_type v_var {}; r_type _r_t = v_var;
+    using c_tag  = typename Traits::iterator_category;  (void)c_tag{};
 
     auto r1 = *a;             // Dereference
     // auto r2 = a->some_member; // Arrow (if applicable)

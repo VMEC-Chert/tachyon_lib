@@ -798,6 +798,7 @@ namespace tyon
                 { log_file = fopen( this->log_filename.c_str(), "w" ); }
                 if (log_file)
                 { fwrite( formatted_message.data(), 1, formatted_message.size(), log_file ); }
+                // TODO: Need to add platform specific filesystem sync
                 fflush( log_file );
             }
         }

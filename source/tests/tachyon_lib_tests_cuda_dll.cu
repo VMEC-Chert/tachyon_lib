@@ -17,7 +17,7 @@ TYON_CUDA_KERNEL void test_kernel()
     // tyon::v3_f32 foo;
     // foo = foo * foo;
     f32 test_float = tyon::square_root( 5.0f );
-    printf( "yep yep \n" );
+    // printf( "yep yep \n" );
 }
 
 int main( int argc, char** argv )
