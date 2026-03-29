@@ -1986,6 +1986,21 @@ namespace tyon
 
 
 
+        // Logarithms
+        TYON_CUDA_SHARED 
+        PROC natural_logarithm(const f32& x) -> f32
+        {
+            return std::logf(x);
+        }
+
+        TYON_CUDA_SHARED 
+        PROC natural_logarithm(const f64& x) -> f64
+        {
+            return std::log(x);
+        }
+
+
+
         // Probability
         TYON_CUDA_SHARED
         PROC error_function(const f32& a) -> f32

@@ -785,6 +785,14 @@ namespace tyon
 
 
 
+        // Logarithms
+        TYON_CUDA_SHARED 
+        PROC natural_logarithm(const f32& x) -> f32;
+
+        TYON_CUDA_SHARED 
+        PROC natural_logarithm(const f64& x) -> f64;
+
+
         // Probability
         TYON_CUDA_SHARED
         PROC error_function(const f32& a) -> f32;
