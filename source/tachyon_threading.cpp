@@ -5,6 +5,30 @@ namespace tyon
 thread_subsystem* g_thread_subystem = nullptr;
 thread_local thread_context* g_thread = nullptr;
 
+PROC thread_fence::wait_opened(
+    time_duration wait_timeout,
+    time_duration slow_spin_threshold,
+    time_duration poll_interval
+) -> fresult
+{
+    time_monotonic timeout = (time_now() + wait_timeout);
+    time_monotonic slow_spin_time = (time_now() + slow_spin_threshold);
+    time_monotonic current_time;
+    while (opened.load( std::memory_order_acquire ) == false)
+    {
+        current_time = time_now();
+        if (current_time > timeout) { return false; }
+        if (current_time > slow_spin_time)
+        {   std::this_thread::sleep_for( poll_interval );
+        }
+    }
+    return false;
+}
+
+/** Open fence and let all blocked threads continue executing */
+PROC thread_fence::open() -> void
+{   opened = true; }
+
 PROC thread_self_init( thread_options options ) -> fresult
 {
     TYON_LOGF( "Initializing new thread '{}'", options.name );

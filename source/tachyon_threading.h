@@ -11,6 +11,24 @@ extern thread_subsystem* g_thread_subsystem;
 ////// -- Threading Library -- /////////////////////////////////////////////////
     /////////////////////////////
 
+struct thread_fence
+{
+    /** True when fence has fulfilled it's conditions and is allowed to proceed */
+    std::atomic<bool> opened = false;
+
+    /** Wait until the fence is opened. Return true if the barrier opened
+     * @param slow_spin_threshold - If we are waiting for this long we wil
+     * consider sleeping between checks. */
+    PROC wait_opened(
+        time_duration wait_timeout,
+        time_duration slow_spin_threshold = 1ms,
+        time_duration poll_interval = 1ms
+        ) -> fresult;
+
+    /** Open fence and let all blocked threads continue executing */
+    PROC open() -> void;
+};
+
 struct thread_options
 {
     // < 16 bytes for UNIX
