@@ -15,6 +15,8 @@ struct thread_fence
 {
     /** True when fence has fulfilled it's conditions and is allowed to proceed */
     std::atomic<bool> opened = false;
+    std::atomic<i32> successful_passes = 0;
+    std::atomic<i32> timeouts = 0;
 
     /** Wait until the fence is opened. Return true if the barrier opened
      * @param slow_spin_threshold - If we are waiting for this long we wil

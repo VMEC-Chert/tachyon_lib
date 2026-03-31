@@ -14,15 +14,19 @@ PROC thread_fence::wait_opened(
     time_monotonic timeout = (time_now() + wait_timeout);
     time_monotonic slow_spin_time = (time_now() + slow_spin_threshold);
     time_monotonic current_time;
-    while (opened.load( std::memory_order_acquire ) == false)
+
+    // NOTE: Total thread synchronization requires total ordering. So we use the
+    // default memory order 'std::memory_order_seq_cst' which provides that.
+    while (opened == false)
     {
         current_time = time_now();
-        if (current_time > timeout) { return false; }
+        if (current_time > timeout) { ++timeout; return false; }
         if (current_time > slow_spin_time)
         {   std::this_thread::sleep_for( poll_interval );
         }
     }
-    return false;
+    ++successful_passes;
+    return true;
 }
 
 /** Open fence and let all blocked threads continue executing */
