@@ -429,6 +429,15 @@ struct array
         }
     }
 
+    /** Same as map_procedure by provides the index argument */
+    template <typename t_proc>
+    PROC map_procedure_indexed( t_proc&& arg  ) -> void
+    {
+        for (i64 i=0; i < size(); ++i)
+        {   arg( data[i], i );
+        }
+    }
+
     // Search from 0 to 'size'
     template <typename t_single_comparison>
     search_result<T>
