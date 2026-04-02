@@ -4,7 +4,9 @@
 namespace tyon
 {
 
-/** Like clamp_u32 but signals an error if something goes wrong */
+/** Like clamp_u32 but signals an error if something goes wrong
+
+ Borked. Not actually safe. */
 template <typename t_return, typename T>
 PROC limit( T arg )
 {   T low_clamp = (arg > 0 ? arg : 0 );

@@ -1277,6 +1277,14 @@ namespace tyon
                 return static_cast<u32>( high_low_clamp );
             }
 
+            constexpr TYON_CUDA_SHARED
+            PROC clamp_u64( i64 arg )
+            {   using T = i64;
+                T low_clamp = (arg > 0 ? arg : 0 );
+                T type_max = INT64_MAX;
+                T high_low_clamp = (low_clamp < type_max ? low_clamp : type_max);
+                return static_cast<u64>( high_low_clamp );
+            }
 
             /** Clamp u32 to stay inside range of a u32, used for deterministic casting.
 
