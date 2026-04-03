@@ -128,6 +128,8 @@ PROC image_packed_from_simd( image<t_pixel> arg ) -> image<t_pixel>
     return result;
 }
 
+PROC image_color_reorder_inplace_u8_bgra_rgba( image<rgba> arg ) -> image<bgra>;
+
 template <typename T>
 struct array
 {
