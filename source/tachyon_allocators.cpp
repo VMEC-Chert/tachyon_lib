@@ -159,4 +159,41 @@ PROC memory_heap_allocator::allocate_raw( isize bytes, isize alignment ) -> raw_
         return {};
     }
 
+    CONSTRUCTOR memory_system_allocator::memory_system_allocator()
+    {}
+
+    PROC memory_system_allocator::allocate_raw( isize bytes, isize alignment ) -> raw_pointer
+    {
+        stats.churn++;
+        stats.churn_bytes += bytes;
+        stats.user_allocated + bytes;
+        return malloc( bytes );
+    }
+
+    PROC memory_system_allocator::allocate_raw_fast( i64 bytes, isize alignment ) -> raw_pointer
+    {
+        return malloc( bytes );
+    }
+
+    // realloc compat function
+    PROC memory_system_allocator::allocate_relocate( void* reference, i64 bytes ) -> raw_pointer
+    {
+        TYON_BREAK();
+        return nullptr;
+    }
+
+    PROC memory_system_allocator::deallocate( void* address ) -> void
+    {
+        free( address );
+    }
+
+    /** Clear all stored allocations and zero memory */
+    PROC memory_system_allocator::blank_all() -> void
+    {
+        TYON_BREAK();
+    }
+
+    PROC memory_system_allocator::get_memory_statistics() -> allocator_info
+    {   return stats; }
+
 }
