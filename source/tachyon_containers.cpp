@@ -3,7 +3,6 @@
 
 namespace tyon
 {
-    __attribute__((optimize("O2")))
     PROC image_color_reorder_inplace_u8_bgra_rgba( image<rgba> arg ) -> image<bgra>
     {
         PROFILE_SCOPE_FUNCTION();
