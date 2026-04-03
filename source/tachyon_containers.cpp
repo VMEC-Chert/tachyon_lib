@@ -25,8 +25,8 @@ namespace tyon
             */
             static_assert( REFLECTION_LITTLE_ENDIAN, "Size is fixed" );
             temp_1 = std::bit_cast<u32>( read[ i_pixel ]);
-            temp_2 = (temp_1 >> 8) | ((temp_1 & 0xFF) << 24);
-            write[ i_pixel ] = std::bit_cast<bgra>( temp_2 );
+            temp_1 = (temp_1 >> 8) | ((temp_1 & 0xFF) << 24);
+            write[ i_pixel ] = std::bit_cast<bgra>( temp_1 );
         };
         image<t_color_out> result;
         result.data = raw_pointer(arg.data);

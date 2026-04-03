@@ -761,7 +761,7 @@ namespace tyon
         // TODO: Add call point
         // entry.call_point = call_point
 
-        if (console_output_enabled || string_output_enabled)
+        if (console_output_enabled)
         {
             i64 nanoseconds = time_to_epoch_nanoseconds( entry.timestamp );
             u64 category_size = category.size();

@@ -1823,7 +1823,8 @@ namespace tyon
         rgba_f32 = 6,
         rgb8     = 7,
         rgb_f32  = 8,
-        rgba16   = 9
+        rgba16   = 9,
+        bgra8 = 10
     };
     using e_color_format = color_format;
 

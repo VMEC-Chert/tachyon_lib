@@ -54,8 +54,8 @@
 #include <ctime>
 #include <cerrno>
 #include <filesystem>
-// Disabled iostreams in favour of fmt (which redirects to 'vprint' but uses type safe operations
-// #include <iostream>
+// NOTE: I originally disabled iostream in favour of fmtlib but its still kinda nice for input
+#include <iostream>
 #include <memory>
 #include <mutex>
 #ifdef __cpp_lib_span
@@ -165,3 +165,4 @@
 #include "tachyon_internals.h"
 #include "tachyon_assets.h"
 #include "tachyon_allocators.h"
+#include "tachyon_command.h"
