@@ -55,7 +55,9 @@
 #include <cerrno>
 #include <filesystem>
 // NOTE: I originally disabled iostream in favour of fmtlib but its still kinda nice for input
-#include <iostream>
+// NOTE: Nevermind, iostream is still trash. Very slow to compile and doesn't
+// help with non-blocking input
+// #include <iostream>
 #include <memory>
 #include <mutex>
 #ifdef __cpp_lib_span

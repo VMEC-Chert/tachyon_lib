@@ -4,6 +4,11 @@ namespace tyon
 {
     extern command_context* g_command = nullptr;
 
+    PROC command_print_q( fstring message ) -> void
+    {
+        fmt::print( "{}", message );
+    }
+
     PROC command_init() -> fresult
     {
         g_command = memory_allocate<command_context>(1);
@@ -16,15 +21,25 @@ namespace tyon
         return true;
     }
 
-    PROC command_ansi_control( ansi_control type, i32 arg ) -> void
+    PROC command_ansi_control( ansi_control type, i32 arg = 0 ) -> void
     {
         fstring code;
         switch (type)
         {
-            case ansi_control::line_clear_entire:
-                code = "\033[2K"; break;
+
+            case ansi_control::none: break;
+            case ansi_control::any: break;
+            case ansi_control::line_clear_after: break;
+            case ansi_control::line_clear_before: break;
+            case ansi_control::line_clear_entire: code = "\033[2K"; break;
+
+            case ansi_control::cursor_move_home: break;
+            case ansi_control::cursor_move_end: break;
+            case ansi_control::cursor_save_store: break;
+            case ansi_control::cursor_move_store: break;
+            default: break;
         }
-        fmt::print( code );
+        command_print_q( code );
     }
 
     PROC command_read_console() -> void
@@ -44,23 +59,23 @@ namespace tyon
             input += buf;
         }
 
-        // print( "Echo: {}", input );
-        // print( "\033[1F" );
-        // print( "\033[2K" );
-        // print( "Echo: {} ASCII: {}", input.back(), int(input.back()) );
-        // print( "\033[1E" );
+        // command_print_q( "Echo: {}", input );
+        // command_print_q( "\033[1F" );
+        // command_print_q( "\033[2K" );
+        // command_print_q( "Echo: {} ASCII: {}", input.back(), int(input.back()) );
+        // command_print_q( "\033[1E" );
 
         // print_q( "\033[0E" );
         // print_q( "\033[2K" );
         // erase whole line
-        fmt::print( "\033[2K");
+        command_ansi_control( ansi_control::line_clear_entire );
         // Save cursor position
-        fmt::print( "\033 7" );
+        command_print_q( "\033 7" );
         // Move beginning of line
-        fmt::print( "\033[0E" );
+        command_print_q( "\033[0E" );
         fmt::print( "{}", input );
         // Restore cursor
-        fmt::print( "\033 8" );
+        command_print_q( "\033 8" );
 
         bool do_backspace = (input.back() == 127);
         bool submit_command = (input.size() > 1 && input.back() == 10);
