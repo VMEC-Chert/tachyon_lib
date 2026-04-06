@@ -25,11 +25,11 @@
     #include <windows.h>
 
     #include <fcntl.h>
+    #include <conio.h>
     #include <io.h>
     #include <rpc.h>
     #include <sysinfoapi.h>
-    #include <winnt.h>
-    // #include <windef.h>
+    #include <winnt.h>    // #include <windef.h>
     // Basic types
     // #include "minwindef.h"
 
