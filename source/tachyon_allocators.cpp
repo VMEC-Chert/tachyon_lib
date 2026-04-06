@@ -166,7 +166,7 @@ PROC memory_heap_allocator::allocate_raw( isize bytes, isize alignment ) -> raw_
     {
         stats.churn++;
         stats.churn_bytes += bytes;
-        stats.user_allocated + bytes;
+        stats.user_allocated += bytes;
         return malloc( bytes );
     }
 

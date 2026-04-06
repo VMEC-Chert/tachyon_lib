@@ -3,6 +3,19 @@
 namespace tyon
 {
 
+    enum class ansi_control : i32
+    {
+        none = 0,
+        any = 1,
+        line_clear_after,
+        line_clear_before,
+        line_clear_entire,
+        cursor_move_home,
+        cursor_move_end,
+        cursor_save_store,
+        cursor_move_store
+    };
+
     struct command_property
     {
         uid id;

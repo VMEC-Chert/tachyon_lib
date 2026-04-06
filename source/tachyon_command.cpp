@@ -16,23 +16,67 @@ namespace tyon
         return true;
     }
 
+    PROC command_ansi_control( ansi_control type, i32 arg ) -> void
+    {
+        fstring code;
+        switch (type)
+        {
+            case ansi_control::line_clear_entire:
+                code = "\033[2K"; break;
+        }
+        fmt::print( code );
+    }
 
     PROC command_read_console() -> void
     {
         fstring input;
         char buf[1024] {};
-        /** NOTE: Breaks if two newlines are input, so we have to clear the newlines in a loop..
-            NOTE: This is horrible API design and I hate whoever designed this.
-            NOTE: BUT IT DOES WORK, it IS non-blocking */
-        while (std::cin.peek() == '\n')
-        { std::cin.ignore( 1000000, '\n' ); }
-        std::cin.get( buf, 1024 );
-        input = buf;
 
-        if (input.size())
+        bool debug_run_always = true;
+        // TODO: do input polling with _khbit() / poll() for performance
+        if (debug_run_always)
         {
-            TYON_LOGF( "Echo Input from stdin: '{}'", input );
+            fgets( buf, 100, stdin );
+            // NOTE: Not needed
+            // NOTE: Extremely slow compared to fgets.
+            // int read_bytes = read( STDIN_FILENO, buf.data(), 100 );
+
+            input += buf;
+        }
+
+        // print( "Echo: {}", input );
+        // print( "\033[1F" );
+        // print( "\033[2K" );
+        // print( "Echo: {} ASCII: {}", input.back(), int(input.back()) );
+        // print( "\033[1E" );
+
+        // print_q( "\033[0E" );
+        // print_q( "\033[2K" );
+        // erase whole line
+        fmt::print( "\033[2K");
+        // Save cursor position
+        fmt::print( "\033 7" );
+        // Move beginning of line
+        fmt::print( "\033[0E" );
+        fmt::print( "{}", input );
+        // Restore cursor
+        fmt::print( "\033 8" );
+
+        bool do_backspace = (input.back() == 127);
+        bool submit_command = (input.size() > 1 && input.back() == 10);
+        if (do_backspace)
+        {   // Take off the backspace + 1 character
+            bool short_string_special_case = (input.size() < 2);
+            size_t new_size = (short_string_special_case ? 0 : (input.size() - 2));
+            input.resize( new_size );
+        }
+        else if (submit_command)
+        {
+            fmt::print( "Command Submitted: {}", input );
+            // Strip last newline
+            input.resize( input.size() - 1 );
             g_command->command_string_queue.push_tail( input );
+            input.clear();
         }
     }
 }

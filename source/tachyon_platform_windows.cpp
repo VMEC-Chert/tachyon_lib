@@ -280,7 +280,7 @@ namespace tyon
 
         // Creates a new console window if one wasn't open already
         AllocConsole();
-        fstring console_name = "VMEC Logging Console";
+        fstring console_name = "Tachyon Library Logging Console";
         SetConsoleTitleA( console_name.c_str() );
 
         EnableMenuItem(GetSystemMenu(GetConsoleWindow(), FALSE), SC_CLOSE , MF_GRAYED);
