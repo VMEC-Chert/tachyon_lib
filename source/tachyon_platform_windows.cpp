@@ -326,6 +326,11 @@ namespace tyon
         return true;
     }
 
+    bool console_input_available()
+    {
+        return (_kbhit() != 0);
+    }
+
 }
 
 #endif // REFLECTION_PLATFORM_WINDOWS

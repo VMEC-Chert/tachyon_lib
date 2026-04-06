@@ -7,6 +7,7 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <poll.h>
 
 namespace platform
 {
@@ -170,6 +171,19 @@ namespace tyon
         return true;
     }
 
+    PROC console_input_available() -> fresult
+    {
+        pollfd poll_args {};
+        poll_args.fd = STDIN_FILENO;
+        // Ask if any new input has arrived
+        poll_args.events = POLLIN;
+
+        i32 timeout_ms = 0;
+        i32 poll_args_n = 1;
+        i32 poll_result = poll( &poll_args, nfds_t(poll_args_n), timeout_ms );
+        bool result = (poll_result != -1) && (poll_args.revents & POLLIN);
+        return result;
+    }
 
 }
 

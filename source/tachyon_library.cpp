@@ -761,7 +761,6 @@ namespace tyon
         // TODO: Add call point
         // entry.call_point = call_point
 
-        if (console_output_enabled)
         {
             i64 nanoseconds = time_to_epoch_nanoseconds( entry.timestamp );
             u64 category_size = category.size();
@@ -781,13 +780,18 @@ namespace tyon
                         nanoseconds, entry.category, call_point.function_name(),
                         call_point.file_name(), call_point.line(), call_point.column(),
                         entry.message );
-                    fmt::print( fmt::emphasis::bold | fmt::fg(fmt::color::red), "{}", formatted_message );
+                    if (console_output_enabled)
+                    {
+                        fmt::print( fmt::emphasis::bold | fmt::fg(fmt::color::red), "{}",
+                                    formatted_message );
+                    }
                     break;
 
                 default:
                     formatted_message = fmt::format(
                         "[{}][{}] {} \n", nanoseconds, entry.category, entry.message );
-                    fmt::print( "{}", formatted_message );
+                    if (console_output_enabled)
+                    {   fmt::print( "{}", formatted_message ); }
             }
             fflush( stdout );
 

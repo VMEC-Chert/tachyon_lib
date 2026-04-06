@@ -146,4 +146,6 @@ namespace tyon
 
     PROC platform_init() -> fresult;
 
+    PROC console_input_available() -> fresult;
+
 }

@@ -31,6 +31,9 @@ namespace tyon
     {
         array<command_property> properties;
         array<fstring> command_string_queue;
+        bool console_input_mode = false;
+        /** Saves the state of the log variable before modifying it so we can restore it. */
+        bool prev_console_output_enabled = true;
     };
 
     PROC command_init() -> fresult;
