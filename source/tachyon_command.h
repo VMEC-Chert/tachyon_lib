@@ -31,6 +31,12 @@ namespace tyon
     {
         array<command_property> properties;
         array<fstring> command_string_queue;
+        fstring line_contents;
+        fstring line_contents_raw;
+        i32 line_cursor = 0;
+        i32 cursor_x = 0;
+        i32 cursor_y = 0;
+
         bool console_input_mode = false;
         /** Saves the state of the log variable before modifying it so we can restore it. */
         bool prev_console_output_enabled = true;
