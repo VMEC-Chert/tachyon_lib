@@ -2104,6 +2104,139 @@ namespace tyon
         using pointer<T>::pointer; // Inherit constructor
     };
 
+    enum classe_ascii : char
+    {
+        null = 0,
+        heading_start,
+        text_start,
+        text_end,
+        transmission_end,
+        enquiry,
+        acknowledge, // ACK
+        bell,
+        backspace,
+        tab,
+        line_feed,
+        tab_vertical,
+        form_feed,
+        carriage_return,
+        shift_out,
+        shift_in,
+        data_link_escape,
+        device_control_1, // XON
+        device_control_2,
+        device_control_3 // XOFF
+        device_control_4,
+        negative_acknowledge, // NAK
+        synchronous_idle, // SYN
+        transmission_end_block,
+        cancel,
+        medium_end,
+        substitute,
+        escape,
+        fie_separator,
+        group_separator,
+        record_separator,
+        unit_separator,
+        space,
+        exclamation_mark,
+        speech_mark,
+        hash, // number sign
+        dollar,
+        percent,
+        ampersand,
+        quote,
+        l_parenthesis,
+        r_parenthesis,
+        asterisk = 42, // multiply
+        multiply = 42
+        plus,
+        comma,
+        minus = 45, // hyphen
+        hyphen = 45, // minus
+        period, // dot, full-stop
+        forward_slash = 47, // divide
+        divide = 47,
+        zero,
+        one,
+        two,
+        three,
+        four,
+        five,
+        six,
+        seven,
+        eight,
+        nine,
+        colon,
+        semicolon,
+        l_angled_bracket, // [<] less_than
+        equals,
+        l_angled_bracket, // [>] greater than
+        question_mark,
+        at_sign, // [@]
+        A,
+        B,
+        C,
+        D,
+        E,
+        F,
+        G,
+        H,
+        I,
+        J,
+        K,
+        L,
+        M,
+        N,
+        O,
+        P,
+        Q,
+        R,
+        S,
+        T,
+        U,
+        V,
+        W,
+        X,
+        Y,
+        Z,
+        l_square_bracket,
+        back_slash,
+        r_square_bracket,
+        caret, // [^]
+        underscore, // [_]
+        grave, // [`] grave accent
+        a,
+        b,
+        c,
+        d,
+        e,
+        f,
+        g,
+        h,
+        i,
+        j,
+        k,
+        l,
+        m,
+        n,
+        o,
+        p,
+        q,
+        r,
+        s,
+        t,
+        u,
+        v,
+        w,
+        x,
+        y,
+        z,
+        l_curly_bracket, // [{]
+        vertical_bar, // [|] pipe
+        r_curly_bracket, // [}]
+    };
+
 }
 
 // -- String Formatters --
