@@ -108,7 +108,11 @@ namespace tyon
         command_print_q( "\x1b 7" );
         // Move beginning of line
         command_print_q( "\x1b[0E" );
-        fmt::print(  TYON_COMMAND_ANSI_COLOR "{}" TYON_COMMAND_ANSI_RESET, input );
+        // NOTE: Don't echo input when not in console mode, it messes up the terminal so much
+        if (g_command->console_input_mode)
+        {
+            fmt::print(  TYON_COMMAND_ANSI_COLOR "> {}" TYON_COMMAND_ANSI_RESET, input );
+        }
         // Restore cursor
         command_print_q( "\x1b 8" );
 
