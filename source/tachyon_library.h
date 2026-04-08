@@ -2106,7 +2106,7 @@ namespace tyon
 
     enum classe_ascii : char
     {
-        null = 0,
+        null_char = 0,
         heading_start,
         text_start,
         text_end,
@@ -2125,7 +2125,7 @@ namespace tyon
         data_link_escape,
         device_control_1, // XON
         device_control_2,
-        device_control_3 // XOFF
+        device_control_3, // XOFF
         device_control_4,
         negative_acknowledge, // NAK
         synchronous_idle, // SYN
@@ -2149,7 +2149,7 @@ namespace tyon
         l_parenthesis,
         r_parenthesis,
         asterisk = 42, // multiply
-        multiply = 42
+        multiply = 42,
         plus,
         comma,
         minus = 45, // hyphen
@@ -2171,7 +2171,7 @@ namespace tyon
         semicolon,
         l_angled_bracket, // [<] less_than
         equals,
-        l_angled_bracket, // [>] greater than
+        r_angled_bracket, // [>] greater than
         question_mark,
         at_sign, // [@]
         A,
