@@ -2104,7 +2104,9 @@ namespace tyon
         using pointer<T>::pointer; // Inherit constructor
     };
 
-    enum classe_ascii : char
+    namespace e_ascii
+    {
+    enum : char
     {
         null_char = 0,
         heading_start,
@@ -2236,6 +2238,7 @@ namespace tyon
         vertical_bar, // [|] pipe
         r_curly_bracket, // [}]
     };
+    }
 
 }
 

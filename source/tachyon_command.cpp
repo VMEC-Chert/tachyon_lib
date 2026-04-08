@@ -94,15 +94,6 @@ namespace tyon
             input.push_back( x_char );
         }
 
-        // command_print_q( "Echo: {}", input );
-        // command_print_q( "\x1b[1F" );
-        // command_print_q( "\x1b[2K" );
-        // command_print_q( "Echo: {} ASCII: {}", input.back(), int(input.back()) );
-        // command_print_q( "\x1b[1E" );
-
-        // print_q( "\x1b[0E" );
-        // print_q( "\x1b[2K" );
-        // erase whole line
         command_ansi_control( ansi_control::line_clear_entire );
         // Save cursor position
         command_print_q( "\x1b 7" );
@@ -119,18 +110,33 @@ namespace tyon
         bool useful_input = (input_raw.size() > 0);
         if (useful_input)
         {
+            // NOTE: Don't forget windows uses "\n\r" for line endings
+
             bool temp_shared_log_window = true;
             bool do_backspace = (input_raw.size() > 1 && input_raw.back() == 127);
             bool submit_command = (g_command->console_input_mode &&
                                    (input_raw.back() == '\n' || input_raw.back() == '\r'));
-            bool start_new_command = ( ! g_command->console_input_mode &&
+            bool exit_command_mode = (g_command->console_input_mode && input_raw.back() == e_ascii::escape);
+            bool enter_command_mode = ( ! g_command->console_input_mode &&
                                        (input_raw.back() == '\r' ||
                                        input_raw.back() == '\n'));
+            if (exit_command_mode)
+            {
+                // Go back to non-input mode
+                g_command->console_input_mode = false;
+                // Restore logger state
+                g_logger->console_output_enabled = g_command->prev_console_output_enabled;
+                // TODO: We should probably dump lost logs into the terminal here.
 
-            if (start_new_command)
+                input.clear();
+                input_raw.clear();
+                command_print_q( "\n------------------------------\n" );
+                command_print_q( "Exiting Command Mode\n" );
+            }
+            else if (enter_command_mode)
             {
                 g_command->console_input_mode = true;
-                command_print_q( "Please Enter Your Command: \n\r" );
+                command_print_q( "Command Mode: Please Enter Your Command: \n\r" );
 
                 // Pause logging if it's being vommited in the same console as standard inptu
                 if (temp_shared_log_window)
@@ -159,10 +165,7 @@ namespace tyon
                 input.clear();
                 input_raw.clear();
 
-                // Restore logger state
-                g_logger->console_output_enabled = g_command->prev_console_output_enabled;
-                // Go back to non-input mode
-                g_command->console_input_mode = false;
+                // NOTE: We used to exit command mode but it's more useful to stay in command mode
             }
         }
     }
