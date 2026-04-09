@@ -55,29 +55,15 @@ namespace tyon
     {
         fstring& input = g_command->line_contents;
         fstring& input_raw = g_command->line_contents_raw;
-        char buf[1024] {};
 
         bool debug_run_always = false;
-        // TODO: do input polling with _khbit() / poll() for performance
-        // bool unread_input = console_input_available();
-        i32 unread_input = _kbhit();
-        i32 events_processed = 0;
-        while (unread_input)
-        {
-            buf[ events_processed ] = char(_getch());
-            // NOTE: Borked on windows when using _kbhit
-            // fgets( buf, 100, stdin );
-            // NOTE: Not needed
-            // NOTE: Extremely slow compared to fgets.
-            // int read_bytes = read( STDIN_FILENO, buf.data(), 100 );
+        monad<fstring> read_result = console_read_input_nonblocking();
+        g_command->console_input = read_result.copy_default({});
 
-            unread_input = _kbhit();
-            ++events_processed;
-        }
-        if (events_processed == 0)
+        if (read_result.error)
         {   return; }
         // Append read input to line editor
-        input_raw += buf;
+        input_raw += g_command->console_input;
         input.clear();
 
         // Normalize non-raw input before doing anything else

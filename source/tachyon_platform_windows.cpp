@@ -331,6 +331,31 @@ namespace tyon
         return (_kbhit() != 0);
     }
 
+    PROC console_read_input_nonblocking() -> monad<fstring>
+    {
+        char buf[1024] = {};
+        i32 unread_input = console_input_available();
+        i32 i_limit = 1000;
+        // NOTE: Less than 1024 to kepe null characters
+        i32 i=0;
+        for (; i < i_limit && unread_input; ++i)
+        {
+            buf[i] = char(_getch());
+            // NOTE: Borked on windows when using _kbhit
+            // fgets( buf, 100, stdin );
+            // NOTE: Extremely slow compared to fgets.
+            // int read_bytes = read( STDIN_FILENO, buf.data(), 100 );
+
+            unread_input = console_input_available();
+        }
+        if (i >= i_limit)
+        {   TYON_ERRORF( "Console input exceeded limit of {} bytes", i_limit ); }
+
+        monad<fstring> result;
+        result.value = buf;
+        result.error = result.value.size() == 0;
+        return result;
+    }
 }
 
 #endif // REFLECTION_PLATFORM_WINDOWS
