@@ -13,7 +13,12 @@ namespace tyon
         cursor_move_home,
         cursor_move_end,
         cursor_save_store,
-        cursor_move_store
+        cursor_move_store,
+
+        cursor_move_forwards,
+        cursor_move_backwards,
+        cursor_move_up,
+        cursor_move_down
     };
 
     struct command_property

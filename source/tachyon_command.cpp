@@ -4,6 +4,7 @@ namespace tyon
 {
     extern command_context* g_command = nullptr;
 
+    // NOTE: Green color by default
     #define TYON_COMMAND_ANSI_COLOR "\x1b[32m"
     #define TYON_COMMAND_ANSI_RESET "\x1b[0m"
 
@@ -42,10 +43,14 @@ namespace tyon
             case ansi_control::line_clear_after: break;
             case ansi_control::line_clear_before: break;
             case ansi_control::line_clear_entire: code = line_clear_entire_code; break;
-            case ansi_control::cursor_move_home: break;
+            case ansi_control::cursor_move_home: code = "\x1b[0E"; break;
             case ansi_control::cursor_move_end: break;
             case ansi_control::cursor_save_store: break;
             case ansi_control::cursor_move_store: break;
+            case ansi_control::cursor_move_forwards: code = fmt::format( "\x1b[{}C", arg ); break;
+            case ansi_control::cursor_move_backwards: code = fmt::format( "\x1b[{}D", arg ); break;
+            case ansi_control::cursor_move_up: code = fmt::format( "\x1b[{}A", arg ); break;
+            case ansi_control::cursor_move_down: code = fmt::format( "\x1b[{}B", arg ); break;
             default: break;
         }
         command_print_q( code );
@@ -53,6 +58,7 @@ namespace tyon
 
     PROC command_read_console() -> void
     {
+        PROFILE_SCOPE_FUNCTION();
         fstring& input = g_command->line_contents;
         fstring& input_raw = g_command->line_contents_raw;
 
@@ -79,7 +85,6 @@ namespace tyon
            // We must have a good character so we can add it to the string
             input.push_back( x_char );
         }
-
 
         bool useful_input = (input_raw.size() > 0);
         if (useful_input)
@@ -128,10 +133,16 @@ namespace tyon
                 bool short_string_special_case = (input_raw.size() < 2);
 
                 i64 raw_size = input_raw.size();
+                i64 stripped_size = raw_size;
                 char x_char = 0;
                 for (i32 i=0; i < input_raw.size(); ++i)
                 {
                    x_char = input_raw[ raw_size - i - 1 ];
+                   bool invisible_char = (x_char == e_ascii::delete_ ||
+                                          x_char == e_ascii::carriage_return ||
+                                          x_char == e_ascii::line_feed);
+                   if (invisible_char)
+                   {    --stripped_size; }
                 }
                 size_t new_size = (short_string_special_case ? 0 : (input_raw.size() - 2));
                 input_raw.resize( new_size );
@@ -161,23 +172,23 @@ namespace tyon
             if (x_char == '\n' || x_char == '\r')
             {   continue; }
 
-           // We must have a good character so we can add it to the string
+            // We must have a good character so we can add it to the string
             input.push_back( x_char );
         }
 
-            // Save cursor position
-            // NOTE: Save before clearing line to preserve through that too
-            command_print_q( "\x1b 7" );
-            command_ansi_control( ansi_control::line_clear_entire );
-            // Move beginning of line
-            command_print_q( "\x1b[0E" );
-            // NOTE: Don't echo input when not in console mode, it messes up the terminal so much
-            if (g_command->console_input_mode)
-            {
-                fmt::print(  TYON_COMMAND_ANSI_COLOR "> {}" TYON_COMMAND_ANSI_RESET, input );
-            }
-            // Restore cursor
-            command_print_q( "\x1b 8" );
+        command_ansi_control( ansi_control::line_clear_entire );
+        // Move beginning of line
+        command_ansi_control( ansi_control::cursor_move_home );
+        // NOTE: Don't echo input when not in console mode, it messes up the terminal so much
+        if (g_command->console_input_mode)
+        {
+            fmt::print(  TYON_COMMAND_ANSI_COLOR "> {}" TYON_COMMAND_ANSI_RESET, input );
+        }
+        // Restore cursor position
+        // go to home then move foward by visible input size + 2 for command start visuals
+        command_ansi_control( ansi_control::cursor_move_home );
+        command_ansi_control( ansi_control::cursor_move_forwards, input.size() + 2);
+        // fflush( stdout );
 
         }
     }

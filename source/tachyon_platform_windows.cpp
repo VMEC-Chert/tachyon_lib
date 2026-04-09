@@ -328,11 +328,13 @@ namespace tyon
 
     bool console_input_available()
     {
+        PROFILE_SCOPE_FUNCTION();
         return (_kbhit() != 0);
     }
 
     PROC console_read_input_nonblocking() -> monad<fstring>
     {
+        PROFILE_SCOPE_FUNCTION();
         char buf[1024] = {};
         i32 unread_input = console_input_available();
         i32 i_limit = 1000;
