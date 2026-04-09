@@ -2237,8 +2237,13 @@ namespace tyon
         l_curly_bracket, // [{]
         vertical_bar, // [|] pipe
         r_curly_bracket, // [}]
+        tilde, // [~] equivilency sign
+        delete_, // [DEL] commonly produced by backspace in termals
     };
     }
+    static_assert( e_ascii::a == 97 );
+    static_assert( e_ascii::delete_ == 127 );
+
 
 }
 

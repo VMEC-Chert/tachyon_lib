@@ -31,9 +31,9 @@ namespace tyon
         // Windows is insanely slow and ansi clear line causes flickering
         fstring line_clear_entire_code;
         if constexpr (REFLECTION_PLATFORM_LINUX)
-        {   code = "\x1b[2K";}
+        {   line_clear_entire_code = "\x1b[2K";}
         else
-        {   code = "\r                                                                                "; }
+        {   line_clear_entire_code = "\r                                                                                \r"; }
 
         switch (type)
         {
@@ -80,18 +80,6 @@ namespace tyon
             input.push_back( x_char );
         }
 
-        command_ansi_control( ansi_control::line_clear_entire );
-        // Save cursor position
-        command_print_q( "\x1b 7" );
-        // Move beginning of line
-        command_print_q( "\x1b[0E" );
-        // NOTE: Don't echo input when not in console mode, it messes up the terminal so much
-        if (g_command->console_input_mode)
-        {
-            fmt::print(  TYON_COMMAND_ANSI_COLOR "> {}" TYON_COMMAND_ANSI_RESET, input );
-        }
-        // Restore cursor
-        command_print_q( "\x1b 8" );
 
         bool useful_input = (input_raw.size() > 0);
         if (useful_input)
@@ -99,7 +87,7 @@ namespace tyon
             // NOTE: Don't forget windows uses "\n\r" for line endings
 
             bool temp_shared_log_window = true;
-            bool do_backspace = (input_raw.size() > 1 && input_raw.back() == 127);
+            bool do_backspace = (input_raw.size() > 1 && input_raw.back() == e_ascii::delete_);
             bool submit_command = (g_command->console_input_mode &&
                                    (input_raw.back() == '\n' || input_raw.back() == '\r'));
             bool exit_command_mode = (g_command->console_input_mode && input_raw.back() == e_ascii::escape);
@@ -118,6 +106,7 @@ namespace tyon
                 input_raw.clear();
                 command_print_q( "\n------------------------------\n" );
                 command_print_q( "Exiting Command Mode\n" );
+                return;
             }
             else if (enter_command_mode)
             {
@@ -137,6 +126,13 @@ namespace tyon
             else if (do_backspace)
             {   // Take off the backspace + 1 character
                 bool short_string_special_case = (input_raw.size() < 2);
+
+                i64 raw_size = input_raw.size();
+                char x_char = 0;
+                for (i32 i=0; i < input_raw.size(); ++i)
+                {
+                   x_char = input_raw[ raw_size - i - 1 ];
+                }
                 size_t new_size = (short_string_special_case ? 0 : (input_raw.size() - 2));
                 input_raw.resize( new_size );
             }
@@ -153,6 +149,36 @@ namespace tyon
 
                 // NOTE: We used to exit command mode but it's more useful to stay in command mode
             }
+
+        // Normalize non-raw input before doing anything else
+        tmp = input_raw;
+        input.clear();
+        char x_char = 0;
+        for (i32 i=0; i < input_raw.size(); ++i )
+        {
+            x_char = input_raw[i];
+            // Skip anything that is irrelevant input or interferes output printing
+            if (x_char == '\n' || x_char == '\r')
+            {   continue; }
+
+           // We must have a good character so we can add it to the string
+            input.push_back( x_char );
+        }
+
+            // Save cursor position
+            // NOTE: Save before clearing line to preserve through that too
+            command_print_q( "\x1b 7" );
+            command_ansi_control( ansi_control::line_clear_entire );
+            // Move beginning of line
+            command_print_q( "\x1b[0E" );
+            // NOTE: Don't echo input when not in console mode, it messes up the terminal so much
+            if (g_command->console_input_mode)
+            {
+                fmt::print(  TYON_COMMAND_ANSI_COLOR "> {}" TYON_COMMAND_ANSI_RESET, input );
+            }
+            // Restore cursor
+            command_print_q( "\x1b 8" );
+
         }
     }
 }
