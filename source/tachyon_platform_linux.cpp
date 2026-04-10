@@ -250,14 +250,13 @@ namespace tyon
         monad<fstring> result;
         result.value = buf;
         result.error = result.value.size() == 0;
-        // i32 bytes_read = result.value.size();
+
         // if (bytes_read)
-        // {   fmt::print( "Bytes read from console: {}\n", result.value.size()); }
-        if (result.value.size())
-        {
-        TYON_LOGF( "Console Input: {} Last Char: {} ASCII CharCode: {}",
-                   result.value, result.value.back(), (int)result.value.back() );
-        }
+        // {
+        //     fmt::print( "Bytes read from console: {}\n", result.value.size());
+        //     TYON_LOGF( "Console Input: {} Last Char: {} ASCII CharCode: {}",
+        //                result.value, result.value.back(), (int)result.value.back() );
+        // }
         return result;
     }
 
