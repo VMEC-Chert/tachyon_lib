@@ -1457,4 +1457,13 @@ namespace tyon
 
             TYON_CUDA_SHARED
             PROC swap_pair(v4_f64& a, v4_f64& b) -> void;
+
+
+
+            // Smooth ramp
+            TYON_CUDA_SHARED 
+            PROC smooth_ramp(const f64& amplitude, const f64& exponent, const f64& x, const f64& x0, const f64& range) -> f64;
+
+            TYON_CUDA_SHARED 
+            PROC smooth_ramp(const f32& amplitude, const f32& exponent, const f32& x, const f32& x0, const f32& range) -> f32;
 }

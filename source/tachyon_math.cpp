@@ -2451,37 +2451,37 @@ namespace tyon
             TYON_CUDA_SHARED
             PROC vector_distance2(const v2_f32& v0, const v2_f32& v1) -> f32
             {
-                return vector_length(v0 - v1);
+                return vector_length2(v0 - v1);
             }
 
             TYON_CUDA_SHARED
             PROC vector_distance2(const v2_f64& v0, const v2_f64& v1) -> f64
             {
-                return vector_length(v0 - v1);
+                return vector_length2(v0 - v1);
             }
 
             TYON_CUDA_SHARED
             PROC vector_distance2(const v3_f32& v0, const v3_f32& v1) -> f32
             {
-                return vector_length(v0 - v1);
+                return vector_length2(v0 - v1);
             }
 
             TYON_CUDA_SHARED
             PROC vector_distance2(const v3_f64& v0, const v3_f64& v1) -> f64
             {
-                return vector_length(v0 - v1);
+                return vector_length2(v0 - v1);
             }
 
             TYON_CUDA_SHARED
             PROC vector_distance2(const v4_f32& v0, const v4_f32& v1) -> f32
             {
-                return vector_length(v0 - v1);
+                return vector_length2(v0 - v1);
             }
 
             TYON_CUDA_SHARED
             PROC vector_distance2(const v4_f64& v0, const v4_f64& v1) -> f32
             {
-                return vector_length(v0 - v1);
+                return vector_length2(v0 - v1);
             }
 
 
@@ -3204,5 +3204,56 @@ namespace tyon
                 v4_f64 temp = b;
                 b = a;
                 a = temp;
+            }
+
+
+
+            // Smooth ramp
+            TYON_CUDA_SHARED 
+            PROC smooth_ramp(const f64& amplitude, const f64& exponent, const f64& x, const f64& x0, const f64& range) -> f64
+            {
+                f64 sign_range = 1.0;
+
+                if(range < 0.0)
+                {
+                    sign_range = -1.0;
+                }
+
+                if((sign_range*x) > (sign_range*(range + x0)))
+                {
+                    return amplitude;
+                }
+                else if((sign_range*x) < (sign_range*x0))
+                {
+                    return 0.0;
+                }
+                else
+                {
+                    return amplitude / ( 1.0 + tyon::power( (x - x0) / (range - (x - x0)) , -exponent ) );
+                }
+            }
+
+            TYON_CUDA_SHARED 
+            PROC smooth_ramp(const f32& amplitude, const f32& exponent, const f32& x, const f32& x0, const f32& range) -> f32
+            {
+                f32 sign_range = 1.0f;
+
+                if(range < 0.0f)
+                {
+                    sign_range = -1.0f;
+                }
+
+                if((sign_range*x) > (sign_range*(range + x0)))
+                {
+                    return amplitude;
+                }
+                else if((sign_range*x) < (sign_range*x0))
+                {
+                    return 0.0f;
+                }
+                else
+                {
+                    return amplitude / ( 1.0f + tyon::power( (x - x0) / (range - (x - x0)) , -exponent ) );
+                }
             }
 }
