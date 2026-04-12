@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <poll.h>
+#include <termios.h>
 
 namespace platform
 {
@@ -18,6 +19,12 @@ namespace fs = std::filesystem;
 
 namespace tyon
 {
+
+    extern linux_context* g_linux = nullptr;
+/** NOTE: This is passed to at-exit, we don't know when this is called so we're using static memory
+    NOTE: This is an internal state we don't need to expose it */
+    static termios linux_original_terminal_mode;
+    static bool linux_original_terminal_mode_valid = false;
 
     auto file_self_directory() -> fpath
     {
@@ -168,11 +175,47 @@ namespace tyon
 
     PROC platform_init() -> fresult
     {
+        PROFILE_SCOPE_FUNCTION();
+        g_linux = memory_allocate<linux_context>(1);
+
+        termios new_terminal_mode {};
+        i32 get_bad = tcgetattr( STDIN_FILENO, &new_terminal_mode );
+        if (get_bad == -1)
+        {
+            TYON_ERROR( "Linux: Failed to get terminal mode" );
+        }
+        else
+        {
+            // Save original terminal mode
+            linux_original_terminal_mode = new_terminal_mode;
+            // Mask off echo flag and canonical (line buffering)
+            new_terminal_mode.c_lflag &= ~(ECHO | ICANON);
+
+            // NOTE: TCSAFLUSH just means delay applying actions until a flush, we
+            // don't really care that much what it is currently
+            i32 set_bad = tcsetattr( STDIN_FILENO, TCSAFLUSH, &new_terminal_mode );
+            if (set_bad == -1)
+            {   TYON_ERROR( "Linux: Failed to set linux console mode to no-echo" );
+            }
+            else
+            {
+                atexit( linux_restore_terminal_mode );
+            }
+            linux_original_terminal_mode_valid = (set_bad != -1) && (get_bad != -1);
+        }
+
+        // Set terminal mode to non-blocking reads
+        int flags = fcntl( STDIN_FILENO, F_GETFL, 0 );
+        fcntl( STDIN_FILENO, F_SETFL, flags | O_NONBLOCK );
+
+        setvbuf(stdout, nullptr, _IONBF, 0);
+
         return true;
     }
 
     PROC console_input_available() -> fresult
     {
+        PROFILE_SCOPE_FUNCTION();
         pollfd poll_args {};
         poll_args.fd = STDIN_FILENO;
         // Ask if any new input has arrived
@@ -184,6 +227,46 @@ namespace tyon
         bool result = (poll_result != -1) && (poll_args.revents & POLLIN);
         return result;
     }
+
+    PROC console_read_input_nonblocking() -> monad<fstring>
+    {
+        PROFILE_SCOPE_FUNCTION();
+        char buf[1024] = {};
+        bool unread_input = console_input_available();
+        i32 i_limit = 1000;
+        // NOTE: Less than 1024 to kepe null characters
+        i32 i=0;
+        if (unread_input)
+        {
+            // We should've set the console mode to non-blockign so it should be oaky to do this
+            fgets( buf, i_limit, stdin );
+        }
+        // NOTE: Extremely slow compared to fgets.
+        // int read_bytes = read( STDIN_FILENO, buf.data(), 100 );
+
+        if (i >= i_limit)
+        {   TYON_ERRORF( "Console input exceeded limit of {} bytes", i_limit ); }
+
+        monad<fstring> result;
+        result.value = buf;
+        result.error = result.value.size() == 0;
+
+        // if (bytes_read)
+        // {
+        //     fmt::print( "Bytes read from console: {}\n", result.value.size());
+        //     TYON_LOGF( "Console Input: {} Last Char: {} ASCII CharCode: {}",
+        //                result.value, result.value.back(), (int)result.value.back() );
+        // }
+        return result;
+    }
+
+    PROC linux_restore_terminal_mode() -> void
+    {
+        i32 set_bad = tcsetattr( STDIN_FILENO, TCSAFLUSH, &linux_original_terminal_mode );
+        if (set_bad == -1)
+        {   TYON_ERROR( "Linux: Failed to restore linux console mode" ); }
+    }
+
 
 }
 

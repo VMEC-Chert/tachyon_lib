@@ -148,4 +148,6 @@ namespace tyon
 
     PROC console_input_available() -> fresult;
 
+    PROC console_read_input_nonblocking() -> monad<fstring>;
+
 }

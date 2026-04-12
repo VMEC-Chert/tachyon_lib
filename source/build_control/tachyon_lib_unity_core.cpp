@@ -21,5 +21,5 @@
 #include "../tachyon_allocators.cpp"
 
 #if (!TYON_FMTLIB_HEADER_ONLY)
-    #include "../../external/fmt/src/format.cc"
+    #include "../../extesornal/fmt/src/format.cc"
 #endif

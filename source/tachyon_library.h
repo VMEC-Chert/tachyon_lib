@@ -2104,7 +2104,9 @@ namespace tyon
         using pointer<T>::pointer; // Inherit constructor
     };
 
-    enum classe_ascii : char
+    namespace e_ascii
+    {
+    enum : char
     {
         null_char = 0,
         heading_start,
@@ -2235,7 +2237,13 @@ namespace tyon
         l_curly_bracket, // [{]
         vertical_bar, // [|] pipe
         r_curly_bracket, // [}]
+        tilde, // [~] equivilency sign
+        delete_, // [DEL] commonly produced by backspace in termals
     };
+    }
+    static_assert( e_ascii::a == 97 );
+    static_assert( e_ascii::delete_ == 127 );
+
 
 }
 

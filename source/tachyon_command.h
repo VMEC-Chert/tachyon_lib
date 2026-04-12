@@ -13,7 +13,12 @@ namespace tyon
         cursor_move_home,
         cursor_move_end,
         cursor_save_store,
-        cursor_move_store
+        cursor_move_store,
+
+        cursor_move_forwards,
+        cursor_move_backwards,
+        cursor_move_up,
+        cursor_move_down
     };
 
     struct command_property
@@ -33,6 +38,8 @@ namespace tyon
         array<fstring> command_string_queue;
         fstring line_contents;
         fstring line_contents_raw;
+        /** Temporary contents for console input reading */
+        fstring console_input;
         i32 line_cursor = 0;
         i32 cursor_x = 0;
         i32 cursor_y = 0;
