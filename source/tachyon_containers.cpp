@@ -3,6 +3,39 @@
 
 namespace tyon
 {
+
+    PROC string::append( fstring arg ) -> string&
+    {
+        dynamic_span<char> message;
+        message.size = arg.size();
+        message.data = memory_allocate<char>( message.size + 1);
+        parts.push_tail( message );
+        memory_copy_raw( message.data, arg.data(), message.size );
+        size_ += message.size;
+
+        return *this;
+    }
+
+    PROC string::operator += ( fstring rhs ) -> string&
+    {
+        this->append( rhs );
+        return *this;
+    }
+
+    string::operator fstring()
+    {
+        PROFILE_SCOPE_FUNCTION();
+        fstring result;
+        result.reserve( size_ );
+        dynamic_span<char> x_part;
+        for (i64 i=0; i < parts.head_size; ++i)
+        {
+            x_part = parts[i];
+            result.append( x_part.data, x_part.size );
+        }
+        return result;
+    }
+
     PROC image_color_reorder_inplace_u8_bgra_rgba( image<rgba> arg ) -> image<bgra>
     {
         PROFILE_SCOPE_FUNCTION();

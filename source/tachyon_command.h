@@ -32,6 +32,24 @@ namespace tyon
     {
     };
 
+    /** Console command types */
+    enum class e_command : i32
+    {
+        none = 0,
+        any = 1,
+        /** One shot command that can run a function*/
+        execute,
+        /** Read or Write from a bound variable */
+        property
+    };
+
+    struct command_submitted
+    {
+        fstring name;
+        dynamic_primitive value;
+        fstring unprocessed;
+    };
+
     struct command_context
     {
         array<command_property> properties;
@@ -53,6 +71,9 @@ namespace tyon
 
     /** Non-blocking stdin processing */
     PROC command_read_console() -> void;
+
+    /** After commands are received we can do text processing and other such actions. */
+    PROC command_proccess_commands() -> void;
 
     extern command_context* g_command;
 }

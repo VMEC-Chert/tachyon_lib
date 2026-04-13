@@ -1060,6 +1060,7 @@ namespace tyon
             case e_primitive::byte_:      return "e_primitive::byte_";
             case e_primitive::pointer_:   return "e_primitive::pointer_";
             case e_primitive::string_:    return "e_primitive::string_";
+            case e_primitive::tyon_string:    return "e_primitive::tyon_string";
         }
         return "no_conversion_found";
     }
@@ -1074,6 +1075,55 @@ namespace tyon
         }
         return result;
     }
+
+    PROC dynamic_primitive::get_integer() -> monad<i64>
+    {
+        if (type == e_primitive::integer_)
+        {   return { integer_, false }; }
+        return { 0, true };
+    };
+
+    PROC dynamic_primitive::get_float() -> monad<f64>
+    {
+        if (type == e_primitive::integer_)
+        {   return { float_, false }; }
+        return { 0.0, true };
+    };
+
+    PROC dynamic_primitive::get_boolean() -> monad<bool>
+    {
+        if (type == e_primitive::integer_)
+        {   return { boolean_, false }; }
+        return { false, true };
+    };
+
+    PROC dynamic_primitive::get_character() -> monad<char>
+    {
+        if (type == e_primitive::integer_)
+        {   return { character_, false }; }
+        return { 0, true };
+    };
+
+    PROC dynamic_primitive::get_byte() -> monad<byte>
+    {
+        if (type == e_primitive::byte_)
+        {   return { byte_, false }; }
+        return { byte{0}, true };
+    };
+
+    PROC dynamic_primitive::get_pointer() -> monad<raw_pointer>
+    {
+        if (type == e_primitive::byte_)
+        {   return { pointer_, false }; }
+        return { nullptr, true };
+    };
+
+    PROC dynamic_primitive::get_tyon_string() -> monad<string>
+    {
+        if (type == e_primitive::tyon_string)
+        {   return { tyon_string, false }; }
+        return { {}, true };
+    };
 
     CONSTRUCTOR dynamic_primitive::dynamic_primitive()
     {   memory_zero_raw( this, sizeof(dynamic_primitive));

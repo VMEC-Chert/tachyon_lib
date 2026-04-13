@@ -192,4 +192,9 @@ namespace tyon
 
         }
     }
+
+    PROC command_proccess_commands() -> void
+    {
+
+    }
 }

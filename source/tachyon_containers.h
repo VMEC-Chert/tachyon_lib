@@ -939,45 +939,22 @@ struct dynamic_span
 
 struct string
 {
-    i64 size = 0;
+    i64 size_ = 0;
     array< dynamic_span<char> > parts;
 
-    inline i64 parts_size()
+    inline
+    PROC size() -> i64
+    {   return size_; }
+
+    /** Should really be count but whatever */
+    inline
+    i64 parts_size()
     { return parts.head_size; }
 
-    string&
-    append( fstring arg )
-    {
-        dynamic_span<char> message;
-        message.size = arg.size();
-        message.data = memory_allocate<char>( message.size + 1);
-        parts.push_tail( message );
-        memory_copy_raw( message.data, arg.data(), message.size );
-        size += message.size;
+    PROC append( fstring arg ) -> string&;
+    PROC operator += ( fstring rhs ) -> string&;
+    operator fstring();
 
-        return *this;
-    }
-
-    string&
-    operator += ( fstring rhs )
-    {
-        this->append( rhs );
-        return *this;
-    }
-
-    operator fstring()
-    {
-        PROFILE_SCOPE_FUNCTION();
-        fstring result;
-        result.reserve( size );
-        dynamic_span<char> x_part;
-        for (i64 i=0; i < parts.head_size; ++i)
-        {
-            x_part = parts[i];
-            result.append( x_part.data, x_part.size );
-        }
-        return result;
-    }
 };
 
 template <typename T>
@@ -987,6 +964,7 @@ struct ntree_node
     ntree_node* parent;
     array< ntree_node<T>*> children;
     T value;
+
 };
 
 template <typename T>

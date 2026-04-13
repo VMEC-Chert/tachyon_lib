@@ -87,7 +87,8 @@ struct logger
         character_ = 5,
         byte_      = 6,
         pointer_   = 7,
-        string_    = 8
+        string_    = 8,
+        tyon_string = 9,
     };
 
     PROC string_cast( e_primitive arg ) -> fstring;
@@ -101,9 +102,24 @@ struct logger
             byte byte_;
             raw_pointer pointer_;
             fstring string_;
+            string tyon_string;
             u8 _buffer[32];
         };
         e_primitive type;
+
+        PROC get_integer() -> monad<i64>;
+
+        PROC get_float() -> monad<f64>;
+
+        PROC get_boolean() -> monad<bool>;
+
+        PROC get_character() -> monad<char>;
+
+        PROC get_byte() -> monad<byte>;
+
+        PROC get_pointer() -> monad<raw_pointer>;
+
+        PROC get_tyon_string() -> monad<string>;
 
         PROC get_string() -> monad<fstring>;
 
