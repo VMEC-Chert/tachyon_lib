@@ -1466,4 +1466,49 @@ namespace tyon
 
             TYON_CUDA_SHARED 
             PROC smooth_ramp(const f32& amplitude, const f32& exponent, const f32& x, const f32& x0, const f32& range) -> f32;
+
+
+            TYON_CUDA_SHARED constexpr
+            PROC array_2d_index( vec2_i64 position, vec2_i64 size ) -> i64
+            {
+                i64 index = position.x + (position.y * size.x);
+                i64 index_max = (size.x * size.y);
+                // TODO: Check sign
+                bool out_of_bounds = (index >= index_max);
+                if (out_of_bounds) { return -1; }
+
+                return index;
+            }
+
+        TYON_CUDA_SHARED constexpr
+        PROC array_2d_index( vec2_i64 position, vec2_i64 size, i64 stride ) -> i64
+        {
+            i64 index = position.x + (position.y * stride);
+            i64 index_max = (size.x * size.y);
+            // TODO: Check sign
+            bool out_of_bounds = (index >= index_max);
+
+            return (out_of_bounds ? -1 : index);
+        }
+
+        TYON_CUDA_SHARED constexpr
+        PROC array_2d_inverse_index( i64 position, vec2_i64 size ) -> vec2_i64
+        {
+            vec2_i64 result {};
+            i64 size_x_remainder = (position % size.x);
+            result.x = size_x_remainder;
+            result.y = (position - size_x_remainder) / size.y;
+            return result;
+        }
+
+        TYON_CUDA_SHARED constexpr
+        PROC array_2d_inverse_index( i64 position, vec2_i64 size, i64 stride ) -> vec2_i64
+        {
+            vec2_i64 result {};
+            i64 size_x_remainder = (position % size.x);
+            result.x = size_x_remainder;
+            result.y = (position - size_x_remainder) / size.y;
+            return result;
+        }
+
 }

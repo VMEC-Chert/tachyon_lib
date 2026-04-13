@@ -1736,6 +1736,17 @@ namespace tyon
         {   return id; }
     };
 
+    /** Simple wrapper class to provided type-restricted uids
+
+        NOTE: May be converted to a normal uid at any time */
+    template <typename T>
+    struct typed_uid final : uid
+    {
+        using uid::uid;         // Inherit Constructor
+
+        operator uid() = delete;
+    };
+
     struct minihash
     {
         u64 value = 0;
@@ -1795,10 +1806,10 @@ namespace tyon
         i64 x;
         i64 y;
 
-        CONSTRUCTOR vec2_i64() : x(0), y(0) { }
+        constexpr CONSTRUCTOR vec2_i64() : x(0), y(0) { }
         // CONSTRUCTOR vec2_i64( vec2 rhs ) : x(rhs.x), y(rhs.y) { }
-        CONSTRUCTOR vec2_i64( i64 arg ) : x(arg), y(arg) {}
-        CONSTRUCTOR vec2_i64( i64 _x, i64 _y ) : x(_x), y(_y) {}
+        constexpr CONSTRUCTOR vec2_i64( i64 arg ) : x(arg), y(arg) {}
+        constexpr CONSTRUCTOR vec2_i64( i64 _x, i64 _y ) : x(_x), y(_y) {}
     };
 
     struct rectangle_copy_args

@@ -274,4 +274,44 @@ namespace tyon
         }
     };
 
+    /** SECTION: Attempt 2
+
+        NOTE: I really didn't like the last system, it was really cumbersome to
+        use when setting up new entities and didn't lend itself to disconnected
+        instances of subsystems using the same or similar types.
+
+        The internal mechanisms of the old system also looks weird to point it's
+        obfuscated for the average person, and reading does not provide that
+        much insight.
+
+        I want this system to be simpler and focus more on convenience rather
+        than being a monolithic system. And also to have simple and transparent
+        internals.
+
+        I wanted to create pseudo-global functions to allow accessing entities
+        but those became singletons, which was not really what I wanted, and it
+        also obfuscated the internals yet more. Perhaps generating a proxy
+        objects to interact with entities makes more sense than using named
+        functions.
+
+        I think I also tried to make it  too much of an interface and forced the
+        implimentation of tick()  init() and destroy() functions.  Which I ended
+        up  not  using  in  practice  because   just  not  all  types  need  it,
+        particularly  aggregate types,  which are  still useful  to treat  as an
+        entity but  have no  real mandatory processing  functions. I  think it's
+        still a good  idea having it as  an interface but forcing  it caused too
+        much extra boilerplate.
+    */
+
+    template <typename T>
+    struct entity_list
+    {
+        using t_uid = entity_uid<T>;
+        array<T> entities;
+
+        PROC search_id( ) -> search_result<T>
+        {
+        }
+    };
+
 }
