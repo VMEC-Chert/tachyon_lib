@@ -4,6 +4,56 @@
 namespace tyon
 {
 
+    COPY_CONSTRUCTOR string::string( const t_self& arg )
+    {
+        parts = {};
+        size_ = 0;
+        i64 i_limit = arg.parts.head_size;
+        parts.resize( i_limit );
+        dynamic_span<char> x_part;
+        dynamic_span<char>* x_new_part = nullptr;
+
+        // Copy all parts across
+        for (i64 i=0; i < i_limit; ++i)
+        {
+            x_new_part = this->parts.address(i);
+            x_part = arg.parts[i];
+
+            x_new_part->data = memory_allocate<t_char>( x_part.size );
+            x_new_part->size = x_part.size;
+            memory_copy<t_char>( x_new_part->data, x_part.data, x_part.size );
+        }
+    }
+
+    COPY_CONSTRUCTOR string::string( fstring& arg )
+    {
+        parts = {};
+        size_ = 0;
+        parts.resize( 1 );
+
+        dynamic_span<t_char>& new_part = parts[0];
+        new_part.size = memory_align( arg.size(), 4 );
+        new_part.data = memory_allocate<t_char>( parts[0].size );
+        memory_copy<t_char>( new_part.data, arg.data(), arg.size() );
+    }
+
+    COPY_CONSTRUCTOR string::string( cstring arg )
+    {
+        parts = {};
+        size_ = 0;
+        parts.resize( 1 );
+
+        i64 max_string_size = 1_GiB;
+        i64 size = 0;
+        for (;size < max_string_size; ++size)
+        {   if (arg[size] == 0) { break; } }
+
+        dynamic_span<t_char>& new_part = parts[0];
+        new_part.size = memory_align( size, 4 );
+        new_part.data = memory_allocate<t_char>( parts[0].size );
+        memory_copy<t_char>( new_part.data, arg, size );
+    }
+
     PROC string::append( fstring arg ) -> string&
     {
         dynamic_span<char> message;
@@ -33,6 +83,47 @@ namespace tyon
             x_part = parts[i];
             result.append( x_part.data, x_part.size );
         }
+        return result;
+    }
+
+    PROC string::split_whitespace() const -> string
+    {
+        return {};
+    }
+
+    PROC string::join_parts( fstring_view connector ) const -> string
+    {
+        string result;
+        result.size_ = size();
+
+        i64 connector_size = connector.size();
+        // Size of all parts + connector + some arbitrary SIMD padding / null termination
+        i64 allocation = (result.size_ + (connector_size * result.parts_size()) + 12);
+        t_char* storage =  memory_allocate<t_char>( allocation );
+
+        if (storage == nullptr) { return string{}; }
+
+        result.parts.resize( 1 );
+        result.parts[0] = { storage, result.size_ };
+
+        i64 parts_limit = parts_size();
+        i64 writehead = 0;
+        dynamic_span<t_char> x_part;
+
+        // Combine each part of the string
+        for (i64 i = 0; i < parts_limit; ++i)
+        {
+            x_part = parts[i];
+            // Don't add connecting string to beginning of first part
+            if (connector_size && i != 0)
+            {
+                memory_copy<t_char>( (storage + writehead), (t_char*)connector.data(), connector_size );
+                writehead += connector_size;
+            }
+            memory_copy<t_char>( (storage + writehead), x_part.data, x_part.size );
+            writehead += x_part.size;
+        }
+        ERROR_GUARD( writehead > result.size_, "More chars were written than allocated" );
         return result;
     }
 

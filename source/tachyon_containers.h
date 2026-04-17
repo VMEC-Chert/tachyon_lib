@@ -342,6 +342,13 @@ struct array
         return data[std::clamp<i64>( i, 0, size_ )];
     }
 
+    T&
+    operator []( isize i ) const
+    {
+        ERROR_GUARD( (i >= 0) || (i < size_), "Tried to access index ouside of bounds" );
+        return data[std::clamp<i64>( i, 0, size_ )];
+    }
+
     PROC address( isize i ) -> T*
     {
         ERROR_GUARD( (i >= 0) || (i < size_), "Tried to access index ouside of bounds" );
@@ -939,21 +946,33 @@ struct dynamic_span
 
 struct string
 {
+    using t_self = string;
+    using t_char = char;
+
     i64 size_ = 0;
-    array< dynamic_span<char> > parts;
+    array< dynamic_span<t_char> > parts;
+
+    COPY_CONSTRUCTOR string() = default;
+    COPY_CONSTRUCTOR string( const t_self& arg );
+    COPY_CONSTRUCTOR string( fstring& arg );
+    COPY_CONSTRUCTOR string( cstring arg );
 
     inline
-    PROC size() -> i64
+    PROC size() const -> i64
     {   return size_; }
 
     /** Should really be count but whatever */
     inline
-    i64 parts_size()
+    PROC parts_size() const -> i64
     { return parts.head_size; }
 
     PROC append( fstring arg ) -> string&;
     PROC operator += ( fstring rhs ) -> string&;
     operator fstring();
+
+    // SECTION: Immutable functions
+    PROC split_whitespace() const -> string;
+    PROC join_parts( fstring_view connector ) const -> string;
 
 };
 

@@ -667,7 +667,7 @@ namespace tyon
      - If 'destination' is nullptr*/
     template <typename T>
     void
-    FUNCTION memory_copy( void* dest, T* src, i64 count )
+    FUNCTION memory_copy( void* dest, const T* src, i64 count )
     {
         i64 bytes = count * sizeof(T);
         bool bad_count = (count <= 0);
@@ -695,7 +695,7 @@ namespace tyon
     }
 
     bool
-    FUNCTION memory_same_raw( void* a, void* b, i64 bytes );
+    FUNCTION memory_same_raw( const void* a, const void* b, i64 bytes );
 
     template <typename T>
     bool
@@ -1744,6 +1744,7 @@ namespace tyon
     {
         using uid::uid;         // Inherit Constructor
 
+        // TODO: Busted, doesn't help at all
         operator uid() = delete;
     };
 

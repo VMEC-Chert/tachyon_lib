@@ -59,7 +59,7 @@ namespace tyon
     }
 
 	bool
-    FUNCTION memory_same_raw( void* a, void* b, i64 bytes )
+    FUNCTION memory_same_raw( const void* a, const void* b, i64 bytes )
     {
         return std::memcmp( a, b, bytes ) == 0;
     }

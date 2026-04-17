@@ -21,17 +21,6 @@ namespace tyon
         cursor_move_down
     };
 
-    struct command_property
-    {
-        uid id;
-        dynamic_primitive value;
-        pointer<byte> custom_data;
-    };
-
-    struct command_property_user
-    {
-    };
-
     /** Console command types */
     enum class e_command : i32
     {
@@ -41,6 +30,31 @@ namespace tyon
         execute,
         /** Read or Write from a bound variable */
         property
+    };
+
+    struct command_property
+    {
+        uid id;
+        dynamic_primitive value;
+        pointer<byte> custom_data;
+    };
+
+    // ??????
+    // TODO: Is this supposed to be a local consumer binding for referencing a bound property? idk
+    struct command_property_user
+    {
+    };
+
+    /** Description of a command that can be called */
+    struct command
+    {
+        e_command type;
+        fstring name;
+        array<fstring> aliases;
+
+        // State
+        bool triggered = false;
+        command_property property;
     };
 
     struct command_submitted
