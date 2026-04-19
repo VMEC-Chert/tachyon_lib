@@ -45,12 +45,19 @@ namespace tyon
 
         i64 max_string_size = 1_GiB;
         i64 size = 0;
-        for (;size < max_string_size; ++size)
-        {   if (arg[size] == 0) { break; } }
+        // NOTE: Tried to use if (arg[size] == 0) { break; } in a normal for
+        // loop but that lead to including the null terminator in the size
+        bool null_terminator = false;
+        for (;size < max_string_size; )
+        {   null_terminator = (arg[size] == char(0));
+            if (null_terminator) { break; }
+            ++size;
+        }
 
         dynamic_span<t_char>& new_part = parts[0];
         new_part.size = memory_align( size, 4 );
-        new_part.data = memory_allocate<t_char>( parts[0].size );
+        // Add extra null termination
+        new_part.data = memory_allocate<t_char>( parts[0].size + 4 );
         memory_copy<t_char>( new_part.data, arg, size );
     }
 
@@ -88,23 +95,61 @@ namespace tyon
 
     PROC string::split_whitespace() const -> string
     {
+        // It's more code to work on a multi-part string so we'll join it first.
+        string result = this->join_parts( "" );
+        dynamic_span<char> str = result.parts[0];
+
+        /** State Varients
+            first char non-space - in_whitespace 0 | i_part_start 0
+            first char space - in_whitespace 0 | i_part_start 0
+         */
+        // Loop state
+        bool in_whitespace = false;
+        // Have we started recording the size of a part
+        bool start_recorded = false;
+        // Start index of a new string
+        i64 i_part_start = 0;
+        i64 i_limit = str.size;
+        i32 x_char = 0;
+        dynamic_span<char> new_part;
+        for (i64 i=0; i < i_limit; ++i)
+        {
+            x_char = str.data[i];
+            bool end_string = (! std::isspace( x_char ) && start_recorded);
+            if (end_string)
+            {
+                in_whitespace = true;
+                // Create new string part
+                new_part.size = (i - i_part_start + 1);
+                new_part.data = memory_allocate<t_char>( new_part.size + 4);
+                memory_copy<t_char>( new_part.data, str.data + i_part_start, new_part.size );
+                // Reset part
+                new_part = {};
+            }
+            else if (start_recorded == false)
+            {
+
+            }
+        }
+
         return {};
     }
 
     PROC string::join_parts( fstring_view connector ) const -> string
     {
         string result;
-        result.size_ = size();
 
         i64 connector_size = connector.size();
         // Size of all parts + connector + some arbitrary SIMD padding / null termination
         i64 allocation = (result.size_ + (connector_size * result.parts_size()) + 12);
-        t_char* storage =  memory_allocate<t_char>( allocation );
+        t_char* storage = memory_allocate<t_char>( allocation );
 
         if (storage == nullptr) { return string{}; }
 
         result.parts.resize( 1 );
-        result.parts[0] = { storage, result.size_ };
+        result.size_ = allocation;
+        // Collapse on 0 size if something went wrong
+        result.parts[0] = { storage, 0 };
 
         i64 parts_limit = parts_size();
         i64 writehead = 0;
@@ -123,7 +168,10 @@ namespace tyon
             memory_copy<t_char>( (storage + writehead), x_part.data, x_part.size );
             writehead += x_part.size;
         }
-        ERROR_GUARD( writehead > result.size_, "More chars were written than allocated" );
+        // Save calculated size to result string
+        result.size_ = writehead;
+        result.parts[0].size = writehead;
+        ERROR_GUARD( writehead > allocation - 1, "More chars were written than allocated" );
         return result;
     }
 

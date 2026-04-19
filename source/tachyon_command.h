@@ -48,6 +48,7 @@ namespace tyon
     /** Description of a command that can be called */
     struct command
     {
+        uid id;
         e_command type;
         fstring name;
         array<fstring> aliases;
@@ -59,15 +60,19 @@ namespace tyon
 
     struct command_submitted
     {
-        fstring name;
+        string name;
+        string flags;
         dynamic_primitive value;
-        fstring unprocessed;
+        string unprocessed;
     };
 
     struct command_context
     {
         array<command_property> properties;
+        /** Before processing */
         array<fstring> command_string_queue;
+        /** After processing */
+        array<command_submitted> command_queue;
         fstring line_contents;
         fstring line_contents_raw;
         /** Temporary contents for console input reading */

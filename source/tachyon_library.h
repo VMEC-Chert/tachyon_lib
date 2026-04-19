@@ -679,6 +679,14 @@ namespace tyon
         {   memcpy( dest, src, bytes); }
     }
 
+    // TODO: Finish this for spans
+    // template typename
+    // PROC memory_fill()
+
+    // TODO: Range checked copy with error reporting for spans
+    // template <typename T>
+    // memory_copy
+
     /** Type unsafe variant of 'memory_copy' */
     template <typename T>
     void

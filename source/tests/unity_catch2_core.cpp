@@ -145,9 +145,25 @@ TEST_CASE( "Container Library" )
         string str_2 = f_str;
         // cstring copy
         REQUIRE( memory_same_raw( str_1.parts[0].data, c_str, sizeof(c_str)  ) );
-        TYON_LOG( str_1.parts[0].data );
+        TYON_LOGF( "cstring to tyon::string result: {}", str_1.parts[0].data );
         // fstring copy
         REQUIRE( memory_same_raw( str_1.parts[0].data, f_str.data(), f_str.size()  ) );
 
+        string str_4;
+        str_4.parts.resize( 3 );
+        str_4.parts[0].data = "The"; str_4.parts[0].size = fstring_view( "The" ).size();
+        str_4.parts[1].data = "quick"; str_4.parts[1].size = fstring_view( "quick" ).size();
+        str_4.parts[2].data = "brown"; str_4.parts[2].size = fstring_view( "brown" ).size();
+
+        string str_5 = str_4.join_parts( " " );
+        fstring_view the_quick = "The quick brown";
+        REQUIRE( memory_same_raw( str_5.parts[0].data, the_quick.data(), the_quick.size() ));
+        TYON_LOGF( "join_parts ' ' result: {}", str_5.parts[0].data );
+
+        auto str_3 = str_2.split_whitespace();
+        REQUIRE( (str_3.parts[0].size == 5 &&
+                  str_3.parts[1].size == 5) );
+        TYON_LOGF( "split_whitespace(): {}", str_3.parts[0].data );
+        fflush( stdout );
     }
 }

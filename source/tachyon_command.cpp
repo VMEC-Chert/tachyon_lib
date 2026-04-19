@@ -195,6 +195,20 @@ namespace tyon
 
     PROC command_proccess_commands() -> void
     {
+        i64 i_limit = g_command->command_string_queue.size();
+        fstring x_command;
+        x_command.reserve( 100 );
+        string x_split;
+        command_submitted x_submit;
+        for (i64 i=0; i < i_limit; ++i)
+        {
+            x_submit = {};
+            x_command = g_command->command_string_queue[i];
+            x_split = x_command;
+            x_split = x_split.split_whitespace();
 
+            x_submit.unprocessed = x_split;
+            // TODO: read each string part and figure out what type of input it is
+        }
     }
 }

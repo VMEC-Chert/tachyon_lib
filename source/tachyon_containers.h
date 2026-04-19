@@ -955,6 +955,8 @@ struct string
     COPY_CONSTRUCTOR string() = default;
     COPY_CONSTRUCTOR string( const t_self& arg );
     COPY_CONSTRUCTOR string( fstring& arg );
+    /** Measures the size of a cstring and creates a sized string minus the null terminator
+     The string is null terminated by it is not included in the size. */
     COPY_CONSTRUCTOR string( cstring arg );
 
     inline
