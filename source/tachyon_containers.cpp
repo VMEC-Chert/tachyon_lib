@@ -125,7 +125,9 @@ namespace tyon
             if (end_string)
             {
                 // Create new string part
-                new_part.size = (i - i_part_start + 1);
+                // NOTE: I haven't figured out the right math in my head for size
+                // calculation but this seems right
+                new_part.size = (i - i_part_start);
                 new_part.data = memory_allocate<t_char>( new_part.size + 4);
                 memory_copy<t_char>( new_part.data, str.data + i_part_start, new_part.size );
                 // Push string and Reset `part` and `start_recorded`
@@ -140,11 +142,13 @@ namespace tyon
                 start_recorded = true;
             }
         }
+        // SPECIAL CASE:
         // Must've reached the end with a recorded string, we can save it as a string part
         if (start_recorded)
         {
             // Create new string part
-            new_part.size = (str.size - i_part_start + 1);
+            // NOTE: This needs to be -1 the difference, probably because i_part_start is an index?
+            new_part.size = (str.size - i_part_start - 1);
             new_part.data = memory_allocate<t_char>( new_part.size + 4);
             memory_copy<t_char>( new_part.data, str.data + i_part_start, new_part.size );
             // Push string and Reset part

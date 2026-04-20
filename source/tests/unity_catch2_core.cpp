@@ -163,7 +163,7 @@ TEST_CASE( "Container Library" )
         auto str_3 = str_2.split_whitespace();
         CHECK( (str_3.parts[0].size == 5 &&
                 str_3.parts[1].size == 5) );
-        TYON_LOGF( "split_whitespace(): '{}'", str_3.parts[0].data );
+        TYON_LOGF( "split_whitespace(): '{}' '{}'", str_3.parts[0].data, str_3.parts[1].data );
         fflush( stdout );
     }
 }
