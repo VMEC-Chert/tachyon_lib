@@ -7,7 +7,7 @@ namespace tyon
     COPY_CONSTRUCTOR string::string( const t_self& arg )
     {
         parts = {};
-        size_ = 0;
+        size_ = arg.size_;
         i64 i_limit = arg.parts.head_size;
         parts.resize( i_limit );
         dynamic_span<char> x_part;
@@ -32,7 +32,8 @@ namespace tyon
         parts.resize( 1 );
 
         dynamic_span<t_char>& new_part = parts[0];
-        new_part.size = memory_align( arg.size(), 4 );
+        size_ = arg.size();
+        new_part.size = memory_align( size_, 4 );
         new_part.data = memory_allocate<t_char>( parts[0].size );
         memory_copy<t_char>( new_part.data, arg.data(), arg.size() );
     }
@@ -55,7 +56,8 @@ namespace tyon
         }
 
         dynamic_span<t_char>& new_part = parts[0];
-        new_part.size = memory_align( size, 4 );
+        size_ = size;
+        new_part.size = memory_align( size_, 4 );
         // Add extra null termination
         new_part.data = memory_allocate<t_char>( parts[0].size + 4 );
         memory_copy<t_char>( new_part.data, arg, size );
@@ -96,15 +98,18 @@ namespace tyon
     PROC string::split_whitespace() const -> string
     {
         // It's more code to work on a multi-part string so we'll join it first.
-        string result = this->join_parts( "" );
-        dynamic_span<char> str = result.parts[0];
+        string result;
+        string joined = this->join_parts( "" );;
+        // Pre-allocate based on lower bound of average word size
+        const i64 average_word_size = 4;
+        result.parts.change_allocation( i64(ceil(f32(result.size_) / average_word_size )) );
+        dynamic_span<char> str = joined.parts[0];
 
         /** State Varients
             first char non-space - in_whitespace 0 | i_part_start 0
             first char space - in_whitespace 0 | i_part_start 0
          */
-        // Loop state
-        bool in_whitespace = false;
+        // SECTION: Loop state
         // Have we started recording the size of a part
         bool start_recorded = false;
         // Start index of a new string
@@ -115,24 +120,39 @@ namespace tyon
         for (i64 i=0; i < i_limit; ++i)
         {
             x_char = str.data[i];
-            bool end_string = (! std::isspace( x_char ) && start_recorded);
+            bool end_string = (std::isspace( x_char ) && start_recorded);
+            bool start_string = (std::isspace( x_char ) == false && start_recorded == false);
             if (end_string)
             {
-                in_whitespace = true;
                 // Create new string part
                 new_part.size = (i - i_part_start + 1);
                 new_part.data = memory_allocate<t_char>( new_part.size + 4);
                 memory_copy<t_char>( new_part.data, str.data + i_part_start, new_part.size );
-                // Reset part
+                // Push string and Reset `part` and `start_recorded`
+                result.size_ += new_part.size;
+                result.parts.push_tail( new_part );
                 new_part = {};
+                start_recorded = false;
             }
-            else if (start_recorded == false)
+            else if (start_string)
             {
-
+                i_part_start = i;
+                start_recorded = true;
             }
         }
+        // Must've reached the end with a recorded string, we can save it as a string part
+        if (start_recorded)
+        {
+            // Create new string part
+            new_part.size = (str.size - i_part_start + 1);
+            new_part.data = memory_allocate<t_char>( new_part.size + 4);
+            memory_copy<t_char>( new_part.data, str.data + i_part_start, new_part.size );
+            // Push string and Reset part
+            result.size_ += new_part.size;
+            result.parts.push_tail( new_part );
+        }
 
-        return {};
+        return result;
     }
 
     PROC string::join_parts( fstring_view connector ) const -> string
@@ -169,8 +189,10 @@ namespace tyon
             writehead += x_part.size;
         }
         // Save calculated size to result string
+        // NOTE: writehad is left on the next char to write on, not the current one, so it's a "size"
+        // NOTE: I got this wrong and tried to -1 te writehead in a fit of rage, this is wrong.
         result.size_ = writehead;
-        result.parts[0].size = writehead;
+        result.parts[0].size = result.size_;
         ERROR_GUARD( writehead > allocation - 1, "More chars were written than allocated" );
         return result;
     }

@@ -48,76 +48,76 @@ TEST_CASE( "Memory Alignment Helpers", "memory" )
     SECTION( "memory_padding" )
     {
         // pointer version
-        REQUIRE( memory_padding( 4,  (void*)0xDEAD ) == 3 );
-        REQUIRE( memory_padding( 16, (void*)0xF003 ) == 13 );
-        REQUIRE( memory_padding( 2,  (void*)0x0ad3 ) == 1 );
-        REQUIRE( memory_padding( 25, (void*)0x2afd ) == 20);
-        REQUIRE( memory_padding( 4,  (void*)0x0021 ) == 3 );
+        CHECK( memory_padding( 4,  (void*)0xDEAD ) == 3 );
+        CHECK( memory_padding( 16, (void*)0xF003 ) == 13 );
+        CHECK( memory_padding( 2,  (void*)0x0ad3 ) == 1 );
+        CHECK( memory_padding( 25, (void*)0x2afd ) == 20);
+        CHECK( memory_padding( 4,  (void*)0x0021 ) == 3 );
 
         // int pointer version
-        REQUIRE( memory_padding( 4,  (int*)0xDEAD ) == 3  );
-        REQUIRE( memory_padding( 16, (int*)0xF003 ) == 13 );
-        REQUIRE( memory_padding( 2,  (int*)0x0ad3 ) == 1  );
-        REQUIRE( memory_padding( 25, (int*)0x2afd ) == 20 );
-        REQUIRE( memory_padding( 4,  (int*)0x0021 ) == 3  );
+        CHECK( memory_padding( 4,  (int*)0xDEAD ) == 3  );
+        CHECK( memory_padding( 16, (int*)0xF003 ) == 13 );
+        CHECK( memory_padding( 2,  (int*)0x0ad3 ) == 1  );
+        CHECK( memory_padding( 25, (int*)0x2afd ) == 20 );
+        CHECK( memory_padding( 4,  (int*)0x0021 ) == 3  );
 
         // User defined type version
-        REQUIRE( memory_padding( 4,  (uid*)0xDEAD ) == 3  );
-        REQUIRE( memory_padding( 16, (uid*)0xF003 ) == 13 );
-        REQUIRE( memory_padding( 2,  (uid*)0x0ad3 ) == 1  );
-        REQUIRE( memory_padding( 25, (uid*)0x2afd ) == 20 );
-        REQUIRE( memory_padding( 4,  (uid*)0x0021 ) == 3  );
+        CHECK( memory_padding( 4,  (uid*)0xDEAD ) == 3  );
+        CHECK( memory_padding( 16, (uid*)0xF003 ) == 13 );
+        CHECK( memory_padding( 2,  (uid*)0x0ad3 ) == 1  );
+        CHECK( memory_padding( 25, (uid*)0x2afd ) == 20 );
+        CHECK( memory_padding( 4,  (uid*)0x0021 ) == 3  );
 
         // Integer version
-        REQUIRE( memory_padding( 4,    0xDEAD ) == 3    );
-        REQUIRE( memory_padding( 16,   0xF003 ) == 13   );
-        REQUIRE( memory_padding( 2,    0x0ad3 ) == 1    );
-        REQUIRE( memory_padding( 25,   0x2afd ) == 20   );
-        REQUIRE( memory_padding( 4,    0x0021 ) == 3    );
+        CHECK( memory_padding( 4,    0xDEAD ) == 3    );
+        CHECK( memory_padding( 16,   0xF003 ) == 13   );
+        CHECK( memory_padding( 2,    0x0ad3 ) == 1    );
+        CHECK( memory_padding( 25,   0x2afd ) == 20   );
+        CHECK( memory_padding( 4,    0x0021 ) == 3    );
     }
 
     SECTION( "memory_align" )
     {
 
-        REQUIRE( memory_align( 0xDEAD,  4 ) == 0xDEB0  );
-        REQUIRE( memory_align( 0xF003, 16 ) == 0xF010  );
-        REQUIRE( memory_align( 0x0ad3,  2 ) == 0x00ad4 );
-        REQUIRE( memory_align( 0x2afd, 25 ) == 0x2b11  );
-        REQUIRE( memory_align( 0x0021,  4 ) == 0x0024  );
-        REQUIRE( memory_align( 0x0021,  64 ) == 0x0040 );
+        CHECK( memory_align( 0xDEAD,  4 ) == 0xDEB0  );
+        CHECK( memory_align( 0xF003, 16 ) == 0xF010  );
+        CHECK( memory_align( 0x0ad3,  2 ) == 0x00ad4 );
+        CHECK( memory_align( 0x2afd, 25 ) == 0x2b11  );
+        CHECK( memory_align( 0x0021,  4 ) == 0x0024  );
+        CHECK( memory_align( 0x0021,  64 ) == 0x0040 );
 
-        REQUIRE( memory_align_typed<i32>( 1, 64) == 64 );
+        CHECK( memory_align_typed<i32>( 1, 64) == 64 );
     }
 }
 
 TEST_CASE( "uid/uuid Unique Identifiers" )
 {
     uid valid = uuid_generate();
-    REQUIRE( valid.valid() );
+    CHECK( valid.valid() );
 
     uid invalid;
-    REQUIRE( invalid.valid() == false );
+    CHECK( invalid.valid() == false );
 
     uid copy1 = uuid_generate();
     copy1.id = 25;
     uid copy2 = copy1;
-    REQUIRE( memcmp( &copy1, &copy2, sizeof( uid) ) == 0 );
+    CHECK( memcmp( &copy1, &copy2, sizeof( uid) ) == 0 );
 
     uid equal1 = uuid_generate();
     equal1.id = 25;
     uid equal2 = equal1;
-    REQUIRE( equal1 == equal2 );
+    CHECK( equal1 == equal2 );
 
     uid equal_different1 = uuid_generate();
     equal_different1.id = 25;
     uid equal_different2 = uuid_generate();
-    REQUIRE( (equal_different1 == equal_different2) == false );
+    CHECK( (equal_different1 == equal_different2) == false );
 
     // Unimplimented
     // uid inequal1 = uuid_generate();
     // inequal1.id = 25;
     // uid inequal2 = inequal1;
-    // REQUIRE( inequal1 != inequal2 );
+    // CHECK( inequal1 != inequal2 );
 
 }
 
@@ -144,10 +144,10 @@ TEST_CASE( "Container Library" )
         string str_1 = c_str;
         string str_2 = f_str;
         // cstring copy
-        REQUIRE( memory_same_raw( str_1.parts[0].data, c_str, sizeof(c_str)  ) );
+        CHECK( memory_same_raw( str_1.parts[0].data, c_str, sizeof(c_str)  ) );
         TYON_LOGF( "cstring to tyon::string result: {}", str_1.parts[0].data );
         // fstring copy
-        REQUIRE( memory_same_raw( str_1.parts[0].data, f_str.data(), f_str.size()  ) );
+        CHECK( memory_same_raw( str_1.parts[0].data, f_str.data(), f_str.size()  ) );
 
         string str_4;
         str_4.parts.resize( 3 );
@@ -157,13 +157,13 @@ TEST_CASE( "Container Library" )
 
         string str_5 = str_4.join_parts( " " );
         fstring_view the_quick = "The quick brown";
-        REQUIRE( memory_same_raw( str_5.parts[0].data, the_quick.data(), the_quick.size() ));
-        TYON_LOGF( "join_parts ' ' result: {}", str_5.parts[0].data );
+        CHECK( memory_same_raw( str_5.parts[0].data, the_quick.data(), the_quick.size() ));
+        TYON_LOGF( "join_parts ' ' result: '{}'", str_5.parts[0].data );
 
         auto str_3 = str_2.split_whitespace();
-        REQUIRE( (str_3.parts[0].size == 5 &&
-                  str_3.parts[1].size == 5) );
-        TYON_LOGF( "split_whitespace(): {}", str_3.parts[0].data );
+        CHECK( (str_3.parts[0].size == 5 &&
+                str_3.parts[1].size == 5) );
+        TYON_LOGF( "split_whitespace(): '{}'", str_3.parts[0].data );
         fflush( stdout );
     }
 }
