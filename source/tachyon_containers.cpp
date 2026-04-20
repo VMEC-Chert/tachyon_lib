@@ -165,7 +165,7 @@ namespace tyon
 
         i64 connector_size = connector.size();
         // Size of all parts + connector + some arbitrary SIMD padding / null termination
-        i64 allocation = (result.size_ + (connector_size * result.parts_size()) + 12);
+        i64 allocation = (size_ + (connector_size * parts_size()) + 12);
         t_char* storage = memory_allocate<t_char>( allocation );
 
         if (storage == nullptr) { return string{}; }
@@ -197,7 +197,7 @@ namespace tyon
         // NOTE: I got this wrong and tried to -1 te writehead in a fit of rage, this is wrong.
         result.size_ = writehead;
         result.parts[0].size = result.size_;
-        ERROR_GUARD( writehead > allocation - 1, "More chars were written than allocated" );
+        ERROR_GUARD( writehead < allocation - 1, "More chars were written than allocated" );
         return result;
     }
 

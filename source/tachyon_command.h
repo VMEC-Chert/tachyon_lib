@@ -73,6 +73,7 @@ namespace tyon
         array<fstring> command_string_queue;
         /** After processing */
         array<command_submitted> command_queue;
+        array<command> command_list;
         fstring line_contents;
         fstring line_contents_raw;
         /** Temporary contents for console input reading */
@@ -87,6 +88,8 @@ namespace tyon
     };
 
     PROC command_init() -> fresult;
+
+    PROC command_add( command* arg ) -> uid;
 
     /** Non-blocking stdin processing */
     PROC command_read_console() -> void;

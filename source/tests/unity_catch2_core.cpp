@@ -150,10 +150,13 @@ TEST_CASE( "Container Library" )
         CHECK( memory_same_raw( str_1.parts[0].data, f_str.data(), f_str.size()  ) );
 
         string str_4;
-        str_4.parts.resize( 3 );
-        str_4.parts[0].data = "The"; str_4.parts[0].size = fstring_view( "The" ).size();
-        str_4.parts[1].data = "quick"; str_4.parts[1].size = fstring_view( "quick" ).size();
-        str_4.parts[2].data = "brown"; str_4.parts[2].size = fstring_view( "brown" ).size();
+        str_4 += "The";
+        str_4 += "quick";
+        str_4 += "brown";
+        // str_4.parts.resize( 3 );
+        // str_4.parts[0].data = "The"; str_4.parts[0].size = fstring_view( "The" ).size();
+        // str_4.parts[1].data = "quick"; str_4.parts[1].size = fstring_view( "quick" ).size();
+        // str_4.parts[2].data = "brown"; str_4.parts[2].size = fstring_view( "brown" ).size();
 
         string str_5 = str_4.join_parts( " " );
         fstring_view the_quick = "The quick brown";

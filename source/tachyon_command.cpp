@@ -25,6 +25,13 @@ namespace tyon
         return true;
     }
 
+    PROC command_add( command* arg ) -> uid
+    {
+        arg->id = uuid_generate();
+        g_command->command_list.push_tail( *arg );
+        return arg->id;
+    }
+
     PROC command_ansi_control( ansi_control type, i32 arg = 0 ) -> void
     {
         /** NOTE: Windows supports only the \x1b ANSI escape code and Linux supports both that and \033 */
@@ -202,6 +209,7 @@ namespace tyon
         command_submitted x_submit;
         for (i64 i=0; i < i_limit; ++i)
         {
+            TYON_LOG( "Processing commands", i );
             x_submit = {};
             x_command = g_command->command_string_queue[i];
             x_split = x_command;
@@ -209,6 +217,16 @@ namespace tyon
 
             x_submit.unprocessed = x_split;
             // TODO: read each string part and figure out what type of input it is
+            auto command_s = entity_search_name_array(
+                g_command->command_list, x_split.parts[0].data );
+            if (command_s.match_found)
+            {
+                TYON_LOGF( "Command Exists: {}", command_s.match->name );
+            }
+            // TYON_LOGF( "Command Processed: {}", x_split.parts[0].data );
         }
+
+        // We can clear this list now
+        g_command->command_string_queue.reset();
     }
 }
