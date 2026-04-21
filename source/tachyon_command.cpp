@@ -21,6 +21,7 @@ namespace tyon
             return false;
         }
 
+        // Create some default commands
         g_command->command_string_queue.change_allocation( 50 );
         command command_1 = {
             .type = e_command::execute,
@@ -30,14 +31,26 @@ namespace tyon
             .on_trigger = command_list_commands
         };
         g_command->c_list = command_add( &command_1 );
+
+        command command_2 = {
+            .type = e_command::property,
+            .name = "log_debug_break",
+            .description = "break on error",
+            .aliases = { "help" },
+            .on_trigger = command_list_commands,
+            .property { .value_type = e_primitive::integer_ },
+        };
+        g_command->c_log_debug_break = command_add( &command_2 );
+
         return true;
     }
 
     PROC command_add( command* arg ) -> uid
     {
-        bool valid_type = (arg->type == e_command::none || arg->type == e_command::any);
+        bool invalid_type = (arg->type == e_command::none || arg->type == e_command::any);
 
-        if (valid_type == false) { return uid {}; }
+        if (invalid_type)
+        {   TYON_ERROR( "Tried to add command with invalid type"); return uid {}; }
         arg->id = uuid_generate();
         g_command->command_list.push_tail( *arg );
         return arg->id;
@@ -235,7 +248,7 @@ namespace tyon
         command_submitted x_submit;
         for (i64 i=0; i < i_limit; ++i)
         {
-            TYON_LOG( "Processing commands", i );
+            TYON_LOG( "Processing comman", i );
             x_submit = {};
             x_command = g_command->command_string_queue[i];
             x_split = x_command;
@@ -271,8 +284,10 @@ namespace tyon
                         }
                         else if (set_value)
                         {
+                            TYON_LOGF( "Setting value of command: {}", cmd->name );
                             x_value = fstring( x_split.parts[1].data, x_split.parts[1].size );
-                            dynamic_primitive_from_string( cmd->property.value.type, x_value );
+                            cmd->property.value = dynamic_primitive_from_string(
+                                cmd->property.value_type, x_value );
                         }
                         break;
                     }

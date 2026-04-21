@@ -1180,7 +1180,7 @@ namespace tyon
             {
                 case e_primitive::none: break;
                 case e_primitive::any: break;
-                case e_primitive::integer_: break;
+                case e_primitive::integer_:
                     result.integer_ = std::stoll( arg ); result.type = e_primitive::integer_; break;
                 case e_primitive::float_:
                     result.float_ = std::stod( arg ); result.type = e_primitive::float_; break;

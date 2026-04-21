@@ -54,8 +54,8 @@ namespace tyon
         fstring name;
         string description;
         array<fstring> aliases;
-        command_property property;
         generic_procedure<void()> on_trigger;
+        command_property property;
 
         // State
         bool triggered = false;
@@ -92,6 +92,7 @@ namespace tyon
 
         // Default commands
         uid c_list;
+        uid c_log_debug_break;
     };
 
     PROC command_init() -> fresult;
