@@ -1171,6 +1171,54 @@ namespace tyon
         memory_zero_raw( &this->_buffer, 32);
     }
 
+    PROC dynamic_primitive_from_string( e_primitive input_type, fstring arg ) -> dynamic_primitive
+    {
+        dynamic_primitive result;
+        try
+        {
+            switch (input_type)
+            {
+                case e_primitive::none: break;
+                case e_primitive::any: break;
+                case e_primitive::integer_: break;
+                    result.integer_ = std::stoll( arg ); result.type = e_primitive::integer_; break;
+                case e_primitive::float_:
+                    result.float_ = std::stod( arg ); result.type = e_primitive::float_; break;
+                case e_primitive::boolean_: break;
+                case e_primitive::character_:
+                    result.character_ = arg[0]; result.type = e_primitive::character_; break;
+                case e_primitive::byte_:
+                    result.integer_ = char(std::stoll( arg )); result.type = e_primitive::byte_; break;
+                case e_primitive::pointer_: break;
+                case e_primitive::string_:
+                    result = arg; break;
+                case e_primitive::tyon_string: break;
+            }
+        }
+        // Just eat the exception and leave it as a none value
+        catch (...) {}
+        return result;
+    }
+
+    PROC to_string( dynamic_primitive arg ) -> fstring
+    {
+        fstring result;
+        switch (arg.type)
+        {
+            case e_primitive::none:        result = "none"; break;
+            case e_primitive::any:         TYON_BREAK(); break;
+            case e_primitive::integer_:    result = fmt::format( "{}", arg.integer_); break;
+            case e_primitive::float_:      result = fmt::format( "{}", arg.float_); break;
+            case e_primitive::boolean_:    result = fmt::format( "{}", arg.boolean_); break;
+            case e_primitive::character_:  result = fmt::format( "{}", arg.character_); break;
+            case e_primitive::byte_:       result = fmt::format( "{}", arg.byte_); break;
+            case e_primitive::pointer_:    result = fmt::format( "{}", (void*)(arg.pointer_)); break;
+            case e_primitive::string_:     result = fmt::format( "{}", arg.string_); break;
+            case e_primitive::tyon_string: result = fmt::format( "{}", fstring(arg.tyon_string)); break;
+        }
+        return result;
+    }
+
 }
 
 // /** Overriding new makes address sanitizer complain */

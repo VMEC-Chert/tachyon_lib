@@ -35,6 +35,7 @@ namespace tyon
     struct command_property
     {
         uid id;
+        e_primitive value_type;
         dynamic_primitive value;
         pointer<byte> custom_data;
     };
@@ -51,11 +52,13 @@ namespace tyon
         uid id;
         e_command type;
         fstring name;
+        string description;
         array<fstring> aliases;
+        command_property property;
+        generic_procedure<void()> on_trigger;
 
         // State
         bool triggered = false;
-        command_property property;
     };
 
     struct command_submitted
@@ -73,6 +76,7 @@ namespace tyon
         array<fstring> command_string_queue;
         /** After processing */
         array<command_submitted> command_queue;
+        /** All valid registered commands */
         array<command> command_list;
         fstring line_contents;
         fstring line_contents_raw;
@@ -85,11 +89,18 @@ namespace tyon
         bool console_input_mode = false;
         /** Saves the state of the log variable before modifying it so we can restore it. */
         bool prev_console_output_enabled = true;
+
+        // Default commands
+        uid c_list;
     };
 
     PROC command_init() -> fresult;
 
     PROC command_add( command* arg ) -> uid;
+
+    PROC command_list_commands() -> void;
+
+    PROC command_ansi_control( ansi_control type, i32 arg = 0 ) -> void;
 
     /** Non-blocking stdin processing */
     PROC command_read_console() -> void;

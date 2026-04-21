@@ -143,6 +143,9 @@ struct logger
 
     };
 
+    PROC dynamic_primitive_from_string( e_primitive input_type, fstring arg ) -> dynamic_primitive;
+    PROC to_string( dynamic_primitive arg ) -> fstring;
+
     /** Copy and swap helper */
     void swap( dynamic_primitive& a, dynamic_primitive& b );
 

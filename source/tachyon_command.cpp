@@ -22,17 +22,41 @@ namespace tyon
         }
 
         g_command->command_string_queue.change_allocation( 50 );
+        command command_1 = {
+            .type = e_command::execute,
+            .name = "list",
+            .description = "list out all known console commands",
+            .aliases = { "help" },
+            .on_trigger = command_list_commands
+        };
+        g_command->c_list = command_add( &command_1 );
         return true;
     }
 
     PROC command_add( command* arg ) -> uid
     {
+        bool valid_type = (arg->type == e_command::none || arg->type == e_command::any);
+
+        if (valid_type == false) { return uid {}; }
         arg->id = uuid_generate();
         g_command->command_list.push_tail( *arg );
         return arg->id;
     }
 
-    PROC command_ansi_control( ansi_control type, i32 arg = 0 ) -> void
+    PROC command_list_commands() -> void
+    {
+        i64 i_limit = g_command->command_list.size();
+        // Log it twice because it needs to go to stdout too
+        TYON_LOG( "Listing all known commands" );
+        fmt::print( "Listing all known commands \n" );
+        for (i64 i=0; i < i_limit; ++i)
+        {
+            TYON_LOGF( "\t{}", g_command->command_list[i].name );
+            fmt::print( "\t{}\n", g_command->command_list[i].name );
+        }
+    }
+
+    PROC command_ansi_control( ansi_control type, i32 arg ) -> void
     {
         /** NOTE: Windows supports only the \x1b ANSI escape code and Linux supports both that and \033 */
         fstring code;
@@ -205,6 +229,8 @@ namespace tyon
         i64 i_limit = g_command->command_string_queue.size();
         fstring x_command;
         x_command.reserve( 100 );
+        fstring x_value;
+        x_value.reserve( 100 );
         string x_split;
         command_submitted x_submit;
         for (i64 i=0; i < i_limit; ++i)
@@ -221,7 +247,37 @@ namespace tyon
                 g_command->command_list, x_split.parts[0].data );
             if (command_s.match_found)
             {
-                TYON_LOGF( "Command Exists: {}", command_s.match->name );
+                auto cmd = command_s.match;
+                TYON_LOGF( "Command Exists: {}", cmd->name );
+
+                switch (cmd->type)
+                {
+                    case e_command::execute:
+                    {   cmd->on_trigger(); break; }
+                    case e_command::property:
+                    {
+                        bool get_value = (x_split.parts.size() < 2);
+                        bool set_value = (x_split.parts.size() >= 2);
+                        if (get_value)
+                        {
+                            fmt::println( "Property: {} Value: {} ",
+                                          fstring_view(x_split.parts[0].data, x_split.parts[0].data),
+                                          to_string( cmd->property.value )
+                            );
+                            TYON_LOGF( "Property: {} Value: {} ",
+                                       fstring_view(x_split.parts[0].data, x_split.parts[0].data),
+                                       to_string( cmd->property.value )
+                            );
+                        }
+                        else if (set_value)
+                        {
+                            x_value = fstring( x_split.parts[1].data, x_split.parts[1].size );
+                            dynamic_primitive_from_string( cmd->property.value.type, x_value );
+                        }
+                        break;
+                    }
+                    default: break;
+                }
             }
             // TYON_LOGF( "Command Processed: {}", x_split.parts[0].data );
         }
