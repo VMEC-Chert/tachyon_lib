@@ -64,8 +64,9 @@ namespace tyon
         fmt::print( "Listing all known commands \n" );
         for (i64 i=0; i < i_limit; ++i)
         {
-            TYON_LOGF( "\t{}", g_command->command_list[i].name );
-            fmt::print( "\t{}\n", g_command->command_list[i].name );
+            auto& x_command = g_command->command_list[i];
+            TYON_LOGF( "\t{} | {}", x_command.name, fstring(x_command.description) );
+            fmt::print( "\t{} | {}\n", x_command.name, fstring(x_command.description) );
         }
     }
 
