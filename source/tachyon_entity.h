@@ -315,16 +315,16 @@ namespace tyon
     };
 
     template <typename T>
-    PROC entity_search_id_array( array<T> context, uid id ) -> search_result<T>
+    PROC entity_search_id_array( array<T>* context, uid id ) -> search_result<T>
     {
-        return context.linear_search( [id]( T& arg ) {
+        return context->linear_search( [id]( T& arg ) {
             return arg.id == id; });
     }
 
     template <typename T>
-    PROC entity_search_name_array( array<T> context, fstring name ) -> search_result<T>
+    PROC entity_search_name_array( array<T>* context, fstring name ) -> search_result<T>
     {
-        return context.linear_search( [&name]( T& arg ) {
+        return context->linear_search( [&name]( T& arg ) {
             return arg.name == name; });
     }
 

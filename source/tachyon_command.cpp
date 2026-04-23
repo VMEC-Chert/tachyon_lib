@@ -62,11 +62,14 @@ namespace tyon
         // Log it twice because it needs to go to stdout too
         TYON_LOG( "Listing all known commands" );
         fmt::print( "Listing all known commands \n" );
+        command* x_command = nullptr;
         for (i64 i=0; i < i_limit; ++i)
         {
-            auto& x_command = g_command->command_list[i];
-            TYON_LOGF( "\t{} | {}", x_command.name, fstring(x_command.description) );
-            fmt::print( "\t{} | {}\n", x_command.name, fstring(x_command.description) );
+            x_command = &g_command->command_list[i];
+            auto name = x_command->name;
+            auto description = fstring(x_command->description);
+            TYON_LOGF( "\t{} | {:<20}", name, description );
+            fmt::print( "\t{} | {:<20}\n", name, description );
         }
     }
 
@@ -258,7 +261,7 @@ namespace tyon
             x_submit.unprocessed = x_split;
             // TODO: read each string part and figure out what type of input it is
             auto command_s = entity_search_name_array(
-                g_command->command_list, x_split.parts[0].data );
+                &g_command->command_list, x_split.parts[0].data );
             if (command_s.match_found)
             {
                 auto cmd = command_s.match;

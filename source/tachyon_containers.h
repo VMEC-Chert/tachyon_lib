@@ -189,7 +189,7 @@ struct array
         new(new_storage) T[count] {};
         if (data)
         {
-            for (i32 i=0; i < std::min( size_, count ); ++i )
+            for (i32 i=0; i < std::min( size(), count ); ++i )
             {
                 new_storage[i] = std::move( data[i] );
             }
@@ -358,6 +358,10 @@ struct array
     t_self&
     COPY_ASSIGNMENT operator= ( const t_self& rhs )
     {
+        // Make sure we leave good data for before trying to use copy operators...
+        // This flagged up as a major issue with std::string usage
+        this->cleanup();
+        this->reset();
         this->change_allocation( rhs.size_ );
         this->head_size = rhs.head_size;
         for (i64 i=0; i < rhs.head_size; ++i )
