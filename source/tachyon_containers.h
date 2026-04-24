@@ -192,6 +192,7 @@ struct array
             for (i32 i=0; i < std::min( size(), count ); ++i )
             {
                 new_storage[i] = std::move( data[i] );
+                std::destroy_at( &this->data[i] );
             }
             allocator->deallocate( (void*)(data) );
         }
@@ -360,10 +361,10 @@ struct array
     {
         // Make sure we leave good data for before trying to use copy operators...
         // This flagged up as a major issue with std::string usage
+        // I tried to call reset() here but its redundant as change_allocation() will init anew.
         this->cleanup();
-        this->reset();
-        this->change_allocation( rhs.size_ );
         this->head_size = rhs.head_size;
+        this->change_allocation( rhs.size_ );
         for (i64 i=0; i < rhs.head_size; ++i )
         {
             data[i] = rhs.data[i];
