@@ -1220,6 +1220,14 @@ namespace tyon
         return result;
     }
 
+    PROC log_error_result( fstring message, bool error ) -> void
+    {
+        if (error)
+        {   TYON_ERRORF( "{} : Failed", message ); }
+        else
+        {   TYON_LOGF( "{} : Succeeded", message ); }
+    }
+
 }
 
 // /** Overriding new makes address sanitizer complain */

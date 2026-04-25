@@ -2264,6 +2264,7 @@ namespace tyon
     static_assert( e_ascii::a == 97 );
     static_assert( e_ascii::delete_ == 127 );
 
+    PROC log_error_result( fstring message, bool error ) -> void;
 
 }
 
