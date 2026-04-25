@@ -1184,12 +1184,13 @@ namespace tyon
                     result.integer_ = std::stoll( arg ); result.type = e_primitive::integer_; break;
                 case e_primitive::float_:
                     result.float_ = std::stod( arg ); result.type = e_primitive::float_; break;
-                case e_primitive::boolean_: break;
+                case e_primitive::boolean_:
+                    result.boolean_ = std::stoll( arg ); result.type = e_primitive::boolean_; break;
                 case e_primitive::character_:
                     result.character_ = arg[0]; result.type = e_primitive::character_; break;
                 case e_primitive::byte_:
                     result.integer_ = char(std::stoll( arg )); result.type = e_primitive::byte_; break;
-                case e_primitive::pointer_: break;
+                case e_primitive::pointer_: TYON_BREAK(); break; // Taking pointer as a string input is extremely dangerous and rarely useful
                 case e_primitive::string_:
                     result = arg; break;
                 case e_primitive::tyon_string: break;

@@ -65,8 +65,10 @@ namespace tyon
     {
         string name;
         string flags;
-        dynamic_primitive value;
+        dynamic_primitive value {};
         string unprocessed;
+        /** If a valid command was matched with then */
+        uid matched_command;
     };
 
     struct command_context
@@ -75,7 +77,7 @@ namespace tyon
         /** Before processing */
         array<fstring> command_string_queue;
         /** After processing */
-        array<command_submitted> command_queue;
+        array<command_submitted> command_history;
         /** All valid registered commands */
         array<command> command_list;
         fstring line_contents;
@@ -85,6 +87,10 @@ namespace tyon
         i32 line_cursor = 0;
         i32 cursor_x = 0;
         i32 cursor_y = 0;
+
+        /** Inverse walk through command history */
+        i32 history_position = 0;
+        bool history_search_mode = false;
 
         bool console_input_mode = false;
         /** Saves the state of the log variable before modifying it so we can restore it. */
@@ -105,6 +111,8 @@ namespace tyon
 
     /** Non-blocking stdin processing */
     PROC command_read_console() -> void;
+
+    PROC command_reset_history_state() -> void;
 
     /** After commands are received we can do text processing and other such actions. */
     PROC command_proccess_commands() -> void;

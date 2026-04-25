@@ -33,8 +33,8 @@ namespace tyon
 
         dynamic_span<t_char>& new_part = parts[0];
         size_ = arg.size();
-        new_part.size = memory_align( size_, 4 );
-        new_part.data = memory_allocate<t_char>( parts[0].size );
+        new_part.size = size_;
+        new_part.data = memory_allocate<t_char>( size_ + 4 );
         memory_copy<t_char>( new_part.data, arg.data(), arg.size() );
     }
 
@@ -85,7 +85,7 @@ namespace tyon
     {
         PROFILE_SCOPE_FUNCTION();
         fstring result;
-        result.reserve( size_ );
+        result.reserve( size_ + 4 );
         dynamic_span<char> x_part;
         for (i64 i=0; i < parts.head_size; ++i)
         {
@@ -147,8 +147,7 @@ namespace tyon
         if (start_recorded)
         {
             // Create new string part
-            // NOTE: This needs to be -1 the difference, probably because i_part_start is an index?
-            new_part.size = (str.size - i_part_start - 1);
+            new_part.size = (str.size - i_part_start);
             new_part.data = memory_allocate<t_char>( new_part.size + 4);
             memory_copy<t_char>( new_part.data, str.data + i_part_start, new_part.size );
             // Push string and Reset part

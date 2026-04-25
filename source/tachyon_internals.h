@@ -143,6 +143,7 @@ struct logger
 
     };
 
+    /** Returns default constructed 'none' type on error */
     PROC dynamic_primitive_from_string( e_primitive input_type, fstring arg ) -> dynamic_primitive;
     PROC to_string( dynamic_primitive arg ) -> fstring;
 

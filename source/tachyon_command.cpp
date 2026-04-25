@@ -104,6 +104,12 @@ namespace tyon
         command_print_q( code );
     }
 
+    PROC command_reset_history_state() -> void
+    {
+        g_command->history_search_mode = false;
+        g_command->history_position = 0;
+    }
+
     PROC command_read_console() -> void
     {
         PROFILE_SCOPE_FUNCTION();
@@ -147,7 +153,51 @@ namespace tyon
             bool enter_command_mode = ( ! g_command->console_input_mode &&
                                        (input_raw.back() == '\r' ||
                                        input_raw.back() == '\n'));
-            if (exit_command_mode)
+            // Windows specific thing
+            // It seems with virtual processing mode it should work with VT codes on both Windows too.
+            u8 magic_ansi_arrow = 224;
+            i32 input_raw_tail = input_raw.size() -1;
+            // Arrow keys are a 2 part char so we need to check for the leading char first
+            // VT code version, uses |escape, [, letter|
+            bool arrow_escape = (input_raw.size() >= 3 && (
+                                     (input_raw[ input_raw_tail -2 ] == e_ascii::escape) &&
+                                     (input_raw[ input_raw_tail -1 ] == e_ascii::l_square_bracket)));
+            static_assert( e_ascii::escape == 27);
+            bool arrow_up = (arrow_escape && input[ input_raw_tail ] == 'A');
+            bool arrow_down = (arrow_escape && input[ input_raw_tail ] == 'B');
+            bool arrow_left = (arrow_escape && input[ input_raw_tail ] == 'D');
+            bool arrow_right = (arrow_escape && input[ input_raw_tail ] == 'C');
+
+            bool history_search_previous = (arrow_up && g_command->console_input_mode);
+
+            if (history_search_previous)
+            {
+                if (g_command->history_search_mode == false)
+                {
+                    g_command->history_search_mode = true;
+                }
+                else
+                {
+                    ++g_command->history_position;
+                }
+
+                i64 history_size = g_command->command_history.size();
+                bool reset_history_position = (g_command->history_position >= history_size);
+                if (reset_history_position)
+                {   g_command->history_position = 0;
+                }
+                i64 history_index = (history_size - 1 - g_command->history_position);
+                string& previous_command = g_command->command_history[ history_index ].unprocessed;
+
+                // Update both line contents to be the history item
+                g_command->line_contents_raw = fstring(previous_command);
+                g_command->line_contents = fstring(previous_command);
+                // Strip arrow chars
+                i64 input_size = input.size();
+                input.resize( clamp_range_i64( 0, input_size, input_size - 3 ) );
+                input_raw.resize( clamp_range_i64( 0, input_size, input_size - 3 ) );
+            }
+            else if (exit_command_mode)
             {
                 // Go back to non-input mode
                 g_command->console_input_mode = false;
@@ -157,6 +207,7 @@ namespace tyon
 
                 input.clear();
                 input_raw.clear();
+                command_reset_history_state();
                 command_print_q( "\n------------------------------\n" );
                 command_print_q( "Exiting Command Mode\n" );
                 return;
@@ -207,6 +258,8 @@ namespace tyon
                 input_raw.clear();
 
                 // NOTE: We used to exit command mode but it's more useful to stay in command mode
+                // Reset history position state too
+                command_reset_history_state();
             }
 
         // Normalize non-raw input before doing anything else
@@ -252,13 +305,16 @@ namespace tyon
         command_submitted x_submit;
         for (i64 i=0; i < i_limit; ++i)
         {
-            TYON_LOG( "Processing comman", i );
+            // TYON_LOG( "Processing command index:", i );
             x_submit = {};
             x_command = g_command->command_string_queue[i];
             x_split = x_command;
             x_split = x_split.split_whitespace();
 
-            x_submit.unprocessed = x_split;
+            x_submit.unprocessed = x_command;
+            bool empty_command = (x_split.parts.size() == 0);
+            if (empty_command)
+            {   continue; }
             // TODO: read each string part and figure out what type of input it is
             auto command_s = entity_search_name_array(
                 &g_command->command_list, x_split.parts[0].data );
@@ -298,7 +354,8 @@ namespace tyon
                     default: break;
                 }
             }
-            // TYON_LOGF( "Command Processed: {}", x_split.parts[0].data );
+            TYON_LOGF( "Command Processed: {}", x_split.parts[0].data );
+            g_command->command_history.push_tail( x_submit );
         }
 
         // We can clear this list now
