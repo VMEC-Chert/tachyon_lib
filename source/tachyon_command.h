@@ -54,7 +54,7 @@ namespace tyon
         fstring name;
         string description;
         array<fstring> aliases;
-        generic_procedure<void()> on_trigger;
+        generic_procedure<void( command* )> on_trigger;
         command_property property;
 
         // State
@@ -105,7 +105,7 @@ namespace tyon
 
     PROC command_add( command* arg ) -> uid;
 
-    PROC command_list_commands() -> void;
+    PROC command_list_commands( command* arg ) -> void;
 
     PROC command_ansi_control( ansi_control type, i32 arg = 0 ) -> void;
 

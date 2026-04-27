@@ -37,7 +37,6 @@ namespace tyon
             .name = "log_debug_break",
             .description = "break on error",
             .aliases = { "help" },
-            .on_trigger = command_list_commands,
             .property { .value_type = e_primitive::integer_ },
         };
         g_command->c_log_debug_break = command_add( &command_2 );
@@ -56,7 +55,7 @@ namespace tyon
         return arg->id;
     }
 
-    PROC command_list_commands() -> void
+    PROC command_list_commands( command* arg ) -> void
     {
         i64 i_limit = g_command->command_list.size();
         // Log it twice because it needs to go to stdout too
@@ -169,8 +168,10 @@ namespace tyon
             bool arrow_right = (arrow_escape && input[ input_raw_tail ] == 'C');
 
             bool history_search_previous = (arrow_up && g_command->console_input_mode);
+            // NOTE: Don't even bother trying if history is empty
+            bool history_empty = (g_command->command_history.size() < 1);
 
-            if (history_search_previous)
+            if (history_search_previous && history_empty == false)
             {
                 if (g_command->history_search_mode == false)
                 {
@@ -326,7 +327,7 @@ namespace tyon
                 switch (cmd->type)
                 {
                     case e_command::execute:
-                    {   cmd->on_trigger(); break; }
+                    {   cmd->on_trigger( cmd ); break; }
                     case e_command::property:
                     {
                         bool get_value = (x_split.parts.size() < 2);
@@ -349,6 +350,7 @@ namespace tyon
                             cmd->property.value = dynamic_primitive_from_string(
                                 cmd->property.value_type, x_value );
                         }
+                        cmd->on_trigger( cmd );
                         break;
                     }
                     default: break;

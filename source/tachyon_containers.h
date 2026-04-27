@@ -957,6 +957,9 @@ struct string
     i64 size_ = 0;
     array< dynamic_span<t_char> > parts;
 
+    // TODO: We will have to do hashing for each individual at some point (performance optimization).
+    // minihash hash;
+
     COPY_CONSTRUCTOR string() = default;
     COPY_CONSTRUCTOR string( const t_self& arg );
     COPY_CONSTRUCTOR string( fstring& arg );
