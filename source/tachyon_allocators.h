@@ -4,6 +4,26 @@
 namespace tyon
 {
 
+/** Temporary change the thread local allocator and restore it at end of scope.
+
+    Can be chained within the same scopeo. */
+struct push_allocator
+{
+    i_allocator* previous_allocator = nullptr;
+
+    /** Only set it if passed a valid allocator */
+    inline CONSTRUCTOR push_allocator( i_allocator* arg )
+    {
+        previous_allocator = g_allocator;
+        if (arg != nullptr)
+        {   g_allocator = arg; }
+    }
+
+    /** Restore the allocator */
+    inline DESTRUCTOR ~push_allocator()
+    {   g_allocator = previous_allocator; }
+};
+
 struct heap_entry
 {
     raw_pointer data;
@@ -34,6 +54,11 @@ struct memory_heap_allocator final : i_allocator
     /** Clear all stored allocations and zero memory */
     PROC blank_all() -> void override;
     PROC get_memory_statistics() -> allocator_info override;
+};
+
+/** Special global thread-shared allocator */
+struct memory_root_allocator
+{
 };
 
 struct memory_system_allocator : i_allocator

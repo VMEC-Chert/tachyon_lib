@@ -162,6 +162,7 @@ namespace tyon
     using fresult = bool;
 
     FORWARD struct memory_stack_allocator;
+    FORWARD struct i_allocator;
     FORWARD struct null_type;
     FORWARD struct raw_pointer;
     FORWARD struct uid;
@@ -221,8 +222,10 @@ namespace tyon
     TYON_API extern tyon::time_monotonic g_program_epoch;
     TYON_API extern bool g_little_endian;
     TYON_API extern i32 g_log_largest_category;
-    TYON_API extern memory_stack_allocator* g_allocator;
+    TYON_API extern memory_stack_allocator* g_root_allocator;
+    TYON_API extern thread_local i_allocator* g_allocator;
     TYON_API extern memory_stack_allocator* g_taint_allocator;
+    /** Root allocator lock */
     TYON_API extern std::mutex* g_allocator_lock;
     TYON_API extern std::mutex g_taint_allocator_lock;
     constexpr isize memory_default_block_size = 268'435'456;
@@ -625,6 +628,7 @@ namespace tyon
     {
         if (count <= 0) { return nullptr; }
         std::scoped_lock lock( *g_allocator_lock );
+        // TODO: Remove this lock and move it to a seperate global allocator
         return g_allocator->allocate<T>( count );
     }
 

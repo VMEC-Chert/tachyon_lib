@@ -36,6 +36,8 @@ PROC thread_fence::open() -> void
 PROC thread_self_init( thread_options options ) -> fresult
 {
     TYON_LOGF( "Initializing new thread '{}'", options.name );
+    // Bind to root allocator before starting
+    g_allocator = g_root_allocator;
     g_thread = memory_allocate<thread_context>( 1 );
     g_thread->options = options;
     // Initialize ID

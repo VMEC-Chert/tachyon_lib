@@ -12,7 +12,8 @@ namespace tyon
     time_monotonic g_program_epoch = time_now();
     bool g_little_endian = true;
     i32 g_log_largest_category = 0;
-    memory_stack_allocator* g_allocator = nullptr;
+    memory_stack_allocator* g_root_allocator = nullptr;
+    thread_local i_allocator* g_allocator = nullptr;
     memory_stack_allocator* g_taint_allocator;
     std::mutex* g_allocator_lock = nullptr;
     std::mutex g_taint_allocator_lock = {};
@@ -823,6 +824,7 @@ namespace tyon
         }
         g_library = arg;
         g_program_epoch = time_now();
+        g_root_allocator = &arg->global_allocator;
         g_allocator = &arg->global_allocator;
         g_allocator_lock = &arg->global_allocator_lock;
         // g_taint_allocator_lock = &arg->taint_allocator_lock;
