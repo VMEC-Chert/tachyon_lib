@@ -2270,6 +2270,9 @@ namespace tyon
 
     PROC log_error_result( fstring message, bool error ) -> void;
 
+    constexpr bool bool_flip( bool& arg )
+    {   return (arg = !arg); }
+
 }
 
 // -- String Formatters --
