@@ -326,18 +326,18 @@ namespace tyon
         array<T> entities;
     };
 
+    /** NOTE: I wanted create the uuid on init but honestly it creates
+        incoherent and sloppy logic if we do. All uids should just always be
+        valid.  We can use some other mechanism for inactive entities.  Likely
+        simply just "bool active" for most entities, but they can manage it
+        themselves.
+    */
     template <typename T>
-    PROC entity_search_id_array( array<T>* context, uid id ) -> search_result<T>
+    PROC entity_allocate( entity_list<T>* context ) -> T*
     {
-        return context->linear_search( [id]( T& arg ) {
-            return arg.id == id; });
-    }
-
-    template <typename T>
-    PROC entity_search_name_array( array<T>* context, fstring name ) -> search_result<T>
-    {
-        return context->linear_search( [&name]( T& arg ) {
-            return arg.name == name; });
+        T* result = &context->entities.push_tail({});
+        result->id = uuid_generate();
+        return result;
     }
 
     template <typename T>
@@ -357,5 +357,20 @@ namespace tyon
         return context->entities.linear_search( [name]( T& arg ) {
             return arg.name == name; });
     }
+
+    template <typename T>
+    PROC entity_search_id_array( array<T>* context, uid id ) -> search_result<T>
+    {
+        return context->linear_search( [id]( T& arg ) {
+            return arg.id == id; });
+    }
+
+    template <typename T>
+    PROC entity_search_name_array( array<T>* context, fstring name ) -> search_result<T>
+    {
+        return context->linear_search( [&name]( T& arg ) {
+            return arg.name == name; });
+    }
+
 
 }
