@@ -830,7 +830,6 @@ namespace tyon
         // g_taint_allocator_lock = &arg->taint_allocator_lock;
         g_logger = &arg->default_logger;
         g_switch_logger = &arg->switch_logger;
-        g_entity = &arg->entity;
 
         // Canonicalize and log filename so its static and never changes with working directory
         // NOTE: Throws error when file doesn't exist yet so we use directories instead
@@ -849,7 +848,6 @@ namespace tyon
 
         // Mandatory subsystems
         platform_init();
-        entity_type_register<file>();
 
         // Init optional sub-systems
         asset_machinery_init();
