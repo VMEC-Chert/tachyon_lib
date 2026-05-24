@@ -23,6 +23,23 @@ namespace tyon
 
 
 
+        // Dual Numbers
+        TYON_CUDA_SHARED
+        CONSTRUCTOR d32::d32() : real(0.0f), dual(0.0f) {}
+        TYON_CUDA_SHARED
+        CONSTRUCTOR d32::d32( f32 arg ) : real(arg), dual(0.0f) {}
+        TYON_CUDA_SHARED
+        CONSTRUCTOR d32::d32( f32 arg_real, f32 arg_dual ) : real(arg_real), dual(arg_dual) {}
+
+        TYON_CUDA_SHARED
+        CONSTRUCTOR d64::d64() : real(0.0), dual(0.0) {}
+        TYON_CUDA_SHARED
+        CONSTRUCTOR d64::d64( f64 arg ) : real(arg), dual(0.0) {}
+        TYON_CUDA_SHARED
+        CONSTRUCTOR d64::d64( f64 arg_real, f64 arg_dual ) : real(arg_real), dual(arg_dual) {}
+
+
+
         // Vectors 
         TYON_CUDA_SHARED
         CONSTRUCTOR v2_f32::v2_f32() : x(0.0f), y(0.0f) {}
@@ -244,6 +261,175 @@ namespace tyon
                 result.real = -z0.real;
                 result.imag = z0.imag;
                 return result;
+            }
+
+
+
+        // Dual numbers
+            TYON_CUDA_SHARED
+            PROC operator+(const d32& a, const d32& b) -> d32
+            {
+                return d32(a.real + b.real, a.dual + b.dual);
+            }
+
+            TYON_CUDA_SHARED
+            PROC operator+(const d64& a, const d64& b) -> d64
+            {
+                return d64(a.real + b.real, a.dual + b.dual);
+            }
+
+            TYON_CUDA_SHARED
+            PROC operator+(const d32& a, const f32& s) -> d32
+            {
+                d32 s_prime = d32(s);
+                return a+s;
+            }
+
+            TYON_CUDA_SHARED
+            PROC operator+(const f32& s, const d32& a) -> d32
+            {
+                d32 s_prime = d32(s);
+                return s+a;
+            }
+
+            TYON_CUDA_SHARED
+            PROC operator+(const d64& a, const f64& s) -> d64
+            {
+                d64 s_prime = d64(s);
+                return a+s;
+            }
+
+            TYON_CUDA_SHARED
+            PROC operator+(const f64& s, const d64& a) -> d64
+            {
+                d64 s_prime = d64(s);
+                return s+a;
+            }
+
+            // Subtraction
+            TYON_CUDA_SHARED
+            PROC operator-(const d32& a, const d32& b) -> d32
+            {
+                return d32(a.real - b.real, a.dual - b.dual);
+            }
+
+            TYON_CUDA_SHARED
+            PROC operator-(const d64& a, const d64& b) -> d64
+            {
+                return d64(a.real - b.real, a.dual - b.dual);
+            }
+
+            TYON_CUDA_SHARED
+            PROC operator-(const d32& a, const f32& s) -> d32
+            {
+                d32 s_prime = d32(s);
+                return a+s;
+            }
+
+            TYON_CUDA_SHARED
+            PROC operator-(const f32& s, const d32& a) -> d32
+            {
+                d64 s_prime = d64(s);
+                return s+a;
+            }
+
+            TYON_CUDA_SHARED
+            PROC operator-(const d64& a, const f64& s) -> d64
+            {
+                d64 s_prime = d64(s);
+                return a+s;
+            }
+
+            TYON_CUDA_SHARED
+            PROC operator-(const f64& s, const d64& a) -> d64
+            {
+                d64 s_prime = d64(s);
+                return s+a;
+            }
+
+            // Multiplication
+            TYON_CUDA_SHARED
+            PROC operator*(const d32& a, const d32& b) -> d32
+            {
+                return d32(a.real * b.real,
+                           a.real * b.dual + a.dual * b.real);
+            }
+
+            TYON_CUDA_SHARED
+            PROC operator*(const d64& a, const d64& b) -> d64
+            {
+                return d64(a.real * b.real,
+                           a.real * b.dual + a.dual * b.real);
+            }
+
+            TYON_CUDA_SHARED
+            PROC operator*(const d32& a, const f32& s) -> d32
+            {
+                d32 s_prime = d32(s);
+                return a*s_prime;
+            }
+
+            TYON_CUDA_SHARED
+            PROC operator*(const d64& a, const f64& s) -> d64
+            {
+                d64 s_prime = d64(s);
+                return a*s_prime;
+            }
+
+            // Division
+            TYON_CUDA_SHARED
+            PROC operator/(const d32& a, const d32& b) -> d32
+            {
+                return d32( a.real / b.real, 
+                          (a.dual * b.real - a.real * b.dual) / (b.real * b.real));
+            }
+
+            TYON_CUDA_SHARED
+            PROC operator/(const d64& a, const d64& b) -> d64
+            {
+                return d64(a.real / b.real, 
+                          (a.dual * b.real - a.real * b.dual) / (b.real * b.real));
+            }
+
+            TYON_CUDA_SHARED
+            PROC operator/(const d32& a, const f32& s) -> d32
+            {
+                d32 s_prime = d32(s);
+                return a/s;
+            }
+
+            TYON_CUDA_SHARED
+            PROC operator/(const d64& a, const f64& s) -> d64
+            {
+                d64 s_prime = d64(s);
+                return a/s;
+            }
+
+            TYON_CUDA_SHARED
+            PROC operator/(const f32& s, const d32& a) -> d32
+            {
+                d32 s_prime = d32(s);
+                return s/a;
+            }
+
+            TYON_CUDA_SHARED
+            PROC operator/(const f64& s, const d64& a) -> d64
+            {
+                d64 s_prime = d64(s);
+                return s/a;
+            }
+
+            // Inverse
+            TYON_CUDA_SHARED
+            PROC operator-(const d32& a) -> d32
+            {
+                return d32(-a.real, -a.dual);
+            }
+
+            TYON_CUDA_SHARED
+            PROC operator-(const d64& a) -> d64
+            {
+                return d64(-a.real, -a.dual);
             }
 
 
@@ -1840,8 +2026,6 @@ namespace tyon
             return c32(x2, y2);
         }
 
-
-
         TYON_CUDA_SHARED
         PROC square_root(const c64& z) -> c64
         {
@@ -1870,6 +2054,20 @@ namespace tyon
             return c64(x2, y2);
         }
 
+        TYON_CUDA_SHARED
+        PROC square_root(const d32& a) -> d32
+        {
+            f32 sqrt_real = tyon::square_root(a.real);
+            return d32(sqrt_real, 0.5f * a.dual / sqrt_real);
+        }
+
+        TYON_CUDA_SHARED
+        PROC square_root(const d64& a) -> d64
+        {
+            f64 sqrt_real = tyon::square_root(a.real);
+            return d64( sqrt_real, 0.5 * a.dual / sqrt_real );
+        }
+
 
 
         // Exponential
@@ -1883,6 +2081,20 @@ namespace tyon
         PROC power(const f64& base, const f64& exponent) -> f64
         {
             return std::pow(base, exponent);
+        }
+
+        TYON_CUDA_SHARED
+        PROC power(const d32& base, const f32& exponent) -> d32
+        {
+            return d32( tyon::power(base.real, exponent), 
+                        exponent*base.dual * tyon::power(base.real, exponent - 1.0f) );
+        }
+
+        TYON_CUDA_SHARED 
+        PROC power(const d64& base, const f64& exponent) -> d64
+        {
+            return d64( tyon::power(base.real, exponent), 
+                        exponent*base.dual * tyon::power(base.real, exponent - 1.0) );
         }
 
         TYON_CUDA_SHARED

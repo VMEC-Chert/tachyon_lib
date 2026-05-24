@@ -37,6 +37,35 @@ namespace tyon
 
 
 
+        // Dual Numbers
+        struct d32
+        {
+            f32 real;
+            f32 dual;
+
+            TYON_CUDA_SHARED
+            CONSTRUCTOR d32();
+            TYON_CUDA_SHARED
+            CONSTRUCTOR d32( f32 arg );
+            TYON_CUDA_SHARED
+            CONSTRUCTOR d32( f32 arg_real, f32 arg_dual );
+        };
+
+        struct d64
+        {
+            f64 real;
+            f64 dual;
+
+            TYON_CUDA_SHARED
+            CONSTRUCTOR d64();
+            TYON_CUDA_SHARED
+            CONSTRUCTOR d64( f64 arg );
+            TYON_CUDA_SHARED
+            CONSTRUCTOR d64( f64 arg_real, f64 arg_dual );
+        };
+
+
+
         // Vectors 
         struct v2_f32
         {
@@ -300,6 +329,86 @@ namespace tyon
 
             TYON_CUDA_SHARED
             PROC operator-(const c64& z0) -> c64;
+
+
+
+        // Dual numbers
+            // Addition
+            TYON_CUDA_SHARED
+            PROC operator+(const d32& a, const d32& b) -> d32;
+
+            TYON_CUDA_SHARED
+            PROC operator+(const d64& a, const d64& b) -> d64;
+
+            TYON_CUDA_SHARED
+            PROC operator+(const d32& a, const f32& s) -> d32;
+
+            TYON_CUDA_SHARED
+            PROC operator+(const f32& s, const d32& a) -> d32;
+
+            TYON_CUDA_SHARED
+            PROC operator+(const d64& a, const f64& s) -> d64;
+
+            TYON_CUDA_SHARED
+            PROC operator+(const f64& s, const d64& a) -> d64;
+
+            // Subtraction
+            TYON_CUDA_SHARED
+            PROC operator-(const d32& a, const d32& b) -> d32;
+
+            TYON_CUDA_SHARED
+            PROC operator-(const d64& a, const d64& b) -> d64;
+
+            TYON_CUDA_SHARED
+            PROC operator-(const d32& a, const f32& s) -> d32;
+
+            TYON_CUDA_SHARED
+            PROC operator-(const f32& s, const d32& a) -> d32;
+
+            TYON_CUDA_SHARED
+            PROC operator-(const d64& a, const f64& s) -> d64;
+
+            TYON_CUDA_SHARED
+            PROC operator-(const f64& s, const d64& a) -> d64;
+
+            // Multiplication
+            TYON_CUDA_SHARED
+            PROC operator*(const d32& a, const d32& b) -> d32;
+
+            TYON_CUDA_SHARED
+            PROC operator*(const d64& a, const d64& b) -> d64;
+
+            TYON_CUDA_SHARED
+            PROC operator*(const d32& a, const f32& s) -> d32;
+
+            TYON_CUDA_SHARED
+            PROC operator*(const d64& a, const f64& s) -> d64;
+
+            // Division
+            TYON_CUDA_SHARED
+            PROC operator/(const d32& a, const d32& b) -> d32;
+
+            TYON_CUDA_SHARED
+            PROC operator/(const d64& a, const d64& b) -> d64;
+
+            TYON_CUDA_SHARED
+            PROC operator/(const d32& a, const f32& s) -> d32;
+
+            TYON_CUDA_SHARED
+            PROC operator/(const d64& a, const f64& s) -> d64;
+
+            TYON_CUDA_SHARED
+            PROC operator/(const f32& s, const d32& a) -> d32;
+
+            TYON_CUDA_SHARED
+            PROC operator/(const f64& s, const d64& a) -> d64;
+
+            // Inverse
+            TYON_CUDA_SHARED
+            PROC operator-(const d32& a) -> d32;
+
+            TYON_CUDA_SHARED
+            PROC operator-(const d64& a) -> d64;
 
 
 
@@ -723,6 +832,12 @@ namespace tyon
         TYON_CUDA_SHARED
         PROC square_root(const c64& z) -> c64;
 
+        TYON_CUDA_SHARED
+        PROC square_root(const d32& a) -> d32;
+
+        TYON_CUDA_SHARED
+        PROC square_root(const d64& a) -> d64;
+
 
 
         // Exponential
@@ -731,6 +846,12 @@ namespace tyon
 
         TYON_CUDA_SHARED 
         PROC power(const f64& base, const f64& exponent) -> f64;
+
+        TYON_CUDA_SHARED
+        PROC power(const d32& base, const f32& exponent) -> d32;
+
+        TYON_CUDA_SHARED 
+        PROC power(const d64& base, const f64& exponent) -> d64;
 
         TYON_CUDA_SHARED
         PROC exponential(const f32& exponent) -> f32;
