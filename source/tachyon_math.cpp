@@ -158,7 +158,7 @@ namespace tyon
         // Complex Numbers
             // Addition
             TYON_CUDA_SHARED
-            PROC operator+(const c32& z0, const c32& z1) -> c32
+            PROC operator+(const c32 z0, const c32 z1) -> c32
             {
                 c32 result;
                 result.real = z0.real + z1.real;
@@ -167,7 +167,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator+(const c64& z0, const c64& z1) -> c64
+            PROC operator+(const c64 z0, const c64 z1) -> c64
             {
                 c64 result;
                 result.real = z0.real + z1.real;
@@ -177,7 +177,7 @@ namespace tyon
 
             // Subtraction
             TYON_CUDA_SHARED
-            PROC operator-(const c32& z0, const c32& z1) -> c32
+            PROC operator-(const c32 z0, const c32 z1) -> c32
             {
                 c32 result;
                 result.real = z0.real - z1.real;
@@ -186,7 +186,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const c64& z0, const c64& z1) -> c64
+            PROC operator-(const c64 z0, const c64 z1) -> c64
             {
                 c64 result;
                 result.real = z0.real - z1.real;
@@ -196,7 +196,7 @@ namespace tyon
 
             // Multiplication
             TYON_CUDA_SHARED
-            PROC operator*(const c32& z0, const c32& z1) -> c32
+            PROC operator*(const c32 z0, const c32 z1) -> c32
             {
                 c32 result;
                 result.real = (z0.real * z1.real) - (z0.imag * z1.imag);
@@ -205,7 +205,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const c64& z0, const c64& z1) -> c64
+            PROC operator*(const c64 z0, const c64 z1) -> c64
             {
                 c64 result;
                 result.real = (z0.real * z1.real) - (z0.imag * z1.imag);
@@ -214,20 +214,20 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const c32& z0, const f32& s0) -> c32
+            PROC operator*(const c32 z0, const f32 s0) -> c32
             {
                 return c32{z0.real * s0, z0.real * s0};
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const c64& z0, const f64& s0) -> c64
+            PROC operator*(const c64 z0, const f64 s0) -> c64
             {
                 return c64{z0.real * s0, z0.real * s0};
             }
 
             // Division
             TYON_CUDA_SHARED
-            PROC operator/(const c32& z0, const c32& z1) -> c32
+            PROC operator/(const c32 z0, const c32 z1) -> c32
             {
                 c32 result;
                 result.real = ((z0.real * z1.real) + (z0.imag * z1.imag)) / ((z1.real * z1.real) + (z1.imag * z1.imag));
@@ -236,7 +236,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator/(const c64& z0, const c64& z1) -> c64
+            PROC operator/(const c64 z0, const c64 z1) -> c64
             {
                 c64 result;
                 result.real = ((z0.real * z1.real) + (z0.imag * z1.imag)) / ((z1.real * z1.real) + (z1.imag * z1.imag));
@@ -246,7 +246,7 @@ namespace tyon
 
             // Inverse
             TYON_CUDA_SHARED
-            PROC operator-(const c32& z0) -> c32
+            PROC operator-(const c32 z0) -> c32
             {
                 c32 result;
                 result.real = -z0.real;
@@ -255,7 +255,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const c64& z0) -> c64
+            PROC operator-(const c64 z0) -> c64
             {
                 c64 result;
                 result.real = -z0.real;
@@ -266,82 +266,82 @@ namespace tyon
 
 
         // Dual numbers
-            TYON_CUDA_SHARED
-            PROC operator+(const d32& a, const d32& b) -> d32
+            /*TYON_CUDA_SHARED
+            PROC operator+(const d32 a, const d32 b) -> d32
             {
                 return d32(a.real + b.real, a.dual + b.dual);
             }
 
             TYON_CUDA_SHARED
-            PROC operator+(const d64& a, const d64& b) -> d64
+            PROC operator+(const d64 a, const d64 b) -> d64
             {
                 return d64(a.real + b.real, a.dual + b.dual);
-            }
+            }*/
 
             TYON_CUDA_SHARED
-            PROC operator+(const d32& a, const f32& s) -> d32
+            PROC operator+(const d32 a, const f32 s) -> d32
             {
                 d32 s_prime = d32(s);
                 return a+s;
             }
 
             TYON_CUDA_SHARED
-            PROC operator+(const f32& s, const d32& a) -> d32
+            PROC operator+(const f32 s, const d32 a) -> d32
             {
                 d32 s_prime = d32(s);
                 return s+a;
             }
 
             TYON_CUDA_SHARED
-            PROC operator+(const d64& a, const f64& s) -> d64
+            PROC operator+(const d64 a, const f64 s) -> d64
             {
                 d64 s_prime = d64(s);
                 return a+s;
             }
 
             TYON_CUDA_SHARED
-            PROC operator+(const f64& s, const d64& a) -> d64
+            PROC operator+(const f64 s, const d64 a) -> d64
             {
                 d64 s_prime = d64(s);
                 return s+a;
             }
 
             // Subtraction
-            TYON_CUDA_SHARED
-            PROC operator-(const d32& a, const d32& b) -> d32
+            /*TYON_CUDA_SHARED
+            PROC operator-(const d32 a, const d32 b) -> d32
             {
                 return d32(a.real - b.real, a.dual - b.dual);
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const d64& a, const d64& b) -> d64
+            PROC operator-(const d64 a, const d64 b) -> d64
             {
                 return d64(a.real - b.real, a.dual - b.dual);
-            }
+            }*/
 
             TYON_CUDA_SHARED
-            PROC operator-(const d32& a, const f32& s) -> d32
+            PROC operator-(const d32 a, const f32 s) -> d32
             {
                 d32 s_prime = d32(s);
                 return a+s;
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const f32& s, const d32& a) -> d32
+            PROC operator-(const f32 s, const d32 a) -> d32
             {
                 d64 s_prime = d64(s);
                 return s+a;
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const d64& a, const f64& s) -> d64
+            PROC operator-(const d64 a, const f64 s) -> d64
             {
                 d64 s_prime = d64(s);
                 return a+s;
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const f64& s, const d64& a) -> d64
+            PROC operator-(const f64 s, const d64 a) -> d64
             {
                 d64 s_prime = d64(s);
                 return s+a;
@@ -349,28 +349,29 @@ namespace tyon
 
             // Multiplication
             TYON_CUDA_SHARED
-            PROC operator*(const d32& a, const d32& b) -> d32
+            PROC operator*(const d32 a, const d32 b) -> d32
             {
-                return d32(a.real * b.real,
-                           a.real * b.dual + a.dual * b.real);
+                return d32(
+                        a.real * b.real,
+                        std::fmaf(a.real, b.dual, a.dual * b.real)
+                    );
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const d64& a, const d64& b) -> d64
+            PROC operator*(const d64 a, const d64 b) -> d64
             {
                 return d64(a.real * b.real,
                            a.real * b.dual + a.dual * b.real);
             }
 
-            TYON_CUDA_SHARED
-            PROC operator*(const d32& a, const f32& s) -> d32
+            TYON_CUDA_SHARED 
+            PROC operator*(const d32 a, const f32 s) -> d32
             {
-                d32 s_prime = d32(s);
-                return a*s_prime;
+                return d32(a.real * s, a.dual * s);
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const d64& a, const f64& s) -> d64
+            PROC operator*(const d64 a, const f64 s) -> d64
             {
                 d64 s_prime = d64(s);
                 return a*s_prime;
@@ -378,42 +379,42 @@ namespace tyon
 
             // Division
             TYON_CUDA_SHARED
-            PROC operator/(const d32& a, const d32& b) -> d32
+            PROC operator/(const d32 a, const d32 b) -> d32
             {
                 return d32( a.real / b.real, 
                           (a.dual * b.real - a.real * b.dual) / (b.real * b.real));
             }
 
             TYON_CUDA_SHARED
-            PROC operator/(const d64& a, const d64& b) -> d64
+            PROC operator/(const d64 a, const d64 b) -> d64
             {
                 return d64(a.real / b.real, 
                           (a.dual * b.real - a.real * b.dual) / (b.real * b.real));
             }
 
             TYON_CUDA_SHARED
-            PROC operator/(const d32& a, const f32& s) -> d32
+            PROC operator/(const d32 a, const f32 s) -> d32
             {
                 d32 s_prime = d32(s);
                 return a/s;
             }
 
             TYON_CUDA_SHARED
-            PROC operator/(const d64& a, const f64& s) -> d64
+            PROC operator/(const d64 a, const f64 s) -> d64
             {
                 d64 s_prime = d64(s);
                 return a/s;
             }
 
             TYON_CUDA_SHARED
-            PROC operator/(const f32& s, const d32& a) -> d32
+            PROC operator/(const f32 s, const d32 a) -> d32
             {
                 d32 s_prime = d32(s);
                 return s/a;
             }
 
             TYON_CUDA_SHARED
-            PROC operator/(const f64& s, const d64& a) -> d64
+            PROC operator/(const f64 s, const d64 a) -> d64
             {
                 d64 s_prime = d64(s);
                 return s/a;
@@ -421,13 +422,13 @@ namespace tyon
 
             // Inverse
             TYON_CUDA_SHARED
-            PROC operator-(const d32& a) -> d32
+            PROC operator-(const d32 a) -> d32
             {
                 return d32(-a.real, -a.dual);
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const d64& a) -> d64
+            PROC operator-(const d64 a) -> d64
             {
                 return d64(-a.real, -a.dual);
             }
@@ -437,7 +438,7 @@ namespace tyon
         // Vector-Vector
             // Addition
             TYON_CUDA_SHARED
-            PROC operator+(const v2_f32& v0, const v2_f32& v1) -> v2_f32
+            PROC operator+(const v2_f32 v0, const v2_f32 v1) -> v2_f32
             {
                 v2_f32 result;
                 result.x = v0.x + v1.x;
@@ -446,7 +447,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator+(const v2_f64& v0, const v2_f64& v1) -> v2_f64
+            PROC operator+(const v2_f64 v0, const v2_f64 v1) -> v2_f64
             {
                 v2_f64 result;
                 result.x = v0.x + v1.x;
@@ -455,7 +456,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator+(const v3_f32& v0, const v3_f32& v1) -> v3_f32
+            PROC operator+(const v3_f32 v0, const v3_f32 v1) -> v3_f32
             {
                 v3_f32 result;
                 result.x = v0.x + v1.x;
@@ -465,7 +466,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator+(const v3_f64& v0, const v3_f64& v1) -> v3_f64
+            PROC operator+(const v3_f64 v0, const v3_f64 v1) -> v3_f64
             {
                 v3_f64 result;
                 result.x = v0.x + v1.x;
@@ -475,30 +476,30 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator+(const v4_f32& v0, const v4_f32& v1) -> v4_f32
+            PROC operator+(const v4_f32 v0, const v4_f32 v1) -> v4_f32
             {
                 v4_f32 result;
                 result.x = v0.x + v1.x;
                 result.y = v0.y + v1.y;
                 result.z = v0.z + v1.z;
-                result.z = v0.w + v1.w;
+                result.w = v0.w + v1.w;
                 return result;
             }
 
             TYON_CUDA_SHARED
-            PROC operator+(const v4_f64& v0, const v4_f64& v1) -> v4_f64
+            PROC operator+(const v4_f64 v0, const v4_f64 v1) -> v4_f64
             {
                 v4_f64 result;
                 result.x = v0.x + v1.x;
                 result.y = v0.y + v1.y;
                 result.z = v0.z + v1.z;
-                result.z = v0.w + v1.w;
+                result.w = v0.w + v1.w;
                 return result;
             }
 
             // Subtraction
             TYON_CUDA_SHARED
-            PROC operator-(const v2_f32& v0, const v2_f32& v1) -> v2_f32
+            PROC operator-(const v2_f32 v0, const v2_f32 v1) -> v2_f32
             {
                 v2_f32 result;
                 result.x = v0.x - v1.x;
@@ -507,7 +508,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const v2_f64& v0, const v2_f64& v1) -> v2_f64
+            PROC operator-(const v2_f64 v0, const v2_f64 v1) -> v2_f64
             {
                 v2_f64 result;
                 result.x = v0.x - v1.x;
@@ -516,7 +517,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const v3_f32& v0, const v3_f32& v1) -> v3_f32
+            PROC operator-(const v3_f32 v0, const v3_f32 v1) -> v3_f32
             {
                 v3_f32 result;
                 result.x = v0.x - v1.x;
@@ -526,7 +527,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const v3_f64& v0, const v3_f64& v1) -> v3_f64
+            PROC operator-(const v3_f64 v0, const v3_f64 v1) -> v3_f64
             {
                 v3_f64 result;
                 result.x = v0.x - v1.x;
@@ -536,30 +537,30 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const v4_f32& v0, const v4_f32& v1) -> v4_f32
+            PROC operator-(const v4_f32 v0, const v4_f32 v1) -> v4_f32
             {
                 v4_f32 result;
                 result.x = v0.x - v1.x;
                 result.y = v0.y - v1.y;
                 result.z = v0.z - v1.z;
-                result.z = v0.w - v1.w;
+                result.w = v0.w - v1.w;
                 return result;
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const v4_f64& v0, const v4_f64& v1) -> v4_f64
+            PROC operator-(const v4_f64 v0, const v4_f64 v1) -> v4_f64
             {
                 v4_f64 result;
                 result.x = v0.x - v1.x;
                 result.y = v0.y - v1.y;
                 result.z = v0.z - v1.z;
-                result.z = v0.w - v1.w;
+                result.w = v0.w - v1.w;
                 return result;
             }
 
             // Multiplication
             TYON_CUDA_SHARED
-            PROC operator*(const v2_f32& v0, const v2_f32& v1) -> v2_f32
+            PROC operator*(const v2_f32 v0, const v2_f32 v1) -> v2_f32
             {
                 v2_f32 result;
                 result.x = v0.x * v1.x;
@@ -568,7 +569,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const v2_f64& v0, const v2_f64& v1) -> v2_f64
+            PROC operator*(const v2_f64 v0, const v2_f64 v1) -> v2_f64
             {
                 v2_f64 result;
                 result.x = v0.x * v1.x;
@@ -577,7 +578,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const v3_f32& v0, const v3_f32& v1) -> v3_f32
+            PROC operator*(const v3_f32 v0, const v3_f32 v1) -> v3_f32
             {
                 v3_f32 result;
                 result.x = v0.x * v1.x;
@@ -587,7 +588,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const v3_f64& v0, const v3_f64& v1) -> v3_f64
+            PROC operator*(const v3_f64 v0, const v3_f64 v1) -> v3_f64
             {
                 v3_f64 result;
                 result.x = v0.x * v1.x;
@@ -597,30 +598,30 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const v4_f32& v0, const v4_f32& v1) -> v4_f32
+            PROC operator*(const v4_f32 v0, const v4_f32 v1) -> v4_f32
             {
                 v4_f32 result;
                 result.x = v0.x * v1.x;
                 result.y = v0.y * v1.y;
                 result.z = v0.z * v1.z;
-                result.z = v0.w * v1.w;
+                result.w = v0.w * v1.w;
                 return result;
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const v4_f64& v0, const v4_f64& v1) -> v4_f64
+            PROC operator*(const v4_f64 v0, const v4_f64 v1) -> v4_f64
             {
                 v4_f64 result;
                 result.x = v0.x * v1.x;
                 result.y = v0.y * v1.y;
                 result.z = v0.z * v1.z;
-                result.z = v0.w * v1.w;
+                result.w = v0.w * v1.w;
                 return result;
             }
 
             // Division
             TYON_CUDA_SHARED
-            PROC operator/(const v2_f32& v0, const v2_f32& v1) -> v2_f32
+            PROC operator/(const v2_f32 v0, const v2_f32 v1) -> v2_f32
             {
                 v2_f32 result;
                 result.x = v0.x / v1.x;
@@ -629,7 +630,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator/(const v2_f64& v0, const v2_f64& v1) -> v2_f64
+            PROC operator/(const v2_f64 v0, const v2_f64 v1) -> v2_f64
             {
                 v2_f64 result;
                 result.x = v0.x / v1.x;
@@ -638,7 +639,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator/(const v3_f32& v0, const v3_f32& v1) -> v3_f32
+            PROC operator/(const v3_f32 v0, const v3_f32 v1) -> v3_f32
             {
                 v3_f32 result;
                 result.x = v0.x / v1.x;
@@ -648,7 +649,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator/(const v3_f64& v0, const v3_f64& v1) -> v3_f64
+            PROC operator/(const v3_f64 v0, const v3_f64 v1) -> v3_f64
             {
                 v3_f64 result;
                 result.x = v0.x / v1.x;
@@ -658,60 +659,60 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator/(const v4_f32& v0, const v4_f32& v1) -> v4_f32
+            PROC operator/(const v4_f32 v0, const v4_f32 v1) -> v4_f32
             {
                 v4_f32 result;
                 result.x = v0.x / v1.x;
                 result.y = v0.y / v1.y;
                 result.z = v0.z / v1.z;
-                result.z = v0.w / v1.w;
+                result.w = v0.w / v1.w;
                 return result;
             }
 
             TYON_CUDA_SHARED
-            PROC operator/(const v4_f64& v0, const v4_f64& v1) -> v4_f64
+            PROC operator/(const v4_f64 v0, const v4_f64 v1) -> v4_f64
             {
                 v4_f64 result;
                 result.x = v0.x / v1.x;
                 result.y = v0.y / v1.y;
                 result.z = v0.z / v1.z;
-                result.z = v0.w / v1.w;
+                result.w = v0.w / v1.w;
                 return result;
             }
 
             // Inverse
             TYON_CUDA_SHARED
-            PROC operator-(const v2_f32& v) -> v2_f32
+            PROC operator-(const v2_f32 v) -> v2_f32
             {
                 return v2_f32(-v.x, -v.y);
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const v2_f64& v) -> v2_f64
+            PROC operator-(const v2_f64 v) -> v2_f64
             {
                 return v2_f64(-v.x, -v.y);
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const v3_f32& v) -> v3_f32
+            PROC operator-(const v3_f32 v) -> v3_f32
             {
                 return v3_f32(-v.x, -v.y, -v.z);
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const v3_f64& v) -> v3_f64
+            PROC operator-(const v3_f64 v) -> v3_f64
             {
                 return v3_f64(-v.x, -v.y, -v.z);
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const v4_f32& v) -> v4_f32
+            PROC operator-(const v4_f32 v) -> v4_f32
             {
                 return v4_f32(-v.x, -v.y, -v.z, -v.w);
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const v4_f64& v) -> v4_f64
+            PROC operator-(const v4_f64 v) -> v4_f64
             {
                 return v4_f64(-v.x, -v.y, -v.z, -v.w);
             }
@@ -721,146 +722,146 @@ namespace tyon
         // Vector-scalar
             // Multiplication
             TYON_CUDA_SHARED
-            PROC operator*(const v2_f32& v0, const f32 s0) -> v2_f32
+            PROC operator*(const v2_f32 v0, const f32 s0) -> v2_f32
             {
                 return v2_f32(v0.x * s0, v0.y * s0);
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const v2_f64& v0, const f64 s0) -> v2_f64
+            PROC operator*(const v2_f64 v0, const f64 s0) -> v2_f64
             {
                 return v2_f64(v0.x * s0, v0.y * s0);
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const f32 s0, const v2_f32& v0) -> v2_f32
+            PROC operator*(const f32 s0, const v2_f32 v0) -> v2_f32
             {
                 return v2_f32(v0.x * s0, v0.y * s0);
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const f64 s0, const v2_f64& v0) -> v2_f64
+            PROC operator*(const f64 s0, const v2_f64 v0) -> v2_f64
             {
                 return v2_f64(v0.x * s0, v0.y * s0);
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const v3_f32& v0, const f32 s0) -> v3_f32
+            PROC operator*(const v3_f32 v0, const f32 s0) -> v3_f32
             {
                 return v3_f32(v0.x * s0, v0.y * s0, v0.z * s0);
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const v3_f64& v0, const f64 s0) -> v3_f64
+            PROC operator*(const v3_f64 v0, const f64 s0) -> v3_f64
             {
                 return v3_f64(v0.x * s0, v0.y * s0, v0.z * s0);
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const f32 s0, const v3_f32& v0) -> v3_f32
+            PROC operator*(const f32 s0, const v3_f32 v0) -> v3_f32
             {
                 return v3_f32(v0.x * s0, v0.y * s0, v0.z * s0);
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const f64 s0, const v3_f64& v0) -> v3_f64
+            PROC operator*(const f64 s0, const v3_f64 v0) -> v3_f64
             {
                 return v3_f64(v0.x * s0, v0.y * s0, v0.z * s0);
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const v4_f32& v0, const f32 s0) -> v4_f32
+            PROC operator*(const v4_f32 v0, const f32 s0) -> v4_f32
             {
                 return v4_f32(v0.x * s0, v0.y * s0, v0.z * s0, v0.w * s0);
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const v4_f64& v0, const f64 s0) -> v4_f64
+            PROC operator*(const v4_f64 v0, const f64 s0) -> v4_f64
             {
                 return v4_f64(v0.x * s0, v0.y * s0, v0.z * s0, v0.w * s0);
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const f32 s0, const v4_f32& v0) -> v4_f32
+            PROC operator*(const f32 s0, const v4_f32 v0) -> v4_f32
             {
                 return v4_f32(v0.x * s0, v0.y * s0, v0.z * s0, v0.w * s0);
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const f64 s0, const v4_f64& v0) -> v4_f64
+            PROC operator*(const f64 s0, const v4_f64 v0) -> v4_f64
             {
                 return v4_f64(v0.x * s0, v0.y * s0, v0.z * s0, v0.w * s0);
             }
 
             // Division
             TYON_CUDA_SHARED
-            PROC operator/(const v2_f32& v0, const f32 s0) -> v2_f32
+            PROC operator/(const v2_f32 v0, const f32 s0) -> v2_f32
             {
                 return v2_f32(v0.x / s0, v0.y / s0);
             }
 
             TYON_CUDA_SHARED
-            PROC operator/(const v2_f64& v0, const f64 s0) -> v2_f64
+            PROC operator/(const v2_f64 v0, const f64 s0) -> v2_f64
             {
                 return v2_f64(v0.x / s0, v0.y / s0);
             }
 
             TYON_CUDA_SHARED
-            PROC operator/(const f32 s0, const v2_f32& v0) -> v2_f32
+            PROC operator/(const f32 s0, const v2_f32 v0) -> v2_f32
             {
                 return v2_f32(s0 / v0.x, s0 / v0.y);
             }
 
             TYON_CUDA_SHARED
-            PROC operator/(const f64 s0, const v2_f64& v0) -> v2_f64
+            PROC operator/(const f64 s0, const v2_f64 v0) -> v2_f64
             {
                 return v2_f64(s0 / v0.x, s0 / v0.y);
             }
 
             TYON_CUDA_SHARED
-            PROC operator/(const v3_f32& v0, const f32 s0) -> v3_f32
+            PROC operator/(const v3_f32 v0, const f32 s0) -> v3_f32
             {
                 return v3_f32(v0.x / s0, v0.y / s0, v0.z / s0);
             }
 
             TYON_CUDA_SHARED
-            PROC operator/(const v3_f64& v0, const f64 s0) -> v3_f64
+            PROC operator/(const v3_f64 v0, const f64 s0) -> v3_f64
             {
                 return v3_f64(v0.x / s0, v0.y / s0, v0.z / s0);
             }
 
             TYON_CUDA_SHARED
-            PROC operator/(const f32 s0, const v3_f32& v0) -> v3_f32
+            PROC operator/(const f32 s0, const v3_f32 v0) -> v3_f32
             {
                 return v3_f32(s0 / v0.x, s0 / v0.y, s0 / v0.z);
             }
 
             TYON_CUDA_SHARED
-            PROC operator/(const f64 s0, const v3_f64& v0) -> v3_f64
+            PROC operator/(const f64 s0, const v3_f64 v0) -> v3_f64
             {
                 return v3_f64(s0 / v0.x, s0 / v0.y, s0 / v0.z);
             }
 
             TYON_CUDA_SHARED
-            PROC operator/(const v4_f32& v0, const f32 s0) -> v4_f32
+            PROC operator/(const v4_f32 v0, const f32 s0) -> v4_f32
             {
                 return v4_f32(v0.x / s0, v0.y / s0, v0.z / s0, v0.w / s0);
             }
 
             TYON_CUDA_SHARED
-            PROC operator/(const v4_f64& v0, const f64 s0) -> v4_f64
+            PROC operator/(const v4_f64 v0, const f64 s0) -> v4_f64
             {
                 return v4_f64(v0.x / s0, v0.y / s0, v0.z / s0, v0.w / s0);
             }
 
             TYON_CUDA_SHARED
-            PROC operator/(const f32 s0, const v4_f32& v0) -> v4_f32
+            PROC operator/(const f32 s0, const v4_f32 v0) -> v4_f32
             {
                 return v4_f32(s0 / v0.x, s0 / v0.y, s0 / v0.z, s0 / v0.w);
             }
 
             TYON_CUDA_SHARED
-            PROC operator/(const f64 s0, const v4_f64& v0) -> v4_f64
+            PROC operator/(const f64 s0, const v4_f64 v0) -> v4_f64
             {
                 return v4_f64(s0 / v0.x, s0 / v0.y, s0 / v0.z, s0 / v0.w);
             }
@@ -869,10 +870,10 @@ namespace tyon
 
         // Vector-Matrix
             TYON_CUDA_SHARED
-            PROC operator*(const v2_f32& v0, const matrix2_f32& m0) -> v2_f32;
+            PROC operator*(const v2_f32 v0, const matrix2_f32 m0) -> v2_f32;
 
             TYON_CUDA_SHARED
-            PROC operator*(const matrix2_f32& m0, const v2_f32& v0) -> v2_f32
+            PROC operator*(const matrix2_f32 m0, const v2_f32 v0) -> v2_f32
             {
                 v2_f32 result;
                 result.x = m0.m11 * v0.x + m0.m12 * v0.y;
@@ -881,10 +882,10 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const v2_f64& v0, const matrix2_f64& m0) -> v2_f64;
+            PROC operator*(const v2_f64 v0, const matrix2_f64 m0) -> v2_f64;
 
             TYON_CUDA_SHARED
-            PROC operator*(const matrix2_f64& m0, const v2_f64& v0) -> v2_f64
+            PROC operator*(const matrix2_f64 m0, const v2_f64 v0) -> v2_f64
             {
                 v2_f64 result;
                 result.x = m0.m11 * v0.x + m0.m12 * v0.y;
@@ -893,10 +894,10 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const v3_f32& v0, const matrix3_f32& m0) -> v3_f32;
+            PROC operator*(const v3_f32 v0, const matrix3_f32 m0) -> v3_f32;
 
             TYON_CUDA_SHARED
-            PROC operator*(const matrix3_f32& m0, const v3_f32& v0) -> v3_f32
+            PROC operator*(const matrix3_f32 m0, const v3_f32 v0) -> v3_f32
             {
                 v3_f32 result;
                 result.x = m0.m11 * v0.x + m0.m12 * v0.y + m0.m13 * v0.z;
@@ -906,10 +907,10 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const v3_f64& v0, const matrix3_f64& m0) -> v3_f64;
+            PROC operator*(const v3_f64 v0, const matrix3_f64 m0) -> v3_f64;
 
             TYON_CUDA_SHARED
-            PROC operator*(const matrix3_f64& m0, const v3_f64& v0) -> v3_f64
+            PROC operator*(const matrix3_f64 m0, const v3_f64 v0) -> v3_f64
             {
                 v3_f64 result;
                 result.x = m0.m11 * v0.x + m0.m12 * v0.y + m0.m13 * v0.z;
@@ -919,10 +920,10 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const v4_f32& v0, const matrix4_f32& m0) -> v4_f32;
+            PROC operator*(const v4_f32 v0, const matrix4_f32 m0) -> v4_f32;
 
             TYON_CUDA_SHARED
-            PROC operator*(const matrix4_f32& m0, const v4_f32& v0) -> v4_f32
+            PROC operator*(const matrix4_f32 m0, const v4_f32 v0) -> v4_f32
             {
                 v4_f32 result;
                 result.x = m0.m11 * v0.x + m0.m12 * v0.y + m0.m13 * v0.z + m0.m14 * v0.w;
@@ -933,10 +934,10 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const v4_f64& v0, const matrix4_f64& m0) -> v4_f64;
+            PROC operator*(const v4_f64 v0, const matrix4_f64 m0) -> v4_f64;
 
             TYON_CUDA_SHARED
-            PROC operator*(const matrix4_f64& m0, const v4_f64& v0) -> v4_f64
+            PROC operator*(const matrix4_f64 m0, const v4_f64 v0) -> v4_f64
             {
                 v4_f64 result;
                 result.x = m0.m11 * v0.x + m0.m12 * v0.y + m0.m13 * v0.z + m0.m14 * v0.w;
@@ -951,7 +952,7 @@ namespace tyon
         // Matrices
             // Matrix Addition
             TYON_CUDA_SHARED
-            PROC operator+(const matrix2_f32& m0, const matrix2_f32& m1) -> matrix2_f32
+            PROC operator+(const matrix2_f32 m0, const matrix2_f32 m1) -> matrix2_f32
             {
                 matrix2_f32 result;
                 result.m11 = m0.m11 + m1.m11;
@@ -963,7 +964,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator+(const matrix2_f64& m0, const matrix2_f64& m1) -> matrix2_f64
+            PROC operator+(const matrix2_f64 m0, const matrix2_f64 m1) -> matrix2_f64
             {
                 matrix2_f64 result;
                 result.m11 = m0.m11 + m1.m11;
@@ -975,7 +976,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator+(const matrix3_f32& m0, const matrix3_f32& m1) -> matrix3_f32
+            PROC operator+(const matrix3_f32 m0, const matrix3_f32 m1) -> matrix3_f32
             {
                 matrix3_f32 result;
                 result.m11 = m0.m11 + m1.m11;
@@ -993,7 +994,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator+(const matrix3_f64& m0, const matrix3_f64& m1) -> matrix3_f64
+            PROC operator+(const matrix3_f64 m0, const matrix3_f64 m1) -> matrix3_f64
             {
                 matrix3_f64 result;
                 result.m11 = m0.m11 + m1.m11;
@@ -1011,7 +1012,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator+(const matrix4_f32& m0, const matrix4_f32& m1) -> matrix4_f32
+            PROC operator+(const matrix4_f32 m0, const matrix4_f32 m1) -> matrix4_f32
             {
                 matrix4_f32 result;
                 result.m11 = m0.m11 + m1.m11;
@@ -1037,7 +1038,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator+(const matrix4_f64& m0, const matrix4_f64& m1) -> matrix4_f64
+            PROC operator+(const matrix4_f64 m0, const matrix4_f64 m1) -> matrix4_f64
             {
                 matrix4_f64 result;
                 result.m11 = m0.m11 + m1.m11;
@@ -1064,7 +1065,7 @@ namespace tyon
 
             // Scalar Addition
             TYON_CUDA_SHARED
-            PROC operator+(const matrix2_f32& m0, const f32& s0) -> matrix2_f32
+            PROC operator+(const matrix2_f32 m0, const f32 s0) -> matrix2_f32
             {
                 matrix2_f32 result;
                 result.m11 = m0.m11 + s0;
@@ -1075,7 +1076,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator+(const f32& s0, const matrix2_f32& m0) -> matrix2_f32
+            PROC operator+(const f32 s0, const matrix2_f32 m0) -> matrix2_f32
             {
                 matrix2_f32 result;
                 result.m11 = s0 + m0.m11;
@@ -1086,7 +1087,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator+(const matrix2_f64& m0, const f64& s0) -> matrix2_f64
+            PROC operator+(const matrix2_f64 m0, const f64 s0) -> matrix2_f64
             {
                 matrix2_f64 result;
                 result.m11 = m0.m11 + s0;
@@ -1097,7 +1098,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator+(const f64& s0, const matrix2_f64& m0) -> matrix2_f64
+            PROC operator+(const f64 s0, const matrix2_f64 m0) -> matrix2_f64
             {
                 matrix2_f64 result;
                 result.m11 = s0 + m0.m11;
@@ -1108,7 +1109,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator+(const matrix3_f32& m0, const f32& s0) -> matrix3_f32
+            PROC operator+(const matrix3_f32 m0, const f32 s0) -> matrix3_f32
             {
                 matrix3_f32 result;
                 result.m11 = m0.m11 + s0;
@@ -1126,7 +1127,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator+(const f32& s0, const matrix3_f32& m0) -> matrix3_f32
+            PROC operator+(const f32 s0, const matrix3_f32 m0) -> matrix3_f32
             {
                 matrix3_f32 result;
                 result.m11 = s0 + m0.m11;
@@ -1144,7 +1145,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator+(const matrix3_f64& m0, const f64& s0) -> matrix3_f64
+            PROC operator+(const matrix3_f64 m0, const f64 s0) -> matrix3_f64
             {
                 matrix3_f64 result;
                 result.m11 = m0.m11 + s0;
@@ -1162,7 +1163,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator+(const f32& s0, const matrix3_f64& m0) -> matrix3_f64
+            PROC operator+(const f32 s0, const matrix3_f64 m0) -> matrix3_f64
             {
                 matrix3_f64 result;
                 result.m11 = s0 + m0.m11;
@@ -1180,7 +1181,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator+(const matrix4_f32& m0, const f32& s0) -> matrix4_f32
+            PROC operator+(const matrix4_f32 m0, const f32 s0) -> matrix4_f32
             {
                 matrix4_f32 result;
                 result.m11 = m0.m11 + s0;
@@ -1206,7 +1207,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator+(const f32& s0, const matrix4_f32& m0) -> matrix4_f32
+            PROC operator+(const f32 s0, const matrix4_f32 m0) -> matrix4_f32
             {
                 matrix4_f32 result;
                 result.m11 = s0 + m0.m11;
@@ -1232,7 +1233,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator+(const matrix4_f64& m0, const f64& s0) -> matrix4_f64
+            PROC operator+(const matrix4_f64 m0, const f64 s0) -> matrix4_f64
             {
                 matrix4_f64 result;
                 result.m11 = m0.m11 + s0;
@@ -1258,7 +1259,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator+(const f32& s0, const matrix4_f64& m0) -> matrix4_f64
+            PROC operator+(const f32 s0, const matrix4_f64 m0) -> matrix4_f64
             {
                 matrix4_f64 result;
                 result.m11 = s0 + m0.m11;
@@ -1285,7 +1286,7 @@ namespace tyon
 
             // Matrix Subtraction
             TYON_CUDA_SHARED
-            PROC operator-(const matrix2_f32& m0, const matrix2_f32& m1) -> matrix2_f32
+            PROC operator-(const matrix2_f32 m0, const matrix2_f32 m1) -> matrix2_f32
             {
                 matrix2_f32 result;
                 result.m11 = m0.m11 - m1.m11;
@@ -1297,7 +1298,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const matrix2_f64& m0, const matrix2_f64& m1) -> matrix2_f64
+            PROC operator-(const matrix2_f64 m0, const matrix2_f64 m1) -> matrix2_f64
             {
                 matrix2_f64 result;
                 result.m11 = m0.m11 - m1.m11;
@@ -1309,7 +1310,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const matrix3_f32& m0, const matrix3_f32& m1) -> matrix3_f32
+            PROC operator-(const matrix3_f32 m0, const matrix3_f32 m1) -> matrix3_f32
             {
                 matrix3_f32 result;
                 result.m11 = m0.m11 - m1.m11;
@@ -1327,7 +1328,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const matrix3_f64& m0, const matrix3_f64& m1) -> matrix3_f64
+            PROC operator-(const matrix3_f64 m0, const matrix3_f64 m1) -> matrix3_f64
             {
                 matrix3_f64 result;
                 result.m11 = m0.m11 - m1.m11;
@@ -1345,7 +1346,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const matrix4_f32& m0, const matrix4_f32& m1) -> matrix4_f32
+            PROC operator-(const matrix4_f32 m0, const matrix4_f32 m1) -> matrix4_f32
             {
                 matrix4_f32 result;
                 result.m11 = m0.m11 - m1.m11;
@@ -1371,7 +1372,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const matrix4_f64& m0, const matrix4_f64& m1) -> matrix4_f64
+            PROC operator-(const matrix4_f64 m0, const matrix4_f64 m1) -> matrix4_f64
             {
                 matrix4_f64 result;
                 result.m11 = m0.m11 - m1.m11;
@@ -1398,7 +1399,7 @@ namespace tyon
 
             // Scalar Subtraction 
             TYON_CUDA_SHARED
-            PROC operator-(const matrix2_f32& m0, const f32& s0) -> matrix2_f32
+            PROC operator-(const matrix2_f32 m0, const f32 s0) -> matrix2_f32
             {
                 matrix2_f32 result;
                 result.m11 = m0.m11 - s0;
@@ -1409,7 +1410,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const f32& s0, const matrix2_f32& m0) -> matrix2_f32
+            PROC operator-(const f32 s0, const matrix2_f32 m0) -> matrix2_f32
             {
                 matrix2_f32 result;
                 result.m11 = s0 - m0.m11;
@@ -1420,7 +1421,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const matrix2_f64& m0, const f64& s0) -> matrix2_f64
+            PROC operator-(const matrix2_f64 m0, const f64 s0) -> matrix2_f64
             {
                 matrix2_f64 result;
                 result.m11 = m0.m11 - s0;
@@ -1431,7 +1432,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const f64& s0, const matrix2_f64& m0) -> matrix2_f64
+            PROC operator-(const f64 s0, const matrix2_f64 m0) -> matrix2_f64
             {
                 matrix2_f64 result;
                 result.m11 = s0 - m0.m11;
@@ -1442,7 +1443,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const matrix3_f32& m0, const f32& s0) -> matrix3_f32
+            PROC operator-(const matrix3_f32 m0, const f32 s0) -> matrix3_f32
             {
                 matrix3_f32 result;
                 result.m11 = m0.m11 - s0;
@@ -1460,7 +1461,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const f32& s0, const matrix3_f32& m0) -> matrix3_f32
+            PROC operator-(const f32 s0, const matrix3_f32 m0) -> matrix3_f32
             {
                 matrix3_f32 result;
                 result.m11 = s0 - m0.m11;
@@ -1478,7 +1479,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const matrix3_f64& m0, const f64& s0) -> matrix3_f64
+            PROC operator-(const matrix3_f64 m0, const f64 s0) -> matrix3_f64
             {
                 matrix3_f64 result;
                 result.m11 = m0.m11 - s0;
@@ -1496,7 +1497,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const f32& s0, const matrix3_f64& m0) -> matrix3_f64
+            PROC operator-(const f32 s0, const matrix3_f64 m0) -> matrix3_f64
             {
                 matrix3_f64 result;
                 result.m11 = s0 - m0.m11;
@@ -1514,7 +1515,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const matrix4_f32& m0, const f32& s0) -> matrix4_f32
+            PROC operator-(const matrix4_f32 m0, const f32 s0) -> matrix4_f32
             {
                 matrix4_f32 result;
                 result.m11 = m0.m11 - s0;
@@ -1540,7 +1541,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const f32& s0, const matrix4_f32& m0) -> matrix4_f32
+            PROC operator-(const f32 s0, const matrix4_f32 m0) -> matrix4_f32
             {
                 matrix4_f32 result;
                 result.m11 = s0 - m0.m11;
@@ -1566,7 +1567,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const matrix4_f64& m0, const f64& s0) -> matrix4_f64
+            PROC operator-(const matrix4_f64 m0, const f64 s0) -> matrix4_f64
             {
                 matrix4_f64 result;
                 result.m11 = m0.m11 - s0;
@@ -1592,7 +1593,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator-(const f32& s0, const matrix4_f64& m0) -> matrix4_f64
+            PROC operator-(const f32 s0, const matrix4_f64 m0) -> matrix4_f64
             {
                 matrix4_f64 result;
                 result.m11 = s0 - m0.m11;
@@ -1619,7 +1620,7 @@ namespace tyon
 
             // Matrix Multiplication
             TYON_CUDA_SHARED
-            PROC operator*(const matrix2_f32& m0, const matrix2_f32& m1) -> matrix2_f32
+            PROC operator*(const matrix2_f32 m0, const matrix2_f32 m1) -> matrix2_f32
             {
                 matrix2_f32 result;
                 result.m11 = m0.m11 * m1.m11 + m0.m12 * m1.m21;
@@ -1630,7 +1631,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const matrix2_f64& m0, const matrix2_f64& m1) -> matrix2_f64
+            PROC operator*(const matrix2_f64 m0, const matrix2_f64 m1) -> matrix2_f64
             {
                 matrix2_f64 result;
                 result.m11 = m0.m11 * m1.m11 + m0.m12 * m1.m21;
@@ -1641,7 +1642,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const matrix3_f32& m0, const matrix3_f32& m1) -> matrix3_f32
+            PROC operator*(const matrix3_f32 m0, const matrix3_f32 m1) -> matrix3_f32
             {
                 matrix3_f32 result;
                 result.m11 = m0.m11 * m1.m11 + m0.m12 * m1.m21 + m0.m13 * m1.m31;
@@ -1657,7 +1658,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const matrix3_f64& m0, const matrix3_f64& m1) -> matrix3_f64
+            PROC operator*(const matrix3_f64 m0, const matrix3_f64 m1) -> matrix3_f64
             {
                 matrix3_f64 result;
                 result.m11 = m0.m11 * m1.m11 + m0.m12 * m1.m21 + m0.m13 * m1.m31;
@@ -1673,7 +1674,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const matrix4_f32& m0, const matrix4_f32& m1) -> matrix4_f32
+            PROC operator*(const matrix4_f32 m0, const matrix4_f32 m1) -> matrix4_f32
             {
                 matrix4_f32 result;
                 result.m11 = m0.m11 * m1.m11 + m0.m12 * m1.m21 + m0.m13 * m1.m31 + m0.m14 * m1.m41;
@@ -1696,7 +1697,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const matrix4_f64& m0, const matrix4_f64& m1) -> matrix4_f64
+            PROC operator*(const matrix4_f64 m0, const matrix4_f64 m1) -> matrix4_f64
             {
                 matrix4_f64 result;
                 result.m11 = m0.m11 * m1.m11 + m0.m12 * m1.m21 + m0.m13 * m1.m31 + m0.m14 * m1.m41;
@@ -1720,7 +1721,7 @@ namespace tyon
 
             // Scalar Multiplication
             TYON_CUDA_SHARED
-            PROC operator*(const matrix2_f32& m0, const f32& s0) -> matrix2_f32
+            PROC operator*(const matrix2_f32 m0, const f32 s0) -> matrix2_f32
             {
                 matrix2_f32 result;
                 result.m11 = m0.m11 * s0;
@@ -1732,7 +1733,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const f32& s0, const matrix2_f32& m0) -> matrix2_f32
+            PROC operator*(const f32 s0, const matrix2_f32 m0) -> matrix2_f32
             {
                 matrix2_f32 result;
                 result.m11 = m0.m11 * s0;
@@ -1744,7 +1745,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const matrix2_f64& m0, const f64& s0) -> matrix2_f64
+            PROC operator*(const matrix2_f64 m0, const f64 s0) -> matrix2_f64
             {
                 matrix2_f64 result;
                 result.m11 = m0.m11 * s0;
@@ -1756,7 +1757,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const f64& s0, const matrix2_f64& m0) -> matrix2_f64
+            PROC operator*(const f64 s0, const matrix2_f64 m0) -> matrix2_f64
             {
                 matrix2_f64 result;
                 result.m11 = m0.m11 * s0;
@@ -1768,7 +1769,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const matrix3_f32& m0, const f32& s0) -> matrix3_f32
+            PROC operator*(const matrix3_f32 m0, const f32 s0) -> matrix3_f32
             {
                 matrix3_f32 result;
                 result.m11 = m0.m11 * s0;
@@ -1786,7 +1787,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const f32& s0, const matrix3_f32& m0) -> matrix3_f32
+            PROC operator*(const f32 s0, const matrix3_f32 m0) -> matrix3_f32
             {
                 matrix3_f32 result;
                 result.m11 = m0.m11 * s0;
@@ -1804,7 +1805,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const matrix3_f64& m0, const f64& s0) -> matrix3_f64
+            PROC operator*(const matrix3_f64 m0, const f64 s0) -> matrix3_f64
             {
                 matrix3_f64 result;
                 result.m11 = m0.m11 * s0;
@@ -1822,7 +1823,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const f32& s0, const matrix3_f64& m0) -> matrix3_f64
+            PROC operator*(const f32 s0, const matrix3_f64 m0) -> matrix3_f64
             {
                 matrix3_f64 result;
                 result.m11 = m0.m11 * s0;
@@ -1840,7 +1841,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const matrix4_f32& m0, const f32& s0) -> matrix4_f32
+            PROC operator*(const matrix4_f32 m0, const f32 s0) -> matrix4_f32
             {
                 matrix4_f32 result;
                 result.m11 = m0.m11 * s0;
@@ -1866,7 +1867,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const f32& s0, const matrix4_f32& m0) -> matrix4_f32
+            PROC operator*(const f32 s0, const matrix4_f32 m0) -> matrix4_f32
             {
                 matrix4_f32 result;
                 result.m11 = m0.m11 * s0;
@@ -1892,7 +1893,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const matrix4_f64& m0, const f64& s0) -> matrix4_f64
+            PROC operator*(const matrix4_f64 m0, const f64 s0) -> matrix4_f64
             {
                 matrix4_f64 result;
                 result.m11 = m0.m11 * s0;
@@ -1918,7 +1919,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC operator*(const f32& s0, const matrix4_f64& m0) -> matrix4_f64
+            PROC operator*(const f32 s0, const matrix4_f64 m0) -> matrix4_f64
             {
                 matrix4_f64 result;
                 result.m11 = m0.m11 * s0;
@@ -1948,37 +1949,37 @@ namespace tyon
     /** Functions */
         // Complex Numbers
         TYON_CUDA_SHARED
-        PROC complex_conjugate(const c32& z) -> c32
+        PROC complex_conjugate(const c32 z) -> c32
         {
             return c32(z.real, -z.imag);
         }
 
         TYON_CUDA_SHARED
-        PROC complex_conjugate(const c64& z) -> c64
+        PROC complex_conjugate(const c64 z) -> c64
         {
             return c64(z.real, -z.imag);
         }
 
         TYON_CUDA_SHARED
-        PROC complex_modulus(const c32& z) -> f32
+        PROC complex_modulus(const c32 z) -> f32
         {
             return square_root( z.real * z.real + z.imag * z.imag );
         }
 
         TYON_CUDA_SHARED
-        PROC complex_modulus(const c64& z) -> f64
+        PROC complex_modulus(const c64 z) -> f64
         {
             return square_root( z.real * z.real + z.imag * z.imag );
         }
 
         TYON_CUDA_SHARED
-        PROC complex_arg(const c32& z) -> f32
+        PROC complex_arg(const c32 z) -> f32
         {
             return arctan2(z.imag, z.real);
         }
 
         TYON_CUDA_SHARED
-        PROC complex_arg(const c64& z) -> f64
+        PROC complex_arg(const c64 z) -> f64
         {
             return arctan2(z.imag, z.real);
         }
@@ -1987,19 +1988,19 @@ namespace tyon
 
         // Square root
         TYON_CUDA_SHARED
-        PROC square_root(const f32& a) -> f32
+        PROC square_root(const f32 a) -> f32
         {
             return std::sqrtf(a);
         }
 
         TYON_CUDA_SHARED
-        PROC square_root(const f64& a) -> f64
+        PROC square_root(const f64 a) -> f64
         {
             return std::sqrt(a);
         }
 
         TYON_CUDA_SHARED
-        PROC square_root(const c32& z) -> c32
+        PROC square_root(const c32 z) -> c32
         {
             // Branch cut along the negative real axis to follow 
             // the std::sqrt(std::complex) implementation. 
@@ -2027,7 +2028,7 @@ namespace tyon
         }
 
         TYON_CUDA_SHARED
-        PROC square_root(const c64& z) -> c64
+        PROC square_root(const c64 z) -> c64
         {
             // Branch cut along the negative real axis to follow 
             // the std::sqrt(std::complex) implementation. 
@@ -2055,14 +2056,14 @@ namespace tyon
         }
 
         TYON_CUDA_SHARED
-        PROC square_root(const d32& a) -> d32
+        PROC square_root(const d32 a) -> d32
         {
             f32 sqrt_real = tyon::square_root(a.real);
             return d32(sqrt_real, 0.5f * a.dual / sqrt_real);
         }
 
         TYON_CUDA_SHARED
-        PROC square_root(const d64& a) -> d64
+        PROC square_root(const d64 a) -> d64
         {
             f64 sqrt_real = tyon::square_root(a.real);
             return d64( sqrt_real, 0.5 * a.dual / sqrt_real );
@@ -2072,39 +2073,39 @@ namespace tyon
 
         // Exponential
         TYON_CUDA_SHARED
-        PROC power(const f32& base, const f32& exponent) -> f32
+        PROC power(const f32 base, const f32 exponent) -> f32
         {
             return std::powf(base, exponent);
         }
 
         TYON_CUDA_SHARED
-        PROC power(const f64& base, const f64& exponent) -> f64
+        PROC power(const f64 base, const f64 exponent) -> f64
         {
             return std::pow(base, exponent);
         }
 
         TYON_CUDA_SHARED
-        PROC power(const d32& base, const f32& exponent) -> d32
+        PROC power(const d32 base, const f32 exponent) -> d32
         {
             return d32( tyon::power(base.real, exponent), 
                         exponent*base.dual * tyon::power(base.real, exponent - 1.0f) );
         }
 
         TYON_CUDA_SHARED 
-        PROC power(const d64& base, const f64& exponent) -> d64
+        PROC power(const d64 base, const f64 exponent) -> d64
         {
             return d64( tyon::power(base.real, exponent), 
                         exponent*base.dual * tyon::power(base.real, exponent - 1.0) );
         }
 
         TYON_CUDA_SHARED
-        PROC exponential(const f32& exponent) -> f32
+        PROC exponential(const f32 exponent) -> f32
         {
             return std::expf(exponent);
         }
 
         TYON_CUDA_SHARED
-        PROC exponential(const f64& exponent) -> f64
+        PROC exponential(const f64 exponent) -> f64
         {
             return std::exp(exponent);
         }
@@ -2113,85 +2114,85 @@ namespace tyon
 
         // Trigonometry
         TYON_CUDA_SHARED
-        PROC sinus(const f32& a) -> f32
+        PROC sinus(const f32 a) -> f32
         {
             return std::sinf(a);
         }
 
         TYON_CUDA_SHARED
-        PROC sinus(const f64& a) -> f64
+        PROC sinus(const f64 a) -> f64
         {
             return std::sin(a);
         }
 
         TYON_CUDA_SHARED
-        PROC cosinus(const f32& a) -> f32
+        PROC cosinus(const f32 a) -> f32
         {
             return std::cosf(a);
         }
 
         TYON_CUDA_SHARED
-        PROC cosinus(const f64& a) -> f64
+        PROC cosinus(const f64 a) -> f64
         {
             return std::cos(a);
         }
 
         TYON_CUDA_SHARED
-        PROC tangent(const f32& a) -> f32
+        PROC tangent(const f32 a) -> f32
         {
             return std::tanf(a);
         }
 
         TYON_CUDA_SHARED
-        PROC tangent(const f64& a) -> f64
+        PROC tangent(const f64 a) -> f64
         {
             return std::tan(a);
         }
 
         TYON_CUDA_SHARED
-        PROC arcsin(const f32& a) -> f32
+        PROC arcsin(const f32 a) -> f32
         {
             return std::asinf(a);
         }
 
         TYON_CUDA_SHARED
-        PROC arcsin(const f64& a) -> f64
+        PROC arcsin(const f64 a) -> f64
         {
             return std::asin(a);
         }
 
         TYON_CUDA_SHARED
-        PROC arccos(const f32& a) -> f32
+        PROC arccos(const f32 a) -> f32
         {
             return std::acosf(a);
         }
 
         TYON_CUDA_SHARED
-        PROC arccos(const f64& a) -> f64
+        PROC arccos(const f64 a) -> f64
         {
             return std::acos(a);
         }
 
         TYON_CUDA_SHARED
-        PROC arctan(const f32& a) -> f32
+        PROC arctan(const f32 a) -> f32
         {
             return atanf(a);
         }
 
         TYON_CUDA_SHARED
-        PROC arctan(const f64& a) -> f64
+        PROC arctan(const f64 a) -> f64
         {
             return atan(a);
         }
 
         TYON_CUDA_SHARED
-        PROC arctan2(const f32& x, const f32& y) -> f32
+        PROC arctan2(const f32 x, const f32 y) -> f32
         {
             return std::atan2f(x,y);
         }
 
         TYON_CUDA_SHARED
-        PROC arctan2(const f64& x, const f64& y) -> f64
+        PROC arctan2(const f64 x, const f64 y) -> f64
         {
             return std::atan2(x,y);
         }
@@ -2200,13 +2201,13 @@ namespace tyon
 
         // Logarithms
         TYON_CUDA_SHARED 
-        PROC natural_logarithm(const f32& x) -> f32
+        PROC natural_logarithm(const f32 x) -> f32
         {
             return std::logf(x);
         }
 
         TYON_CUDA_SHARED 
-        PROC natural_logarithm(const f64& x) -> f64
+        PROC natural_logarithm(const f64 x) -> f64
         {
             return std::log(x);
         }
@@ -2215,25 +2216,25 @@ namespace tyon
 
         // Probability
         TYON_CUDA_SHARED
-        PROC error_function(const f32& a) -> f32
+        PROC error_function(const f32 a) -> f32
         {
             return std::erff(a);
         }
 
         TYON_CUDA_SHARED
-        PROC error_function(const f64& a) -> f64
+        PROC error_function(const f64 a) -> f64
         {
             return std::erf(a);
         }
 
         TYON_CUDA_SHARED
-        PROC norm_gaussian_cdf(const f32& mean, const f32& x, const f32& standard_deviation) -> f32
+        PROC norm_gaussian_cdf(const f32 mean, const f32 x, const f32 standard_deviation) -> f32
         {
             return 0.5f * (1.0f + error_function((x - mean) / (standard_deviation * square_root(2.0f))));
         }
 
         TYON_CUDA_SHARED
-        PROC norm_gaussian_cdf(const f64& mean, const f64& x, const f64& standard_deviation) -> f64
+        PROC norm_gaussian_cdf(const f64 mean, const f64 x, const f64 standard_deviation) -> f64
         {
             return 0.5 * (1.0 + error_function((x - mean) / (standard_deviation * square_root(2.0))));
         }
@@ -2243,37 +2244,37 @@ namespace tyon
         // Vector
             // Dot Product
             TYON_CUDA_SHARED
-            PROC vector_dot_product(const v2_f32& v0, const v2_f32& v1) -> f32
+            PROC vector_dot_product(const v2_f32 v0, const v2_f32 v1) -> f32
             {
                 return v0.x * v1.x + v0.y * v1.y;
             }
 
             TYON_CUDA_SHARED
-            PROC vector_dot_product(const v2_f64& v0, const v2_f64& v1) -> f64
+            PROC vector_dot_product(const v2_f64 v0, const v2_f64 v1) -> f64
             {
                 return v0.x * v1.x + v0.y * v1.y;
             }
 
             TYON_CUDA_SHARED
-            PROC vector_dot_product(const v3_f32& v0, const v3_f32& v1) -> f32
+            PROC vector_dot_product(const v3_f32 v0, const v3_f32 v1) -> f32
             {
                 return v0.x * v1.x + v0.y * v1.y + v0.z * v1.z;
             }
 
             TYON_CUDA_SHARED
-            PROC vector_dot_product(const v3_f64& v0, const v3_f64& v1) -> f64
+            PROC vector_dot_product(const v3_f64 v0, const v3_f64 v1) -> f64
             {
                 return v0.x * v1.x + v0.y * v1.y + v0.z * v1.z;
             }
 
             TYON_CUDA_SHARED
-            PROC vector_dot_product(const v4_f32& v0, const v4_f32& v1) -> f32
+            PROC vector_dot_product(const v4_f32 v0, const v4_f32 v1) -> f32
             {
                 return v0.x * v1.x + v0.y * v1.y + v0.z * v1.z + v0.w * v1.w;
             }
 
             TYON_CUDA_SHARED
-            PROC vector_dot_product(const v4_f64& v0, const v4_f64& v1) -> f64
+            PROC vector_dot_product(const v4_f64 v0, const v4_f64 v1) -> f64
             {
                 return v0.x * v1.x + v0.y * v1.y + v0.z * v1.z + v0.w * v1.w;
             }
@@ -2282,14 +2283,14 @@ namespace tyon
 
             // Cross Product
             TYON_CUDA_SHARED
-            PROC vector_cross_product(const v3_f32& v0, const v3_f32& v1) -> v3_f32
+            PROC vector_cross_product(const v3_f32 v0, const v3_f32 v1) -> v3_f32
             {
                 return v3_f32( v0.y*v1.z - v0.z*v1.y , v0.z*v1.x - v0.x*v1.z , v0.x*v1.y - v0.y*v1.x );
 
             }
 
             TYON_CUDA_SHARED
-            PROC vector_cross_product(const v3_f64& v0, const v3_f64& v1) -> v3_f64
+            PROC vector_cross_product(const v3_f64 v0, const v3_f64 v1) -> v3_f64
             {
                 return v3_f64( v0.y*v1.z - v0.z*v1.y , v0.z*v1.x - v0.x*v1.z , v0.x*v1.y - v0.y*v1.x );
             }
@@ -2298,37 +2299,37 @@ namespace tyon
 
             // Angle of two normalized vectors
             TYON_CUDA_SHARED
-            PROC angle_radians(const v2_f32& v0, const v2_f32& v1) -> f32
+            PROC angle_radians(const v2_f32 v0, const v2_f32 v1) -> f32
             {
                 return arccos(vector_dot_product(v0, v1));
             }
 
             TYON_CUDA_SHARED
-            PROC angle_radians(const v2_f64& v0, const v2_f64& v1) -> f64
+            PROC angle_radians(const v2_f64 v0, const v2_f64 v1) -> f64
             {
                 return arccos(vector_dot_product(v0, v1));
             }
 
             TYON_CUDA_SHARED
-            PROC angle_radians(const v3_f32& v0, const v3_f32& v1) -> f32
+            PROC angle_radians(const v3_f32 v0, const v3_f32 v1) -> f32
             {
                 return arccos(vector_dot_product(v0, v1));
             }
 
             TYON_CUDA_SHARED
-            PROC angle_radians(const v3_f64& v0, const v3_f64& v1) -> f64
+            PROC angle_radians(const v3_f64 v0, const v3_f64 v1) -> f64
             {
                 return arccos(vector_dot_product(v0, v1));
             }
 
             TYON_CUDA_SHARED
-            PROC angle_radians(const v4_f32& v0, const v4_f32& v1) -> f32
+            PROC angle_radians(const v4_f32 v0, const v4_f32 v1) -> f32
             {
                 return arccos(vector_dot_product(v0, v1));
             }
 
             TYON_CUDA_SHARED
-            PROC angle_radians(const v4_f64& v0, const v4_f64& v1) -> f64
+            PROC angle_radians(const v4_f64 v0, const v4_f64 v1) -> f64
             {
                 return arccos(vector_dot_product(v0, v1));
             }
@@ -2337,37 +2338,37 @@ namespace tyon
 
             // Normalize
             TYON_CUDA_SHARED
-            PROC vector_normalize(const v2_f32& v0) -> v2_f32
+            PROC vector_normalize(const v2_f32 v0) -> v2_f32
             {
                 return v0 / vector_length(v0);
             }
 
             TYON_CUDA_SHARED
-            PROC vector_normalize(const v2_f64& v0) -> v2_f64
+            PROC vector_normalize(const v2_f64 v0) -> v2_f64
             {
                 return v0 / vector_length(v0);
             }
 
             TYON_CUDA_SHARED
-            PROC vector_normalize(const v3_f32& v0) -> v3_f32
+            PROC vector_normalize(const v3_f32 v0) -> v3_f32
             {
                 return v0 / vector_length(v0);
             }
 
             TYON_CUDA_SHARED
-            PROC vector_normalize(const v3_f64& v0) -> v3_f64
+            PROC vector_normalize(const v3_f64 v0) -> v3_f64
             {
                 return v0 / vector_length(v0);
             }
 
             TYON_CUDA_SHARED
-            PROC vector_normalize(const v4_f32& v0) -> v4_f32
+            PROC vector_normalize(const v4_f32 v0) -> v4_f32
             {
                 return v0 / vector_length(v0);
             }
 
             TYON_CUDA_SHARED
-            PROC vector_normalize(const v4_f64& v0) -> v4_f64
+            PROC vector_normalize(const v4_f64 v0) -> v4_f64
             {
                 return v0 / vector_length(v0);
             }
@@ -2376,37 +2377,37 @@ namespace tyon
 
             // Reflect
             TYON_CUDA_SHARED
-            PROC vector_reflect(const v2_f32& d, const v2_f32& n) -> v2_f32
+            PROC vector_reflect(const v2_f32 d, const v2_f32 n) -> v2_f32
             {
                 return (d - (2.0f * n * vector_dot_product(d, n)));
             }
 
             TYON_CUDA_SHARED
-            PROC vector_reflect(const v2_f64& d, const v2_f64& n) -> v2_f64
+            PROC vector_reflect(const v2_f64 d, const v2_f64 n) -> v2_f64
             {
                 return (d - (2.0 * n * vector_dot_product(d, n)));
             }
 
             TYON_CUDA_SHARED
-            PROC vector_reflect(const v3_f32& d, const v3_f32& n) -> v3_f32
+            PROC vector_reflect(const v3_f32 d, const v3_f32 n) -> v3_f32
             {
                 return (d - (2.0f * n * vector_dot_product(d, n)));
             }
 
             TYON_CUDA_SHARED
-            PROC vector_reflect(const v3_f64& d, const v3_f64& n) -> v3_f64
+            PROC vector_reflect(const v3_f64 d, const v3_f64 n) -> v3_f64
             {
                 return (d - (2.0 * n * vector_dot_product(d, n)));
             }
 
             TYON_CUDA_SHARED
-            PROC vector_reflect(const v4_f32& d, const v4_f32& n) -> v4_f32
+            PROC vector_reflect(const v4_f32 d, const v4_f32 n) -> v4_f32
             {
                 return (d - (2.0f * n * vector_dot_product(d, n)));
             }
 
             TYON_CUDA_SHARED
-            PROC vector_reflect(const v4_f64& d, const v4_f64& n) -> v4_f64
+            PROC vector_reflect(const v4_f64 d, const v4_f64 n) -> v4_f64
             {
                 return (d - (2.0 * n * vector_dot_product(d, n)));
             }
@@ -2415,7 +2416,7 @@ namespace tyon
 
             // Refract
             TYON_CUDA_SHARED
-            PROC vector_refract(const v2_f32& d, const v2_f32& n, const f32& eta_0, const f32& eta_1) -> v2_f32
+            PROC vector_refract(const v2_f32 d, const v2_f32 n, const f32 eta_0, const f32 eta_1) -> v2_f32
             {
                 f32 cos_theta_i = vector_dot_product(d, n);
                 f32 eta_relative = eta_0 / eta_1;
@@ -2424,7 +2425,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC vector_refract(const v2_f64& d, const v2_f64& n, const f64& eta_0, const f64& eta_1) -> v2_f64
+            PROC vector_refract(const v2_f64 d, const v2_f64 n, const f64 eta_0, const f64 eta_1) -> v2_f64
             {
                 f32 cos_theta_i = vector_dot_product(d, n);
                 f32 eta_relative = eta_0 / eta_1;
@@ -2433,7 +2434,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC vector_refract(const v3_f32& d, const v3_f32& n, const f32& eta_0, const f32& eta_1) -> v3_f32
+            PROC vector_refract(const v3_f32 d, const v3_f32 n, const f32 eta_0, const f32 eta_1) -> v3_f32
             {
                 f32 cos_theta_i = vector_dot_product(d, n);
                 f32 eta_relative = eta_0 / eta_1;
@@ -2442,7 +2443,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC vector_refract(const v3_f64& d, const v3_f64& n, const f64& eta_0, const f64& eta_1) -> v3_f64
+            PROC vector_refract(const v3_f64 d, const v3_f64 n, const f64 eta_0, const f64 eta_1) -> v3_f64
             {
                 f32 cos_theta_i = vector_dot_product(d, n);
                 f32 eta_relative = eta_0 / eta_1;
@@ -2451,7 +2452,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC vector_refract(const v4_f32& d, const v4_f32& n, const f32& eta_0, const f32& eta_1) -> v4_f32
+            PROC vector_refract(const v4_f32 d, const v4_f32 n, const f32 eta_0, const f32 eta_1) -> v4_f32
             {
                 f32 cos_theta_i = vector_dot_product(d, n);
                 f32 eta_relative = eta_0 / eta_1;
@@ -2460,7 +2461,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC vector_refract(const v4_f64& d, const v4_f64& n, const f64& eta_0, const f64& eta_1) -> v4_f64
+            PROC vector_refract(const v4_f64 d, const v4_f64 n, const f64 eta_0, const f64 eta_1) -> v4_f64
             {
                 f32 cos_theta_i = vector_dot_product(d, n);
                 f32 eta_relative = eta_0 / eta_1;
@@ -2472,37 +2473,37 @@ namespace tyon
 
             // Project
             TYON_CUDA_SHARED
-            PROC vector_project(const v2_f32& v0, const v2_f32& v1) -> v2_f32
+            PROC vector_project(const v2_f32 v0, const v2_f32 v1) -> v2_f32
             {
                 return (vector_dot_product(v0, v1) * v1) / vector_dot_product(v1, v1);
             }
 
             TYON_CUDA_SHARED
-            PROC vector_project(const v2_f64& v0, const v2_f64& v1) -> v2_f64
+            PROC vector_project(const v2_f64 v0, const v2_f64 v1) -> v2_f64
             {
                 return (vector_dot_product(v0, v1) * v1) / vector_dot_product(v1, v1);
             }
 
             TYON_CUDA_SHARED
-            PROC vector_project(const v3_f32& v0, const v3_f32& v1) -> v3_f32
+            PROC vector_project(const v3_f32 v0, const v3_f32 v1) -> v3_f32
             {
                 return (vector_dot_product(v0, v1) * v1) / vector_dot_product(v1, v1);
             }
 
             TYON_CUDA_SHARED
-            PROC vector_project(const v3_f64& v0, const v3_f64& v1) -> v3_f64
+            PROC vector_project(const v3_f64 v0, const v3_f64 v1) -> v3_f64
             {
                 return (vector_dot_product(v0, v1) * v1) / vector_dot_product(v1, v1);
             }
 
             TYON_CUDA_SHARED
-            PROC vector_project(const v4_f32& v0, const v4_f32& v1) -> v4_f32
+            PROC vector_project(const v4_f32 v0, const v4_f32 v1) -> v4_f32
             {
                 return (vector_dot_product(v0, v1) * v1) / vector_dot_product(v1, v1);
             }
 
             TYON_CUDA_SHARED
-            PROC vector_project(const v4_f64& v0, const v4_f64& v1) -> v4_f64
+            PROC vector_project(const v4_f64 v0, const v4_f64 v1) -> v4_f64
             {
                 return (vector_dot_product(v0, v1) * v1) / vector_dot_product(v1, v1);
             }
@@ -2511,187 +2512,187 @@ namespace tyon
 
             // Barycentric
             TYON_CUDA_SHARED
-            PROC v_barycentric(const v2_f32& p0, const v2_f32& p1, const v2_f32& p2, const v2_f32& barycentric_coordinates) -> v2_f32
+            PROC v_barycentric(const v2_f32 p0, const v2_f32 p1, const v2_f32 p2, const v2_f32 barycentric_coordinates) -> v2_f32
             {
                 return p0 * barycentric_coordinates.x + p1 * barycentric_coordinates.y + p2 * (1.0f - barycentric_coordinates.x - barycentric_coordinates.y);
             }
 
             TYON_CUDA_SHARED
-            PROC v_barycentric(const v2_f64& p0, const v2_f64& p1, const v2_f64& p2, const v2_f64& barycentric_coordinates) -> v2_f64
+            PROC v_barycentric(const v2_f64 p0, const v2_f64 p1, const v2_f64 p2, const v2_f64 barycentric_coordinates) -> v2_f64
             {
                 return p0 * barycentric_coordinates.x + p1 * barycentric_coordinates.y + p2 * (1.0 - barycentric_coordinates.x - barycentric_coordinates.y);
             }
 
             TYON_CUDA_SHARED
-            PROC v_barycentric(const v3_f32& p0, const v3_f32& p1, const v3_f32& p2, const v2_f32& barycentric_coordinates) -> v3_f32
+            PROC v_barycentric(const v3_f32 p0, const v3_f32 p1, const v3_f32 p2, const v2_f32 barycentric_coordinates) -> v3_f32
             {
                 return p0 * barycentric_coordinates.x + p1 * barycentric_coordinates.y + p2 * (1.0f - barycentric_coordinates.x - barycentric_coordinates.y);
             }
 
             TYON_CUDA_SHARED
-            PROC v_barycentric(const v3_f64& p0, const v3_f64& p1, const v3_f64& p2, const v2_f64& barycentric_coordinates) -> v3_f64
+            PROC v_barycentric(const v3_f64 p0, const v3_f64 p1, const v3_f64 p2, const v2_f64 barycentric_coordinates) -> v3_f64
             {
                 return p0 * barycentric_coordinates.x + p1 * barycentric_coordinates.y + p2 * (1.0 - barycentric_coordinates.x - barycentric_coordinates.y);
             }
 
             TYON_CUDA_SHARED
-            PROC v_barycentric(const v4_f32& p0, const v4_f32& p1, const v4_f32& p2, const v2_f32& barycentric_coordinates) -> v4_f32
+            PROC v_barycentric(const v4_f32 p0, const v4_f32 p1, const v4_f32 p2, const v2_f32 barycentric_coordinates) -> v4_f32
             {
                 return p0 * barycentric_coordinates.x + p1 * barycentric_coordinates.y + p2 * (1.0f - barycentric_coordinates.x - barycentric_coordinates.y);
             }
 
             TYON_CUDA_SHARED
-            PROC v_barycentric(const v4_f64& p0, const v4_f64& p1, const v4_f64& p2, const v2_f64& barycentric_coordinates) -> v4_f64
+            PROC v_barycentric(const v4_f64 p0, const v4_f64 p1, const v4_f64 p2, const v2_f64 barycentric_coordinates) -> v4_f64
             {
                 return p0 * barycentric_coordinates.x + p1 * barycentric_coordinates.y + p2 * (1.0 - barycentric_coordinates.x - barycentric_coordinates.y);
             }
 
 
 
-            // Length & Lenght2
+            // Length  Lenght2
             TYON_CUDA_SHARED
-            PROC vector_length(const v2_f32& v0) -> f32
+            PROC vector_length(const v2_f32 v0) -> f32
             {
                 return square_root( v0.x * v0.x + v0.y * v0.y );
             }
 
             TYON_CUDA_SHARED
-            PROC vector_length(const v2_f64& v0) -> f64
+            PROC vector_length(const v2_f64 v0) -> f64
             {
                 return square_root( v0.x * v0.x + v0.y * v0.y );
             }
 
             TYON_CUDA_SHARED
-            PROC vector_length(const v3_f32& v0) -> f32
+            PROC vector_length(const v3_f32 v0) -> f32
             {
                 return square_root( v0.x * v0.x + v0.y * v0.y + v0.z * v0.z );
             }
 
             TYON_CUDA_SHARED
-            PROC vector_length(const v3_f64& v0) -> f64
+            PROC vector_length(const v3_f64 v0) -> f64
             {
                 return square_root( v0.x * v0.x + v0.y * v0.y + v0.z * v0.z );
             }
 
             TYON_CUDA_SHARED
-            PROC vector_length(const v4_f32& v0) -> f32
+            PROC vector_length(const v4_f32 v0) -> f32
             {
                 return square_root( v0.x * v0.x + v0.y * v0.y + v0.z * v0.z + v0.w * v0.w );
             }
 
             TYON_CUDA_SHARED
-            PROC vector_length(const v4_f64& v0) -> f64
+            PROC vector_length(const v4_f64 v0) -> f64
             {
                 return square_root( v0.x * v0.x + v0.y * v0.y + v0.z * v0.z + v0.w * v0.w );
             }
 
             TYON_CUDA_SHARED
-            PROC vector_length2(const v2_f32& v0) -> f32
+            PROC vector_length2(const v2_f32 v0) -> f32
             {
                 return ( v0.x * v0.x + v0.y * v0.y );
             }
 
             TYON_CUDA_SHARED
-            PROC vector_length2(const v2_f64& v0) -> f64
+            PROC vector_length2(const v2_f64 v0) -> f64
             {
                 return ( v0.x * v0.x + v0.y * v0.y );
             }
 
             TYON_CUDA_SHARED
-            PROC vector_length2(const v3_f32& v0) -> f32
+            PROC vector_length2(const v3_f32 v0) -> f32
             {
                 return ( v0.x * v0.x + v0.y * v0.y + v0.z * v0.z);
             }
 
             TYON_CUDA_SHARED
-            PROC vector_length2(const v3_f64& v0) -> f64
+            PROC vector_length2(const v3_f64 v0) -> f64
             {
                 return ( v0.x * v0.x + v0.y * v0.y + v0.z * v0.z);
             }
 
             TYON_CUDA_SHARED
-            PROC vector_length2(const v4_f32& v0) -> f32
+            PROC vector_length2(const v4_f32 v0) -> f32
             {
                 return ( v0.x * v0.x + v0.y * v0.y + v0.z * v0.z + v0.w * v0.w);
             }
 
             TYON_CUDA_SHARED
-            PROC vector_length2(const v4_f64& v0) -> f64
+            PROC vector_length2(const v4_f64 v0) -> f64
             {
                 return ( v0.x * v0.x + v0.y * v0.y + v0.z * v0.z + v0.w * v0.w);
             }
 
 
 
-            // Distance & Distance2
+            // Distance  Distance2
             TYON_CUDA_SHARED
-            PROC vector_distance(const v2_f32& v0, const v2_f32& v1) -> f32
+            PROC vector_distance(const v2_f32 v0, const v2_f32 v1) -> f32
             {
                 return vector_length(v0 - v1);
             }
 
             TYON_CUDA_SHARED
-            PROC vector_distance(const v2_f64& v0, const v2_f64& v1) -> f64
+            PROC vector_distance(const v2_f64 v0, const v2_f64 v1) -> f64
             {
                 return vector_length(v0 - v1);
             }
 
             TYON_CUDA_SHARED
-            PROC vector_distance(const v3_f32& v0, const v3_f32& v1) -> f32
+            PROC vector_distance(const v3_f32 v0, const v3_f32 v1) -> f32
             {
                 return vector_length(v0 - v1);
             }
 
             TYON_CUDA_SHARED
-            PROC vector_distance(const v3_f64& v0, const v3_f64& v1) -> f64
+            PROC vector_distance(const v3_f64 v0, const v3_f64 v1) -> f64
             {
                 return vector_length(v0 - v1);
             }
 
             TYON_CUDA_SHARED
-            PROC vector_distance(const v4_f32& v0, const v4_f32& v1) -> f32
+            PROC vector_distance(const v4_f32 v0, const v4_f32 v1) -> f32
             {
                 return vector_length(v0 - v1);
             }
 
             TYON_CUDA_SHARED
-            PROC vector_distance(const v4_f64& v0, const v4_f64& v1) -> f64
+            PROC vector_distance(const v4_f64 v0, const v4_f64 v1) -> f64
             {
                 return vector_length(v0 - v1);
             }
 
             TYON_CUDA_SHARED
-            PROC vector_distance2(const v2_f32& v0, const v2_f32& v1) -> f32
+            PROC vector_distance2(const v2_f32 v0, const v2_f32 v1) -> f32
             {
                 return vector_length2(v0 - v1);
             }
 
             TYON_CUDA_SHARED
-            PROC vector_distance2(const v2_f64& v0, const v2_f64& v1) -> f64
+            PROC vector_distance2(const v2_f64 v0, const v2_f64 v1) -> f64
             {
                 return vector_length2(v0 - v1);
             }
 
             TYON_CUDA_SHARED
-            PROC vector_distance2(const v3_f32& v0, const v3_f32& v1) -> f32
+            PROC vector_distance2(const v3_f32 v0, const v3_f32 v1) -> f32
             {
                 return vector_length2(v0 - v1);
             }
 
             TYON_CUDA_SHARED
-            PROC vector_distance2(const v3_f64& v0, const v3_f64& v1) -> f64
+            PROC vector_distance2(const v3_f64 v0, const v3_f64 v1) -> f64
             {
                 return vector_length2(v0 - v1);
             }
 
             TYON_CUDA_SHARED
-            PROC vector_distance2(const v4_f32& v0, const v4_f32& v1) -> f32
+            PROC vector_distance2(const v4_f32 v0, const v4_f32 v1) -> f32
             {
                 return vector_length2(v0 - v1);
             }
 
             TYON_CUDA_SHARED
-            PROC vector_distance2(const v4_f64& v0, const v4_f64& v1) -> f32
+            PROC vector_distance2(const v4_f64 v0, const v4_f64 v1) -> f32
             {
                 return vector_length2(v0 - v1);
             }
@@ -2700,7 +2701,7 @@ namespace tyon
 
             // Orthonormal basis
             TYON_CUDA_SHARED
-            PROC construct_orthonormal_basis(const v3_f32& basis_vector_z, const v3_f32& omega, v3_f32& basis_vector_x, v3_f32& basis_vector_y) -> void
+            PROC construct_orthonormal_basis(const v3_f32 basis_vector_z, const v3_f32 omega, v3_f32& basis_vector_x, v3_f32& basis_vector_y) -> void
             {
                 basis_vector_x = omega - vector_dot_product(omega, basis_vector_z)*basis_vector_z;
                 basis_vector_y = vector_cross_product(basis_vector_z, basis_vector_x);
@@ -2710,7 +2711,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC construct_orthonormal_basis(const v3_f64& basis_vector_z, const v3_f64& omega, v3_f64& basis_vector_x, v3_f64& basis_vector_y) -> void
+            PROC construct_orthonormal_basis(const v3_f64 basis_vector_z, const v3_f64 omega, v3_f64& basis_vector_x, v3_f64& basis_vector_y) -> void
             {
                 basis_vector_x = omega - vector_dot_product(omega, basis_vector_z)*basis_vector_z;
                 basis_vector_y = vector_cross_product(basis_vector_z, basis_vector_x);
@@ -2723,7 +2724,7 @@ namespace tyon
 
             // z-aligned normal
             TYON_CUDA_SHARED
-            PROC transform_to_z_aligned_normal(const v3_f32& omega_i, const v3_f32& normal, v3_f32& basis_vector_x, v3_f32& basis_vector_y, v3_f32& basis_vector_z) -> v3_f32
+            PROC transform_to_z_aligned_normal(const v3_f32 omega_i, const v3_f32 normal, v3_f32 basis_vector_x, v3_f32 basis_vector_y, v3_f32 basis_vector_z) -> v3_f32
             {
                 v3_f32 rotated_omega_i;
 
@@ -2735,7 +2736,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC transform_to_z_aligned_normal(const v3_f64& omega_i, const v3_f64& normal, v3_f64& basis_vector_x, v3_f64& basis_vector_y, v3_f64& basis_vector_z) -> v3_f64
+            PROC transform_to_z_aligned_normal(const v3_f64 omega_i, const v3_f64 normal, v3_f64 basis_vector_x, v3_f64 basis_vector_y, v3_f64 basis_vector_z) -> v3_f64
             {
                 v3_f64 rotated_omega_i;
 
@@ -2750,7 +2751,7 @@ namespace tyon
 
             // z to world space
             TYON_CUDA_SHARED
-            PROC local_direction_to_world_space(const v3_f32& reference_dir, const f32& cos_theta, const f32& phi) -> v3_f32
+            PROC local_direction_to_world_space(const v3_f32 reference_dir, const f32 cos_theta, const f32 phi) -> v3_f32
             {
                 f32 sin_theta = square_root(1.0f - cos_theta*cos_theta);
 
@@ -2784,7 +2785,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC local_direction_to_world_space(const v3_f64& reference_dir, const f64& cos_theta, const f64& phi) -> v3_f64
+            PROC local_direction_to_world_space(const v3_f64 reference_dir, const f64 cos_theta, const f64 phi) -> v3_f64
             {
                 f64 sin_theta = square_root(1.0 - cos_theta*cos_theta);
 
@@ -2822,7 +2823,7 @@ namespace tyon
         // Matrix
             // Rotation
             TYON_CUDA_SHARED
-            PROC general_2d_rotation_matrix(const f32& theta) -> matrix2_f32
+            PROC general_2d_rotation_matrix(const f32 theta) -> matrix2_f32
             {
                 matrix2_f32 result;
                 result.m11 = cosinus(theta);
@@ -2833,7 +2834,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC general_2d_rotation_matrix(const f64& theta) -> matrix2_f64
+            PROC general_2d_rotation_matrix(const f64 theta) -> matrix2_f64
             {
                 matrix2_f64 result;
                 result.m11 = cosinus(theta);
@@ -2844,7 +2845,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC general_3d_rotation_matrix(const f32& r_x, const f32& r_y, const f32& r_z) -> matrix3_f32
+            PROC general_3d_rotation_matrix(const f32 r_x, const f32 r_y, const f32 r_z) -> matrix3_f32
             {
                 matrix3_f32 m_x, m_y, m_z;
 
@@ -2891,7 +2892,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC general_3d_rotation_matrix(const f64& r_x, const f64& r_y, const f64& r_z) -> matrix3_f64
+            PROC general_3d_rotation_matrix(const f64 r_x, const f64 r_y, const f64 r_z) -> matrix3_f64
             {
             {
                 matrix3_f64 m_x, m_y, m_z;
@@ -2940,7 +2941,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC euler_rotation_matrix(const f32& theta, const v3_f32& u) -> matrix3_f32
+            PROC euler_rotation_matrix(const f32 theta, const v3_f32 u) -> matrix3_f32
             {
                 matrix3_f32 R;
 
@@ -2960,7 +2961,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC euler_rotation_matrix(const f64& theta, const v3_f64& u) -> matrix3_f64
+            PROC euler_rotation_matrix(const f64 theta, const v3_f64 u) -> matrix3_f64
             {
                 matrix3_f64 R;
 
@@ -2983,7 +2984,7 @@ namespace tyon
 
             // Transpose
             TYON_CUDA_SHARED
-            PROC transpose_matrix(const matrix2_f32& m) -> matrix2_f32
+            PROC transpose_matrix(const matrix2_f32 m) -> matrix2_f32
             {
                 matrix2_f32 transpose;
                 transpose.m11 = m.m11;
@@ -2995,7 +2996,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC transpose_matrix(const matrix2_f64& m) -> matrix2_f64
+            PROC transpose_matrix(const matrix2_f64 m) -> matrix2_f64
             {
                 matrix2_f64 transpose;
                 transpose.m11 = m.m11;
@@ -3007,7 +3008,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC transpose_matrix(const matrix3_f32& m) -> matrix3_f32
+            PROC transpose_matrix(const matrix3_f32 m) -> matrix3_f32
             {
                 matrix3_f32 transpose;
                 transpose.m11 = m.m11;
@@ -3024,7 +3025,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC transpose_matrix(const matrix3_f64& m) -> matrix3_f64
+            PROC transpose_matrix(const matrix3_f64 m) -> matrix3_f64
             {
                 matrix3_f64 transpose;
                 transpose.m11 = m.m11;
@@ -3041,7 +3042,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC transpose_matrix(const matrix4_f32& m) -> matrix4_f32
+            PROC transpose_matrix(const matrix4_f32 m) -> matrix4_f32
             {
                 matrix4_f32 transpose;
                 transpose.m11 = m.m11;
@@ -3065,7 +3066,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC transpose_matrix(const matrix4_f64& m) -> matrix4_f64
+            PROC transpose_matrix(const matrix4_f64 m) -> matrix4_f64
             {
                 matrix4_f64 transpose;
                 transpose.m11 = m.m11;
@@ -3093,13 +3094,13 @@ namespace tyon
         // Conversion
             // To radians
             TYON_CUDA_SHARED
-            PROC to_radians(const f32& degrees) -> f32
+            PROC to_radians(const f32 degrees) -> f32
             {
                 return (degrees * M_PI) / 180.0f;
             }
 
             TYON_CUDA_SHARED
-            PROC to_radians(const f64& degrees) -> f64
+            PROC to_radians(const f64 degrees) -> f64
             {
                 return (degrees * M_PI) / 180.0;
             }
@@ -3108,13 +3109,13 @@ namespace tyon
 
             // To degrees
             TYON_CUDA_SHARED
-            PROC to_degrees(const f32& radians) -> f32
+            PROC to_degrees(const f32 radians) -> f32
             {
                 return radians * (180.0f / M_PI);
             }
 
             TYON_CUDA_SHARED
-            PROC to_degrees(const f64& radians) -> f64
+            PROC to_degrees(const f64 radians) -> f64
             {
                 return radians * (180.0 / M_PI);
             }
@@ -3123,7 +3124,7 @@ namespace tyon
 
             // Spherical coordinates
             TYON_CUDA_SHARED
-            PROC cartesian_to_spherical(const v3_f32& cartesian) -> v3_f32
+            PROC cartesian_to_spherical(const v3_f32 cartesian) -> v3_f32
             {
                 f32 r = vector_length(cartesian);
                 f32 theta = arccos(cartesian.y / r);
@@ -3133,7 +3134,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC cartesian_to_spherical(const v3_f64& cartesian) -> v3_f64
+            PROC cartesian_to_spherical(const v3_f64 cartesian) -> v3_f64
             {
                 f64 r = vector_length(cartesian);
                 f64 theta = arccos(cartesian.y / r);
@@ -3143,7 +3144,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC spherical_to_cartesian(const v3_f32& spherical) -> v3_f32
+            PROC spherical_to_cartesian(const v3_f32 spherical) -> v3_f32
             {
                 f32 x = spherical.x * sinus(spherical.y) * cosinus(spherical.z);
                 f32 y = spherical.x * cosinus(spherical.y);
@@ -3153,7 +3154,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC spherical_to_cartesian(const v3_f64& spherical) -> v3_f64
+            PROC spherical_to_cartesian(const v3_f64 spherical) -> v3_f64
             {
                 f32 x = spherical.x * sinus(spherical.y) * cosinus(spherical.z);
                 f32 y = spherical.x * cosinus(spherical.y);
@@ -3167,49 +3168,49 @@ namespace tyon
         // Utility
             // Lerp
             TYON_CUDA_SHARED
-            PROC lerp(const f32& a, const f32& b, const f32& t) -> f32
+            PROC lerp(const f32 a, const f32 b, const f32 t) -> f32
             {
                 return a + t * (b - a);
             }
 
             TYON_CUDA_SHARED
-            PROC lerp(const f64& a, const f64& b, const f64& t) -> f64
+            PROC lerp(const f64 a, const f64 b, const f64 t) -> f64
             {
                 return a + t * (b - a);
             }
 
             TYON_CUDA_SHARED
-            PROC lerp(const v2_f32& va, const v2_f32& vb, const f32& t) -> v2_f32
+            PROC lerp(const v2_f32 va, const v2_f32 vb, const f32 t) -> v2_f32
             {
                 return v2_f32( lerp(va.x, vb.x, t), lerp(va.y, vb.y, t) );
             }
 
             TYON_CUDA_SHARED
-            PROC lerp(const v2_f64& va, const v2_f64& vb, const f64& t) -> v2_f64
+            PROC lerp(const v2_f64 va, const v2_f64 vb, const f64 t) -> v2_f64
             {
                 return v2_f64( lerp(va.x, vb.x, t), lerp(va.y, vb.y, t) );
             }
 
             TYON_CUDA_SHARED
-            PROC lerp(const v3_f32& va, const v3_f32& vb, const f32& t) -> v3_f32
+            PROC lerp(const v3_f32 va, const v3_f32 vb, const f32 t) -> v3_f32
             {
                 return v3_f32( lerp(va.x, vb.x, t), lerp(va.y, vb.y, t), lerp(va.z, vb.z, t) );
             }
 
             TYON_CUDA_SHARED
-            PROC lerp(const v3_f64& va, const v3_f64& vb, const f64& t) -> v3_f64
+            PROC lerp(const v3_f64 va, const v3_f64 vb, const f64 t) -> v3_f64
             {
                 return v3_f64( lerp(va.x, vb.x, t), lerp(va.y, vb.y, t), lerp(va.z, vb.z, t) );
             }
 
             TYON_CUDA_SHARED
-            PROC lerp(const v4_f32& va, const v4_f32& vb, const f32& t) -> v4_f32
+            PROC lerp(const v4_f32 va, const v4_f32 vb, const f32 t) -> v4_f32
             {
                 return v4_f32( lerp(va.x, vb.x, t), lerp(va.y, vb.y, t), lerp(va.z, vb.z, t), lerp(va.w, vb.w, t) );
             }
 
             TYON_CUDA_SHARED
-            PROC lerp(const v4_f64& va, const v4_f64& vb, const f64& t) -> v4_f64
+            PROC lerp(const v4_f64 va, const v4_f64 vb, const f64 t) -> v4_f64
             {
                 return v4_f64( lerp(va.x, vb.x, t), lerp(va.y, vb.y, t), lerp(va.z, vb.z, t), lerp(va.w, vb.w, t) );
             }
@@ -3218,14 +3219,14 @@ namespace tyon
 
             // Smooth step
             TYON_CUDA_SHARED
-            PROC smooth_step(const f32& edge0, const f32& edge1, const f32& t) -> f32
+            PROC smooth_step(const f32 edge0, const f32 edge1, const f32 t) -> f32
             {
                 f32 x = clamp_range(0.0f, 1.0f, ((t - edge0) / (edge1 * edge0)));
                 return x * x * (3.0f - 2.0f * x);
             }
 
             TYON_CUDA_SHARED
-            PROC smooth_step(const f64& edge0, const f64& edge1, const f64& t) -> f64
+            PROC smooth_step(const f64 edge0, const f64 edge1, const f64 t) -> f64
             {
                 f64 x = clamp_range(0.0, 1.0, ((t - edge0) / (edge1 * edge0)));
                 return x * x * (3.0 - 2.0 * x);
@@ -3233,7 +3234,7 @@ namespace tyon
 
             // Clamp
             TYON_CUDA_SHARED
-            PROC clamp_range(const f32& edge0, const f32& edge1, const f32& a) -> f32
+            PROC clamp_range(const f32 edge0, const f32 edge1, const f32 a) -> f32
             {
                 if(a < edge0) return edge0;
                 if(a > edge1) return edge1;
@@ -3241,7 +3242,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED
-            PROC clamp_range(const f64& edge0, const f64& edge1, const f64& a) -> f64
+            PROC clamp_range(const f64 edge0, const f64 edge1, const f64 a) -> f64
             {
                 if(a < edge0) return edge0;
                 if(a > edge1) return edge1;
@@ -3262,13 +3263,13 @@ namespace tyon
 
             // Round down
             TYON_CUDA_SHARED
-            PROC round_down(const f32& a) -> f32
+            PROC round_down(const f32 a) -> f32
             {
                 return std::floorf(a);
             }
 
             TYON_CUDA_SHARED
-            PROC round_down(const f64& a) -> f64
+            PROC round_down(const f64 a) -> f64
             {
                 return std::floor(a);
             }
@@ -3277,13 +3278,13 @@ namespace tyon
 
             // Round up
             TYON_CUDA_SHARED
-            PROC round_up(const f32& a) -> f32
+            PROC round_up(const f32 a) -> f32
             {
                 return std::ceilf(a);
             }
 
             TYON_CUDA_SHARED
-            PROC round_up(const f64& a) -> f64
+            PROC round_up(const f64 a) -> f64
             {
                 return std::ceil(a);
             }
@@ -3292,13 +3293,13 @@ namespace tyon
 
             // Round normal
             TYON_CUDA_SHARED
-            PROC round_normal(const f32& a) -> f32
+            PROC round_normal(const f32 a) -> f32
             {
                 return std::roundf(a);
             }
 
             TYON_CUDA_SHARED
-            PROC round_normal(const f64& a) -> f64
+            PROC round_normal(const f64 a) -> f64
             {
                 return std::round(a);
             }
@@ -3307,14 +3308,14 @@ namespace tyon
 
             // Fraction
             TYON_CUDA_SHARED
-            PROC fraction(const f32& a) -> f32
+            PROC fraction(const f32 a) -> f32
             {
                 f32 _fraction;
                 return std::modff(a, &_fraction);
             }
 
             TYON_CUDA_SHARED
-            PROC fraction(const f64& a) -> f64
+            PROC fraction(const f64 a) -> f64
             {
                 f64 _fraction;
                 return std::modf(a, &_fraction);
@@ -3324,13 +3325,13 @@ namespace tyon
 
             // Remap
             TYON_CUDA_SHARED
-            PROC remap(const f32& start0, const f32& end0, const f32& start1, const f32& end1, const f32& value) -> f32
+            PROC remap(const f32 start0, const f32 end0, const f32 start1, const f32 end1, const f32 value) -> f32
             {
                 return start1 + ((end1 - start1) / (end0 - start0)) * (value - start0);
             }
 
             TYON_CUDA_SHARED
-            PROC remap(const f64& start0, const f64& end0, const f64& start1, const f64& end1, const f64& value) -> f64
+            PROC remap(const f64 start0, const f64 end0, const f64 start1, const f64 end1, const f64 value) -> f64
             {
                 return start1 + ((end1 - start1) / (end0 - start0)) * (value - start0);
             }
@@ -3422,7 +3423,7 @@ namespace tyon
 
             // Smooth ramp
             TYON_CUDA_SHARED 
-            PROC smooth_ramp(const f64& amplitude, const f64& exponent, const f64& x, const f64& x0, const f64& range) -> f64
+            PROC smooth_ramp(const f64 amplitude, const f64 exponent, const f64 x, const f64 x0, const f64 range) -> f64
             {
                 f64 sign_range = 1.0;
 
@@ -3446,7 +3447,7 @@ namespace tyon
             }
 
             TYON_CUDA_SHARED 
-            PROC smooth_ramp(const f32& amplitude, const f32& exponent, const f32& x, const f32& x0, const f32& range) -> f32
+            PROC smooth_ramp(const f32 amplitude, const f32 exponent, const f32 x, const f32 x0, const f32 range) -> f32
             {
                 f32 sign_range = 1.0f;
 
