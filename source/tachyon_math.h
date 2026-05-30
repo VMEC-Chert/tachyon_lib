@@ -3,66 +3,186 @@
 
 namespace tyon
 {
-    /** Types */
-        // Complex Numbers
-        struct c32
+    /** Types & Templates */
+        // #######################
+        // ### Complex Numbers ###
+        // #######################
+        template<typename T_real, typename T_imag> struct complex_type
         {
-            f32 real;
-            f32 imag;
-
-            TYON_CUDA_SHARED
-            CONSTRUCTOR c32();
-            TYON_CUDA_SHARED
-            CONSTRUCTOR c32( f32 arg );
-            TYON_CUDA_SHARED
-            CONSTRUCTOR c32( f32 real, f32 imag );
-            TYON_CUDA_SHARED
-            explicit CONSTRUCTOR c32( f64 arg );
+            T_real real;
+            T_imag imag;
         };
 
-        struct c64
+        // Addition
+        template<typename T_real, typename T_imag> TYON_CUDA_SHARED inline PROC operator+(complex_type<T_real, T_imag> a, complex_type<T_real, T_imag> b)
         {
-            f64 real; 
-            f64 imag; 
+            return complex_type{ a.real + b.real, a.imag + b.imag };
+        }
 
-            TYON_CUDA_SHARED
-            CONSTRUCTOR c64();
-            TYON_CUDA_SHARED
-            CONSTRUCTOR c64( f64 arg );
-            TYON_CUDA_SHARED
-            CONSTRUCTOR c64( f64 real, f64 imag );
-            TYON_CUDA_SHARED
-            explicit CONSTRUCTOR c64( f32 arg );
+        // Subtraction
+        template<typename T_real, typename T_imag> TYON_CUDA_SHARED inline PROC operator-(complex_type<T_real, T_imag> a, complex_type<T_real, T_imag> b)
+        {
+            return complex_type{ a.real - b.real, a.imag - b.imag };
+        }
+
+        // Multiplication
+        template<typename T_real, typename T_imag> TYON_CUDA_SHARED inline PROC operator*(complex_type<T_real, T_imag> a, complex_type<T_real, T_imag> b)
+        {
+            return complex_type{ (a.real * b.real) - (a.imag * b.imag), (a.real * b.imag) + (a.imag * b.real) };
+        }
+
+        template<typename T_real, typename T_imag> TYON_CUDA_SHARED inline PROC operator*(complex_type<T_real, T_imag> a, T_real b)
+        {
+            return complex_type{ a.real * b, a.real * b };
+        }
+
+        // Division
+        template<typename T_real, typename T_imag> TYON_CUDA_SHARED inline PROC operator/(complex_type<T_real, T_imag> a, complex_type<T_real, T_imag> b)
+        {
+            return complex_type{ ((a.real * b.real) + (a.imag * b.imag)) / ((b.real * b.real) + (b.imag * b.imag)), ((a.imag * b.real) - (a.real * b.imag)) / ((b.real * b.real) + (b.imag * b.imag)) };
+        }
+
+        // Inverse
+        template<typename T_real, typename T_imag> TYON_CUDA_SHARED inline PROC operator-(complex_type<T_real, T_imag> a)
+        {
+            return complex_type{ -a.real, a.imag };
+        }
+
+        // Conjugate
+        template<typename T_real, typename T_imag> TYON_CUDA_SHARED inline PROC complex_conjugate(complex_type<T_real, T_imag> a)
+        {
+            return complex_type{ a.real, -a.imag };
+        }
+
+        // Modulus
+        template<typename T_real, typename T_imag> TYON_CUDA_SHARED inline PROC complex_modulus(complex_type<T_real, T_imag> a)
+        {
+            using std::sqrt;
+            return sqrt(a.real * a.real + a.imag * a.imag);
+        }
+
+        // Argument
+        template<typename T_real, typename T_imag> TYON_CUDA_SHARED inline PROC complex_arg(complex_type<T_real, T_imag> a)
+        {
+            return atan2(a.imag, a.real);
+        }
+
+        // Sqrt
+        template<typename T_real, typename T_imag> TYON_CUDA_SHARED inline PROC sqrt(complex_type<T_real, T_imag> a)
+        {
+            // Branch cut along negative real axis to follow std::sqrt(std::complex) standard
+
+            T_real x = a.real;
+            T_real y = a.imag;
+
+            if(x == static_cast<T_real>(0.0) && y == static_cast<T_real>(0.0))
+            {
+                return complex_type{ static_cast<T_real>(0.0), static_cast<T_imag>(0.0) };
+            }
+
+            T_real theta = atan2(y, x);
+            T_real power_term = std::pow(x*x + y*y, static_cast<T_real>(0.25));
+            T_real x2 = power_term * cos(theta);
+            T_real y2 = power_term * sin(theta);
+
+            if(x2 < static_cast<T_real>(0.0))
+            {
+                x2 *= static_cast<T_real>(-1.0);
+                y2 *= static_cast<T_real>(-1.0);
+            }
+
+            return complex_type{ x2, y2 };
+        }
+
+
+
+        // ####################
+        // ### Dual Numbers ###
+        // ####################
+        template<typename T_real, typename T_dual> struct dual_type
+        {
+            T_real real;
+            T_dual dual;
         };
 
-
-
-        // Dual Numbers
-        struct d32
+        // Addition
+        template<typename T_real, typename T_dual> TYON_CUDA_SHARED inline PROC operator+(dual_type<T_real, T_dual> a, dual_type<T_real, T_dual> b)
         {
-            f32 real;
-            f32 dual;
+            return dual_type{ a.real + b.real, a.dual + b.dual };
+        }
 
-            TYON_CUDA_SHARED
-            CONSTRUCTOR d32();
-            TYON_CUDA_SHARED
-            CONSTRUCTOR d32( f32 arg );
-            TYON_CUDA_SHARED
-            CONSTRUCTOR d32( f32 arg_real, f32 arg_dual );
-        };
-
-        struct d64
+        template<typename T_real, typename T_dual> TYON_CUDA_SHARED inline PROC operator+(dual_type<T_real, T_dual> a, T_real b)
         {
-            f64 real;
-            f64 dual;
+            return dual_type{ a.real + b, a.dual };
+        }
 
-            TYON_CUDA_SHARED
-            CONSTRUCTOR d64();
-            TYON_CUDA_SHARED
-            CONSTRUCTOR d64( f64 arg );
-            TYON_CUDA_SHARED
-            CONSTRUCTOR d64( f64 arg_real, f64 arg_dual );
-        };
+        template<typename T_real, typename T_dual> TYON_CUDA_SHARED inline PROC operator+(T_real a, dual_type<T_real, T_dual> b)
+        {
+            return dual_type{ a + b.real, b.dual };
+        }
+
+        // Subtraction
+        template<typename T_real, typename T_dual> TYON_CUDA_SHARED inline PROC operator-(dual_type<T_real, T_dual> a, dual_type<T_real, T_dual> b)
+        {
+            return dual_type{ a.real - b.real, a.dual - b.dual };
+        }
+
+        template<typename T_real, typename T_dual> TYON_CUDA_SHARED inline PROC operator-(dual_type<T_real, T_dual> a, T_real b)
+        {
+            return dual_type{ a.real - b, a.dual };
+        }
+
+        template<typename T_real, typename T_dual> TYON_CUDA_SHARED inline PROC operator-(T_real a, dual_type<T_real, T_dual> b)
+        {
+            return dual_type{ a - b.real, -b.dual };
+        }
+
+        // Multiplication
+        template<typename T_real, typename T_dual> TYON_CUDA_SHARED inline PROC operator*(dual_type<T_real, T_dual> a, dual_type<T_real, T_dual> b)
+        {
+            return dual_type{ a.real * b.real, b.real * a.dual + a.real * b.dual };
+        }
+
+        template<typename T_real, typename T_dual> TYON_CUDA_SHARED inline PROC operator*(dual_type<T_real, T_dual> a, T_real b)
+        {
+            return dual_type{ a.real * b, a.dual * b };
+        }
+
+        template<typename T_real, typename T_dual> TYON_CUDA_SHARED inline PROC operator*(T_real a, dual_type<T_real, T_dual> b)
+        {
+            return dual_type{ a * b.real, a * b.dual };
+        }
+
+        // Division
+        template<typename T_real, typename T_dual> TYON_CUDA_SHARED inline PROC operator/(dual_type<T_real, T_dual> a, dual_type<T_real, T_dual> b)
+        {
+            return dual_type{ a.real / b.real, (a.dual / b.real) - (a.real * b.dual) / (b.real * b.real) };
+        }
+
+        template<typename T_real, typename T_dual> TYON_CUDA_SHARED inline PROC operator/(dual_type<T_real, T_dual> a, T_real b)
+        {
+            return dual_type{ a.real / b, a.dual / b};
+        }
+
+        template<typename T_real, typename T_dual> TYON_CUDA_SHARED inline PROC operator/(T_real a, dual_type<T_real, T_dual> b)
+        {
+            return dual_type{ a / b.real, -(a / (b.real * b.real)) * b.dual };
+        }
+
+        // Inversion
+        template<typename T_real, typename T_dual> TYON_CUDA_SHARED inline PROC operator-(dual_type<T_real, T_dual> a)
+        {
+            return dual_type{ -a.real, -a.dual };
+        }
+
+        // Compound assigments
+
+        // Square root
+        template<typename T_real, typename T_dual> TYON_CUDA_SHARED inline PROC sqrt(dual_type<T_real, T_dual> a)
+        {
+            using std::sqrt;
+            return dual_type{ sqrt(a.real), a.dual / (static_cast<T_real>(2.0) * sqrt(a.real)) };
+        }
 
 
 
@@ -288,142 +408,6 @@ namespace tyon
         };
 
     /** Operators */
-        // Complex numbers
-            // Addition
-            TYON_CUDA_SHARED
-            PROC operator+(const c32 z0, const c32 z1) -> c32;
-
-            TYON_CUDA_SHARED
-            PROC operator+(const c64 z0, const c64 z1) -> c64;
-
-            // Subtraction
-            TYON_CUDA_SHARED
-            PROC operator-(const c32 z0, const c32 z1) -> c32;
-
-            TYON_CUDA_SHARED
-            PROC operator-(const c64 z0, const c64 z1) -> c64;
-
-            // Multiplication
-            TYON_CUDA_SHARED
-            PROC operator*(const c32 z0, const c32 z1) -> c32;
-
-            TYON_CUDA_SHARED
-            PROC operator*(const c64 z0, const c64 z1) -> c64;
-
-            TYON_CUDA_SHARED
-            PROC operator*(const c32 z0, const f32 s0) -> c32;
-
-            TYON_CUDA_SHARED
-            PROC operator*(const c64 z0, const f64 s0) -> c64;
-
-            // Division
-            TYON_CUDA_SHARED
-            PROC operator/(const c32 z0, const c32 z1) -> c32;
-
-            TYON_CUDA_SHARED
-            PROC operator/(const c64 z0, const c64 z1) -> c64;
-
-            // Inverse
-            TYON_CUDA_SHARED
-            PROC operator-(const c32 z0) -> c32;
-
-            TYON_CUDA_SHARED
-            PROC operator-(const c64 z0) -> c64;
-
-
-
-        // Dual numbers
-            // Addition
-            TYON_CUDA_SHARED
-            inline PROC operator+(const d32 a, const d32 b) -> d32
-            {
-                return d32(a.real + b.real, a.dual + b.dual);
-            }
-
-            TYON_CUDA_SHARED
-            inline PROC operator+(const d64 a, const d64 b) -> d64
-            {
-                return d64(a.real + b.real, a.dual + b.dual);
-            }
-
-            TYON_CUDA_SHARED
-            PROC operator+(const d32 a, const f32 s) -> d32;
-
-            TYON_CUDA_SHARED
-            PROC operator+(const f32 s, const d32 a) -> d32;
-
-            TYON_CUDA_SHARED
-            PROC operator+(const d64 a, const f64 s) -> d64;
-
-            TYON_CUDA_SHARED
-            PROC operator+(const f64 s, const d64 a) -> d64;
-
-            // Subtraction
-            TYON_CUDA_SHARED
-            inline PROC operator-(const d32 a, const d32 b) -> d32
-            {
-                return d32(a.real - b.real, a.dual - b.dual);
-            }
-
-            TYON_CUDA_SHARED
-            inline PROC operator-(const d64 a, const d64 b) -> d64
-            {
-                return d64(a.real - b.real, a.dual - b.dual);
-            }
-
-            TYON_CUDA_SHARED
-            PROC operator-(const d32 a, const f32 s) -> d32;
-
-            TYON_CUDA_SHARED
-            PROC operator-(const f32 s, const d32 a) -> d32;
-
-            TYON_CUDA_SHARED
-            PROC operator-(const d64 a, const f64 s) -> d64;
-
-            TYON_CUDA_SHARED
-            PROC operator-(const f64 s, const d64 a) -> d64;
-
-            // Multiplication
-            TYON_CUDA_SHARED
-            PROC operator*(const d32 a, const d32 b) -> d32;
-
-            TYON_CUDA_SHARED
-            PROC operator*(const d64 a, const d64 b) -> d64;
-
-            TYON_CUDA_SHARED
-            PROC operator*(const d32 a, const f32 s) -> d32;
-
-            TYON_CUDA_SHARED
-            PROC operator*(const d64 a, const f64 s) -> d64;
-
-            // Division
-            TYON_CUDA_SHARED
-            PROC operator/(const d32 a, const d32 b) -> d32;
-
-            TYON_CUDA_SHARED
-            PROC operator/(const d64 a, const d64 b) -> d64;
-
-            TYON_CUDA_SHARED
-            PROC operator/(const d32 a, const f32 s) -> d32;
-
-            TYON_CUDA_SHARED
-            PROC operator/(const d64 a, const f64 s) -> d64;
-
-            TYON_CUDA_SHARED
-            PROC operator/(const f32 s, const d32 a) -> d32;
-
-            TYON_CUDA_SHARED
-            PROC operator/(const f64 s, const d64 a) -> d64;
-
-            // Inverse
-            TYON_CUDA_SHARED
-            PROC operator-(const d32 a) -> d32;
-
-            TYON_CUDA_SHARED
-            PROC operator-(const d64 a) -> d64;
-
-
-
         // Vector-Vector
             // Addition
             TYON_CUDA_SHARED
@@ -810,45 +794,12 @@ namespace tyon
 
 
     /** Functions */
-        // Complex Numbers
-        TYON_CUDA_SHARED
-        PROC complex_conjugate(const c32 z) -> c32;
-
-        TYON_CUDA_SHARED
-        PROC complex_conjugate(const c64 z) -> c64;
-
-        TYON_CUDA_SHARED
-        PROC complex_modulus(const c32 z) -> f32;
-
-        TYON_CUDA_SHARED
-        PROC complex_modulus(const c64 z) -> f64;
-
-        TYON_CUDA_SHARED
-        PROC complex_arg(const c32 z) -> f32;
-
-        TYON_CUDA_SHARED
-        PROC complex_arg(const c64 z) -> f64;
-
-
-
         // Square root
         TYON_CUDA_SHARED
         PROC square_root(const f32 a) -> f32;
 
         TYON_CUDA_SHARED
         PROC square_root(const f64 a) -> f64;
-
-        TYON_CUDA_SHARED
-        PROC square_root(const c32 z) -> c32;
-
-        TYON_CUDA_SHARED
-        PROC square_root(const c64 z) -> c64;
-
-        TYON_CUDA_SHARED
-        PROC square_root(const d32 a) -> d32;
-
-        TYON_CUDA_SHARED
-        PROC square_root(const d64 a) -> d64;
 
 
 
@@ -858,12 +809,6 @@ namespace tyon
 
         TYON_CUDA_SHARED 
         PROC power(const f64 base, const f64 exponent) -> f64;
-
-        TYON_CUDA_SHARED
-        PROC power(const d32 base, const f32 exponent) -> d32;
-
-        TYON_CUDA_SHARED 
-        PROC power(const d64 base, const f64 exponent) -> d64;
 
         TYON_CUDA_SHARED
         PROC exponential(const f32 exponent) -> f32;
@@ -1566,12 +1511,6 @@ namespace tyon
 
             TYON_CUDA_SHARED
             PROC swap_pair(f64& a, f64& b) -> void;
-
-            TYON_CUDA_SHARED
-            PROC swap_pair(c32& a, c32& b) -> void;
-
-            TYON_CUDA_SHARED
-            PROC swap_pair(c64& a, c64& b) -> void;
 
             TYON_CUDA_SHARED
             PROC swap_pair(v2_f32& a, v2_f32& b) -> void;
