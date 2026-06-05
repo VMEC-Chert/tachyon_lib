@@ -38,8 +38,13 @@ namespace tyon
         explicit constexpr
         COPY_CONSTRUCTOR entity_uid( const t_self& arg )
             : id(arg.id), uuid(arg.uuid) { }
-        COPY_CONSTRUCTOR entity_uid( const uid& arg )
+        /** deleted move constructor required for function returns */
+        MOVE_CONSTRUCTOR entity_uid(t_self&& arg) noexcept = default;
+        CONSTRUCTOR entity_uid( const uid arg )
             : id(arg.id), uuid(arg.uuid) { }
+
+        PROC operator= ( const t_self& arg ) -> t_self&
+        {   this->id = arg.id; this->uuid = arg.uuid; return *this; }
 
         explicit operator i64();
 
@@ -51,7 +56,7 @@ namespace tyon
             return memory_different( this->uuid, empty );
         }
 
-        PROC untyped_uid() -> uid
+        PROC untyped() -> uid
         {   return uid { id, uuid };
         }
     };
