@@ -94,6 +94,21 @@ namespace tyon
             return complex_type{ x2, y2 };
         }
 
+        // Nth Power
+        template<typename T_real, typename T_imag> TYON_CUDA_SHARED inline PROC power(complex_type<T_real, T_imag> z, T_real n)
+        {
+            T_real abs_r = tyon::complex_modulus(z);
+            T_real arg = tyon::complex_arg(z);
+
+            using std::pow;
+            using std::cos;
+            using std::sin;
+
+            complex_type<T_real, T_imag> z_raised = complex_type<T_real, T_imag>{ cos(n*arg), sin(n*arg) };
+
+            return z_raised*pow(abs_r, n);
+        }
+
 
 
         // ####################
