@@ -68,7 +68,7 @@ namespace tyon
         }
 
         // Sqrt
-        template<typename T_real, typename T_imag> TYON_CUDA_SHARED inline PROC sqrt(complex_type<T_real, T_imag> a)
+        template<typename T_real, typename T_imag> TYON_CUDA_SHARED inline PROC square_root(complex_type<T_real, T_imag> a)
         {
             // Branch cut along negative real axis to follow std::sqrt(std::complex) standard
 
@@ -80,15 +80,20 @@ namespace tyon
                 return complex_type{ static_cast<T_real>(0.0), static_cast<T_imag>(0.0) };
             }
 
-            T_real theta = atan2(y, x);
-            T_real power_term = std::pow(x*x + y*y, static_cast<T_real>(0.25));
-            T_real x2 = power_term * cos(theta);
-            T_real y2 = power_term * sin(theta);
+            T_real mag = hypot(x, y);
+            T_real w = std::sqrt((mag + std::abs(x)) / static_cast<T_real>(2.0));
 
-            if(x2 < static_cast<T_real>(0.0))
+            T_real x2, y2;
+
+            if (x >= static_cast<T_real>(0.0)) 
             {
-                x2 *= static_cast<T_real>(-1.0);
-                y2 *= static_cast<T_real>(-1.0);
+                x2 = w;
+                y2 = y / (static_cast<T_real>(2.0) * w);
+            } 
+            else 
+            {
+                x2 = std::abs(y) / (static_cast<T_real>(2.0) * w);
+                y2 = (y >= static_cast<T_real>(0.0)) ? w : -w;
             }
 
             return complex_type{ x2, y2 };
@@ -97,16 +102,37 @@ namespace tyon
         // Nth Power
         template<typename T_real, typename T_imag> TYON_CUDA_SHARED inline PROC power(complex_type<T_real, T_imag> z, T_real n)
         {
+            T_real x = z.real;
+            T_real y = z.imag;
+
+            if (x == static_cast<T_real>(0.0) && y == static_cast<T_real>(0.0))
+            {
+                if (n == static_cast<T_real>(0.0)) 
+                {
+                    return complex_type<T_real, T_imag>{ static_cast<T_real>(1.0), static_cast<T_imag>(0.0) };
+                }
+                else if (n > static_cast<T_real>(0.0))
+                {
+                    return complex_type<T_real, T_imag>{ static_cast<T_real>(0.0), static_cast<T_imag>(0.0) };
+                }
+            }
+
             T_real abs_r = tyon::complex_modulus(z);
             T_real arg = tyon::complex_arg(z);
+            
+            T_real r_n = pow(abs_r, n);
+            T_real theta_n = n * arg;
 
-            using std::pow;
-            using std::cos;
-            using std::sin;
+            T_real cos_theta, sin_theta;
 
-            complex_type<T_real, T_imag> z_raised = complex_type<T_real, T_imag>{ cos(n*arg), sin(n*arg) };
+            #ifdef __CUDA_ARCH__
+                sincos(theta_n, &sin_theta, &cos_theta); 
+            #else
+                cos_theta = cos(theta_n);
+                sin_theta = sin(theta_n);
+            #endif
 
-            return z_raised*pow(abs_r, n);
+            return complex_type<T_real, T_imag>{ r_n * cos_theta, static_cast<T_imag>(r_n * sin_theta)};
         }
 
 
@@ -193,7 +219,7 @@ namespace tyon
         // Compound assigments
 
         // Square root
-        template<typename T_real, typename T_dual> TYON_CUDA_SHARED inline PROC sqrt(dual_type<T_real, T_dual> a)
+        template<typename T_real, typename T_dual> TYON_CUDA_SHARED inline PROC square_root(dual_type<T_real, T_dual> a)
         {
             using std::sqrt;
             return dual_type{ sqrt(a.real), a.dual / (static_cast<T_real>(2.0) * sqrt(a.real)) };
