@@ -190,35 +190,35 @@ namespace tyon
         // ### General functions ###
         // #########################
         // Square root
-        template<typename T> TYON_CUDA_SHARED inline PROC square_root(const T x)
+        template<typename T> TYON_CUDA_SHARED inline PROC square_root(const T x) -> T
         {
             return std::sqrt(x);
         }
 
         // Exponential
-        template<typename T> TYON_CUDA_SHARED inline PROC power(const T base, const T exponent)
+        template<typename T> TYON_CUDA_SHARED inline PROC power(const T base, const T exponent) -> T
         {
             return std::pow(base, exponent);
         }
 
-        template<typename T> TYON_CUDA_SHARED inline PROC exponential(const T exponent)
+        template<typename T> TYON_CUDA_SHARED inline PROC exponential(const T exponent) -> T
         {
             return std::exp(exponent);
         }
 
         // Logarithms
-        template<typename T> TYON_CUDA_SHARED inline PROC natural_logarithm(const T x)
+        template<typename T> TYON_CUDA_SHARED inline PROC natural_logarithm(const T x) -> T
         {
             return std::log(x);
         }
 
         // Probability
-        template<typename T> TYON_CUDA_SHARED inline PROC error_function(const T a)
+        template<typename T> TYON_CUDA_SHARED inline PROC error_function(const T a) -> T
         {
             return std::erf(a);
         }
 
-        template<typename T> TYON_CUDA_SHARED inline PROC norm_gaussian_cdf(const T mean, const T x, const T standard_deviation)
+        template<typename T> TYON_CUDA_SHARED inline PROC norm_gaussian_cdf(const T mean, const T x, const T standard_deviation) -> T
         {
             return static_cast<T>(0.5) * (static_cast<T>(1.0) + std::erf((x - mean) / (standard_deviation * std::sqrt(static_cast<T>(2.0)))));
         }
