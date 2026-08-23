@@ -465,43 +465,7 @@ struct array
         {
             if (comparison ==data[i])
             {
-                result.value = &(data[i]);
-                result.index = i;
-                result.match_found = true;
-                break;
-            }
-        }
-        return result;
-    }
-
-    // Search from head to tail
-    search_result<T>
-    FUNCTION linear_search_head( generic_procedure<bool(T&)> comparator )
-    {
-        search_result<T> result;
-        for (i64 i=head; i < head_size; ++i)
-        {
-            if (comparator( data[i] ))
-            {
-                result.value = &(data[i]);
-                result.index = i;
-                result.match_found = true;
-                break;
-            }
-        }
-        return result;
-    }
-
-    // Search from head to tail
-    search_result<T>
-    FUNCTION linear_search_head_value( T comparison )
-    {
-        search_result<T> result;
-        for (i64 i=head; i < head_size; ++i)
-        {
-            if (comparison == data[i])
-            {
-                result.value = &(data[i]);
+                result.match = &(data[i]);
                 result.index = i;
                 result.match_found = true;
                 break;
@@ -678,8 +642,14 @@ struct linked_list
     // The length of the list from head to tail
     isize list_size = 0;
 
+    /** Resizes the internal contigious node storage.
+        NOTE: does nothing if the size is identical */
     PROC resize( isize count )
-    {   nodes.resize( count ); }
+    {   if (count == nodes_free.size())
+        {   return; }
+        nodes.resize( count );
+        nodes_free.resize( count / 2 );
+    }
 
     PROC size_grow( isize count )
     {
@@ -696,9 +666,9 @@ struct linked_list
     {
         t_node* result = nullptr;
         monad<t_node*> pop_result = nodes_free.pop_tail();
-        result.value = pop_result.copy_default( nullptr );
+        result = pop_result.copy_default( nullptr );
 
-        // TODO: if failed allocation allocate some more nodes
+        // TODO: if failed allocation allocate some more nodes, this should not really fail ever
         return result;
     }
 
@@ -709,6 +679,15 @@ struct linked_list
         *arg = {};
     }
 
+    /** WARNING: This will not protect you from invalidated pointers due to them
+        moving after a node is added. You should call resize() with the maximum
+        number of knows you know you will use before usage.
+
+        WARNING: You should not store pointers to internal data members if the
+        list has a unknown maximum number of nodes, store indexes instead.
+
+        TODO: I sort of want to make this return a offset-tracking smart pointer
+        in future. */
     PROC push_tail( T arg ) -> t_node*
     {
         t_node* new_node = &nodes.push_tail( {} );

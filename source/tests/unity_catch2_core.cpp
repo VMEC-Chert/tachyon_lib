@@ -10,6 +10,9 @@
 #include "../include_tachyon_lib_core.h"
 // #include "../build_control/tachyon_lib_unity_core.cpp"
 
+/** Optional tests */
+// #include "ai_generated/grok_containers_1.cpp"
+
 static tyon::library_context _library = {};
 
 void test_init()
@@ -135,10 +138,8 @@ TEST_CASE( "Compile Time Library" )
 
 }
 
-TEST_CASE( "Container Library" )
+TEST_CASE( "tyon::string" )
 {
-    SECTION( "String" )
-    {
         cstring c_str = "hello world";
         fstring f_str = "hello world";
         string str_1 = c_str;
@@ -168,44 +169,66 @@ TEST_CASE( "Container Library" )
                 str_3.parts[1].size == 5) );
         TYON_LOGF( "split_whitespace(): '{}' '{}'", str_3.parts[0].data, str_3.parts[1].data );
         fflush( stdout );
+}
+
+TEST_CASE( "tyon::array" )
+{
+    SECTION( "change_allocation()" ) {
+        array<int> arr_1;
+        arr_1.change_allocation(10);
+        CHECK( arr_1.size_ == 10 );
+    }
+    SECTION( "push_tail()" ) {
+        array<int> arr_1;
+        arr_1.push_tail( 1 );
+        arr_1.push_tail( 2 );
+        arr_1.push_tail( 3 );
+        CHECK( arr_1[ 2 ] == 3 );
+        CHECK( arr_1.data[2] == 3 );
+
+        // Check element editing works okay
+        arr_1[2] = 42;
+        CHECK( arr_1.data[2] == 42 );
+    }
+    SECTION( "Initializer list constructor" ){
+        int ref[5] = { 5, 42, 19, 12, 150 };
+        array<int> arr_1 { 5, 42, 19, 12, 150 };
+        CHECK( memory_same_raw( ref, arr_1.data, 5 ) );
+    }
+    SECTION ( "pop_tail()" ){
+        array<int> arr_1 { 1, 50, 530, 43, 639 };
+        auto pop_result = arr_1.pop_tail();
+        CHECK( pop_result.error == false );
+        CHECK( pop_result.value == 639 );
+        CHECK (arr_1.size() == 4 );
+
+        auto pop_result_2 = arr_1.pop_tail();
+        CHECK( pop_result_2.copy_default( -1 ) == 43 );
+        auto pop_result_3 = arr_1.pop_tail();
+        CHECK( pop_result_3.copy_default( -1 ) == 530 );
     }
 
-    SECTION( "Array")
-    {
-        {
-            array<int> arr_1;
-            arr_1.change_allocation(10);
-            CHECK( arr_1.size_ == 10 );
-        }
-        {
-            array<int> arr_1;
-            arr_1.push_tail( 1 );
-            arr_1.push_tail( 2 );
-            arr_1.push_tail( 3 );
-            CHECK( arr_1[ 2 ] == 3 );
-            CHECK( arr_1.data[2] == 3 );
+    SECTION( "linear_search()" ) {
+        array<i32> arr = { 5, 15, 25, 35 };
+        auto search = arr.linear_search( []( i32 arg ) { return arg == 25; } );
+        CHECK( search.match_found );
+        CHECK( search.index == 2 );
+        CHECK( *search.match == 25 );
+    }
 
-            // Check element editing works okay
-            arr_1[2] = 42;
-            CHECK( arr_1.data[2] == 42 );
-        }
-        {
-            // Initializer list construction
-            int ref[5] = { 5, 42, 19, 12, 150 };
-            array<int> arr_1 { 5, 42, 19, 12, 150 };
-            CHECK( memory_same_raw( ref, arr_1.data, 5 ) );
-        }
-        {
-            array<int> arr_1 { 1, 50, 530, 43, 639 };
-            auto pop_result = arr_1.pop_tail();
-            CHECK( pop_result.error == false );
-            CHECK( pop_result.value == 639 );
-            CHECK (arr_1.size() == 4 );
-
-            auto pop_result_2 = arr_1.pop_tail();
-            CHECK( pop_result_2.copy_default( -1 ) == 43 );
-            auto pop_result_3 = arr_1.pop_tail();
-            CHECK( pop_result_3.copy_default( -1 ) == 530 );
-        }
+    SECTION( "linear_search_value()" ) {
+        array<i32> arr = { 5, 15, 25, 35 };
+        auto search = arr.linear_search_value( 25 );
+        CHECK( search.match_found );
+        CHECK( search.index == 2 );
+        CHECK( *search.match == 25 );
+    }
+    SECTION ( "copy assignment operator =" ) {
+        array<i32> arr = { 1, 2, 3 };
+        array<i32> other;
+        other = arr;
+        CHECK( other.size() == arr.size() );
+        CHECK( other[0] == 1 );
+        CHECK( other[2] == 3);
     }
 }
