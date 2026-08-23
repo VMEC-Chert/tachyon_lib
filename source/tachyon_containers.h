@@ -130,6 +130,7 @@ PROC image_packed_from_simd( image<t_pixel> arg ) -> image<t_pixel>
 
 PROC image_color_reorder_inplace_u8_bgra_rgba( image<rgba> arg ) -> image<bgra>;
 
+// TODO: Remove head/push head logic, it's not worth it, this should be in a queue container
 template <typename T>
 struct array
 {
@@ -257,19 +258,8 @@ struct array
         return true;
     }
 
-    /// Pushes an new before the 'head' index and decrements the 'head'
-    bool
-    FUNCTION push_head( T item )
-    {
-        if (bounded && (head <= 0)) { return false; }
-        data[ --head ] = item;
-        ++head_size;
-        return true;
-    }
-
     /// Pushes a new item at off the tail (head + head_size) and increments 'head_size'
-    T&
-    FUNCTION push_tail( T& item )
+    PROC push_tail( T& item ) -> T&
     {
         if (bounded && (head + head_size >= size_))
         {
@@ -307,20 +297,13 @@ struct array
         return true;
     }
 
-    T
-    FUNCTION pop_head()
+    PROC pop_tail() -> monad<T>
     {
-        if (bounded && (head_size == 0)) { return false; }
-        T result = data[ head++ ];
-        --head_size;
-        return result;
-    }
+        monad<T> result;
+        if (bounded && (head_size == 0))
+        { return { .value = {}, .error = true }; }
 
-    T
-    FUNCTION pop_tail()
-    {
-        if (bounded && (head_size == 0)) { return {}; }
-        T result = data[ head + head_size - 1 ];
+        result.value = data[ head + head_size - 1 ];
         --head_size;
         return result;
     }
@@ -687,6 +670,7 @@ struct linked_list
     using t_self = linked_list<T>;
     using t_node = node_link<T>;
     array< t_node > nodes;
+    array< i64 > nodes_free;
     // The index of the first node in the list
     i64 head_ = -1;
     // The index of the last node in the list
@@ -700,6 +684,29 @@ struct linked_list
     PROC size_grow( isize count )
     {
         nodes.resize( nodes.size() + count );
+    }
+
+    /** Returns the length of the size from head to tail
+        NOTE: Does not tell you the size of the node array */
+    PROC size() -> isize
+    {   return list_size; };
+
+    /** Finds a free node to allocate on*/
+    PROC allocate_node() -> t_node*
+    {
+        t_node* result = nullptr;
+        monad<t_node*> pop_result = nodes_free.pop_tail();
+        result.value = pop_result.copy_default( nullptr );
+
+        // TODO: if failed allocation allocate some more nodes
+        return result;
+    }
+
+    /** Adds node to the free list and clears internal data */
+    PROC deallocate_node( t_node* arg ) -> void
+    {
+        nodes_free.push_tail( arg->index );
+        *arg = {};
     }
 
     PROC push_tail( T arg ) -> t_node*
@@ -740,8 +747,7 @@ struct linked_list
         result.index = -1;
         result.value = nodes[ tail_ ];
         // nullify tail so it can be detected as an unused node
-        tail() = {};
-        nodes.head_size--;
+        *tail() = {};
 
         ERROR_GUARD( (head_ == -1 && tail_ == -1) || (head_ = -1 && tail_ == -1) ||
                      (head_ >= 0 && tail_ >= 0),

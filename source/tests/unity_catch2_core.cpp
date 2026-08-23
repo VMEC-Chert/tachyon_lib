@@ -169,4 +169,43 @@ TEST_CASE( "Container Library" )
         TYON_LOGF( "split_whitespace(): '{}' '{}'", str_3.parts[0].data, str_3.parts[1].data );
         fflush( stdout );
     }
+
+    SECTION( "Array")
+    {
+        {
+            array<int> arr_1;
+            arr_1.change_allocation(10);
+            CHECK( arr_1.size_ == 10 );
+        }
+        {
+            array<int> arr_1;
+            arr_1.push_tail( 1 );
+            arr_1.push_tail( 2 );
+            arr_1.push_tail( 3 );
+            CHECK( arr_1[ 2 ] == 3 );
+            CHECK( arr_1.data[2] == 3 );
+
+            // Check element editing works okay
+            arr_1[2] = 42;
+            CHECK( arr_1.data[2] == 42 );
+        }
+        {
+            // Initializer list construction
+            int ref[5] = { 5, 42, 19, 12, 150 };
+            array<int> arr_1 { 5, 42, 19, 12, 150 };
+            CHECK( memory_same_raw( ref, arr_1.data, 5 ) );
+        }
+        {
+            array<int> arr_1 { 1, 50, 530, 43, 639 };
+            auto pop_result = arr_1.pop_tail();
+            CHECK( pop_result.error == false );
+            CHECK( pop_result.value == 639 );
+            CHECK (arr_1.size() == 4 );
+
+            auto pop_result_2 = arr_1.pop_tail();
+            CHECK( pop_result_2.copy_default( -1 ) == 43 );
+            auto pop_result_3 = arr_1.pop_tail();
+            CHECK( pop_result_3.copy_default( -1 ) == 530 );
+        }
+    }
 }

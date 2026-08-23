@@ -140,6 +140,7 @@ namespace tyon
     /// Has no time period adjustments, is most accurate for time measurements
     using time_monotonic = chrono::time_point< chrono::steady_clock >;
     using time_monotonic_ns = u64;
+    using time_monotonic_s = double;
     /// Calender time from system_clock
     using time_date = chrono::time_point< chrono::system_clock >;
     using time_date_ns = u64;
@@ -1879,6 +1880,11 @@ namespace tyon
 
         isize size_bytes()
         { return (size.x * size.y * sizeof(t_pixel)); }
+
+        /** Returns if zero size */
+        PROC zero_size() -> fresult
+        {   return (size.x == 0 && size.y == 0);
+        }
 
         /** Ratio of vertical size to horizontal size v:h = ratio:1 */
         f32 aspect_ratio_vh()
