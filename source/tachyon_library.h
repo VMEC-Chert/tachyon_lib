@@ -2279,6 +2279,21 @@ namespace tyon
     constexpr bool bool_flip( bool& arg )
     {   return (arg = !arg); }
 
+    /** Returns -1 on zero set bits as this is invalid usage*/
+    inline
+    PROC count_trailing_zeros( u64 bits ) -> i32
+    {
+        // NOTE: __builtin_ctzll is undefined behaviour on zero
+        if (bits == 0) { return -1; }
+#if (REFLECTION_COMPILER_GCC || REFLECTION_COMPILER_CLANG)
+        return __builtin_ctzll( bits );
+#elif (REFLECTION_COMPILER_MSVC)
+        u64 index {};
+        _BitScanForward64( &index, bits );
+        return static_cast<i32>( index );
+#endif
+}
+
 }
 
 // -- String Formatters --

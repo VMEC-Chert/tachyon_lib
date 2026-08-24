@@ -634,7 +634,7 @@ struct linked_list
     using t_self = linked_list<T>;
     using t_node = node_link<T>;
     array< t_node > nodes;
-    array< i64 > nodes_free;
+    array< u64 > nodes_used_bits;
     // The index of the first node in the list
     i64 head_ = -1;
     // The index of the last node in the list
@@ -645,15 +645,20 @@ struct linked_list
     /** Resizes the internal contigious node storage.
         NOTE: does nothing if the size is identical */
     PROC resize( isize count )
-    {   if (count == nodes_free.size())
+    {   if (count == nodes.size())
         {   return; }
         nodes.resize( count );
-        nodes_free.resize( count / 2 );
+
+        /** NOTE: For the free list we need the minimum amount of u64 that will
+         * fit the bits to fulfil 1 bit for each 'count' worth of nodes, so it
+         * will be rounded up */
+        i64 bit_containers_needed = i64( ceil( f64(count) / 64 ));
+        nodes_used_bits.resize( bit_containers_needed );
     }
 
     PROC size_grow( isize count )
     {
-        nodes.resize( nodes.size() + count );
+        resize( nodes.size() + count );
     }
 
     /** Returns the length of the size from head to tail
@@ -665,17 +670,53 @@ struct linked_list
     PROC allocate_node() -> t_node*
     {
         t_node* result = nullptr;
-        monad<t_node*> pop_result = nodes_free.pop_tail();
-        result = pop_result.copy_default( nullptr );
+        i32 first_bit = 0;
+
+        i64 i_limit = nodes_used_bits.size();
+        bool node_found = 0;
+        u64 free_bits {};
+        i64 node_found_i = 0;
+        i64 node_bits_i = 0;
+        for (i64 i=0; i < i_limit; ++i)
+        {
+            // NOTE: We have to flip the bits to convert used marking bits to free bits
+            free_bits = ~(nodes_used_bits[i]);
+            // Find the first set bit and interpret that as a free node
+            first_bit = count_trailing_zeros( free_bits );
+            if (first_bit > -1)
+            {   node_found = true;
+                // Calculate the index of the node based on u64 bit elements
+                node_found_i = (i * 64 + first_bit);;
+                node_bits_i = i;
+                break;
+            }
+        }
+        if (node_found)
+        {
+            result = &nodes[ node_found_i ];
+            // Set the bit we're claiming as used now
+            nodes_used_bits[ node_bits_i ] |= (u64(1) << first_bit);
+            // Make sure to set the internal index
+            result->index = node_found_i;
+        }
 
         // TODO: if failed allocation allocate some more nodes, this should not really fail ever
+        // NOTE: Currently just returns nullptr
         return result;
     }
 
     /** Adds node to the free list and clears internal data */
     PROC deallocate_node( t_node* arg ) -> void
     {
-        nodes_free.push_tail( arg->index );
+        // Where in the bits array the node is
+        // NOTE: Take advantage of integer division truncation
+        i64 bits_index = (arg->index / 64);
+        i64 target_bit = (arg->index % 64);
+
+        // Turn off the bit
+        u64 off_mask = ~(u64(1) << target_bit);
+        nodes_used_bits[ bits_index ] &= off_mask;
+
         *arg = {};
     }
 
@@ -739,9 +780,7 @@ struct linked_list
     {
         ERROR_GUARD( (target_node >= nodes.address(0)) && (target_node <= nodes.address( nodes.size_ )),
                      "A node from outside this container has been used as an argument" );
-        t_node* new_node = &nodes.push_tail( {} );
-        // Set index before proceeding
-        new_node->index = list_size;
+        t_node* new_node = allocate_node();
         if (target_node->next >= 0)
         {   t_node& next_node = nodes[ target_node->next ];
             next_node.prev = new_node->index;
