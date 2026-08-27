@@ -859,7 +859,12 @@ struct linked_list
             head_ = next_of;
             nodes[ next_of ].prev = -1;
         }
-
+        else
+        {
+            // Both prev and next is null, this node is the head so both must made -1
+            head_ = -1;
+            tail_ = -1;
+        }
         // Done, we can deallocate node and reduce list size
         deallocate_node( arg );
         --list_size;
