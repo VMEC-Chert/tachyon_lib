@@ -11,7 +11,7 @@
 // #include "../build_control/tachyon_lib_unity_core.cpp"
 
 /** Optional tests */
-// #include "ai_generated/grok_containers_1.cpp"
+#include "ai_generated/grok_containers_1.cpp"
 
 static tyon::library_context _library = {};
 

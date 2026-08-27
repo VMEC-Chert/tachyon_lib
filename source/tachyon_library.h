@@ -391,9 +391,9 @@ namespace tyon
 
     #define TYON_UNSUPPORTED()
     #define TYON_NOP() void(0);
-    #define TYON_UNIMPLIMENTED();
+    #define TYON_UNIMPLIMENTED() TYON_BREAK();
     #define TYON_TESTING( x ) x;
-    #define TYON_TODO( explanation )
+    #define TYON_TODO( explanation ) TYON_BREAK();
 
     // Use these macros to do logging, or use it as a base for your own macros
     // with a predefined category.

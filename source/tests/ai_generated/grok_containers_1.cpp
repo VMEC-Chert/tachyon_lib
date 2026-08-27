@@ -1,10 +1,10 @@
 /**
 Model: Grok 4.5 Fast
-Date: [2026-08-23 Sun 12:40]
+Date: [2026-08-24 Mon 20:39]
 */
 
 // ============================================================
-//  array / linked_list API tests  (Catch2)
+//  array / linked_list API tests  (Catch2)  – corrected
 //  Drop into (or next to) unity_catch2_core.cpp
 // ============================================================
 
@@ -18,10 +18,9 @@ TEST_CASE("array – construction & basic state", "[array]")
     SECTION("default construction")
     {
         array<i32> a;
-        CHECK(a.size() == 0);          // logical size
+        CHECK(a.size() == 0);
         CHECK(a.head_size == 0);
         CHECK(a.head == 0);
-        // size_ (capacity) may be 0
     }
 
     SECTION("initializer_list constructor")
@@ -50,8 +49,8 @@ TEST_CASE("array – change_allocation / resize / reserve", "[array]")
     SECTION("change_allocation grows capacity")
     {
         REQUIRE(a.change_allocation(8));
-        CHECK(a.size_ >= 8);           // capacity
-        CHECK(a.size() == 0);          // logical still empty
+        CHECK(a.size_ >= 8);
+        CHECK(a.size() == 0);
         CHECK(a.head_size == 0);
     }
 
@@ -60,7 +59,6 @@ TEST_CASE("array – change_allocation / resize / reserve", "[array]")
         a.resize(5);
         CHECK(a.size() == 5);
         CHECK(a.size_ >= 5);
-        // elements are default-constructed
         for (i64 i = 0; i < a.size(); ++i)
             CHECK(a[i] == 0);
     }
@@ -72,7 +70,7 @@ TEST_CASE("array – change_allocation / resize / reserve", "[array]")
         CHECK(a.size_ >= 16);
     }
 
-    SECTION("growing then shrinking")
+    SECTION("growing then shrinking (capacity first)")
     {
         a.resize(10);
         for (i64 i = 0; i < 10; ++i) a[i] = i32(i);
@@ -86,6 +84,7 @@ TEST_CASE("array – change_allocation / resize / reserve", "[array]")
 TEST_CASE("array – push_tail / pop_tail / access", "[array]")
 {
     array<i32> a;
+    a.reserve(16);                     // capacity first
 
     SECTION("push_tail sequence")
     {
@@ -102,7 +101,7 @@ TEST_CASE("array – push_tail / pop_tail / access", "[array]")
 
     SECTION("pop_tail")
     {
-        a = {11, 22, 33, 44};
+        a = {11, 22, 33, 44};           // initializer already sizes
         auto r1 = a.pop_tail();
         CHECK_FALSE(r1.error);
         CHECK(r1.value == 44);
@@ -112,7 +111,6 @@ TEST_CASE("array – push_tail / pop_tail / access", "[array]")
         CHECK(r2.value == 33);
         CHECK(a.size() == 2);
 
-        // empty pop
         a.pop_tail();
         a.pop_tail();
         auto empty = a.pop_tail();
@@ -184,23 +182,12 @@ TEST_CASE("array – copy assignment", "[array]")
     CHECK(dst.size() == src.size());
     CHECK(dst[0] == 1);
     CHECK(dst[3] == 4);
-    // independence
     dst[0] = 99;
     CHECK(src[0] == 1);
 }
 
-// Optional / future – currently expected to be incomplete
-/*
-TEST_CASE("array – move construction (placeholder)", "[array][move]")
-{
-    array<i32> src{1, 2, 3};
-    array<i32> dst = std::move(src);
-    // define intended post-move state when you enable moves
-}
-*/
-
 // ---------------------------------------------------------------------------
-//  linked_list<T>
+//  linked_list<T>   – ALWAYS resize before obtaining node pointers
 // ---------------------------------------------------------------------------
 TEST_CASE("linked_list – construction & empty state", "[linked_list]")
 {
@@ -213,7 +200,7 @@ TEST_CASE("linked_list – construction & empty state", "[linked_list]")
 TEST_CASE("linked_list – push_tail & basic linking", "[linked_list]")
 {
     linked_list<i32> list;
-    list.resize( 5 );
+    list.resize(8);                    // capacity first – no later invalidation
 
     SECTION("single node")
     {
@@ -238,7 +225,6 @@ TEST_CASE("linked_list – push_tail & basic linking", "[linked_list]")
         CHECK(list.head()->value == 10);
         CHECK(list.tail()->value == 30);
 
-        // links
         CHECK(n1->prev == -1);
         CHECK(n1->next == n2->index);
         CHECK(n2->prev == n1->index);
@@ -251,7 +237,8 @@ TEST_CASE("linked_list – push_tail & basic linking", "[linked_list]")
 TEST_CASE("linked_list – operator[] (index from head)", "[linked_list]")
 {
     linked_list<i32> list;
-    list.resize( 3 );
+    list.resize(8);
+
     list.push_tail(100);
     list.push_tail(200);
     list.push_tail(300);
@@ -268,7 +255,6 @@ TEST_CASE("linked_list – operator[] (index from head)", "[linked_list]")
     REQUIRE_FALSE(r2.error);
     CHECK(r2.value->value == 300);
 
-    // out of range
     auto bad = list[5];
     CHECK(bad.error);
 }
@@ -276,6 +262,8 @@ TEST_CASE("linked_list – operator[] (index from head)", "[linked_list]")
 TEST_CASE("linked_list – insert_after / insert_before", "[linked_list]")
 {
     linked_list<i32> list;
+    list.resize(8);
+
     auto* a = list.push_tail(1);
     auto* c = list.push_tail(3);
 
@@ -283,10 +271,11 @@ TEST_CASE("linked_list – insert_after / insert_before", "[linked_list]")
     {
         auto* b = list.insert_after(a, 2);
         CHECK(list.size() == 3);
+        // prefer index checks
         CHECK(list[0].value->value == 1);
         CHECK(list[1].value->value == 2);
         CHECK(list[2].value->value == 3);
-        // links
+
         CHECK(a->next == b->index);
         CHECK(b->prev == a->index);
         CHECK(b->next == c->index);
@@ -295,11 +284,12 @@ TEST_CASE("linked_list – insert_after / insert_before", "[linked_list]")
 
     SECTION("insert_before")
     {
-        // reset
         linked_list<i32> list2;
+        list2.resize(8);
         auto* x = list2.push_tail(10);
         auto* z = list2.push_tail(30);
         auto* y = list2.insert_before(z, 20);
+
         CHECK(list2.size() == 3);
         CHECK(list2[0].value->value == 10);
         CHECK(list2[1].value->value == 20);
@@ -310,6 +300,8 @@ TEST_CASE("linked_list – insert_after / insert_before", "[linked_list]")
 TEST_CASE("linked_list – remove_node", "[linked_list]")
 {
     linked_list<i32> list;
+    list.resize(8);
+
     auto* n1 = list.push_tail(1);
     auto* n2 = list.push_tail(2);
     auto* n3 = list.push_tail(3);
@@ -345,7 +337,7 @@ TEST_CASE("linked_list – remove_node", "[linked_list]")
     SECTION("remove last remaining node")
     {
         linked_list<i32> one;
-        one.resize( 5 );
+        one.resize(4);
         auto* only = one.push_tail(99);
         one.remove_node(only);
         CHECK(one.size() == 0);
@@ -357,16 +349,17 @@ TEST_CASE("linked_list – remove_node", "[linked_list]")
 TEST_CASE("linked_list – free-list behaviour (intended)", "[linked_list]")
 {
     linked_list<i32> list;
-    // force some nodes into existence
+    list.resize(8);                    // enough room for all operations
+
     auto* a = list.push_tail(1);
     auto* b = list.push_tail(2);
     auto* c = list.push_tail(3);
 
-    list.remove_node(b);               // should go onto free list
-    // next allocate should reuse a free slot if the implementation does so
-    auto* d = list.push_tail(4);
+    list.remove_node(b);               // returns node to free list
+    auto* d = list.push_tail(4);       // may reuse a free slot
+
     CHECK(list.size() == 3);
-    // we only assert size & values; exact index reuse is an implementation detail
+    // values via index (safe)
     CHECK(list[0].value->value == 1);
     CHECK(list[1].value->value == 3);
     CHECK(list[2].value->value == 4);

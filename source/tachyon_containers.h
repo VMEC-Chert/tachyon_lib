@@ -645,7 +645,8 @@ struct linked_list
     /** Resizes the internal contigious node storage.
         NOTE: does nothing if the size is identical */
     PROC resize( isize count )
-    {   if (count == nodes.size())
+    {   bool size_unchanged = (count == nodes.size());
+        if (size_unchanged)
         {   return; }
         nodes.resize( count );
 
@@ -656,6 +657,7 @@ struct linked_list
         nodes_used_bits.resize( bit_containers_needed );
     }
 
+    /** Increases the size of the internal contingious node storage by the specified amount */
     PROC size_grow( isize count )
     {
         resize( nodes.size() + count );
@@ -705,6 +707,14 @@ struct linked_list
         return result;
     }
 
+    /** Finds multiple free nodes to allocate on in quick succession.
+     Should be faster because of grouped bit processing */
+    PROC allocate_nodes_count( i64 count ) -> array<t_node*>
+    {
+        TYON_TODO( "Unimplimented" );
+        return {};
+    }
+
     /** Adds node to the free list and clears internal data */
     PROC deallocate_node( t_node* arg ) -> void
     {
@@ -731,8 +741,7 @@ struct linked_list
         in future. */
     PROC push_tail( T arg ) -> t_node*
     {
-        t_node* new_node = &nodes.push_tail( {} );
-        new_node->index = nodes.size() - 1;
+        t_node* new_node = allocate_node();
         new_node->value = arg;
 
         bool no_tail = (this->tail_ < 0);
@@ -766,8 +775,9 @@ struct linked_list
 
         result.index = -1;
         result.value = nodes[ tail_ ];
-        // nullify tail so it can be detected as an unused node
-        *tail() = {};
+        // deallocate node and decrement list list
+        deallocate_node( result.value );
+        --list_size;
 
         ERROR_GUARD( (head_ == -1 && tail_ == -1) || (head_ = -1 && tail_ == -1) ||
                      (head_ >= 0 && tail_ >= 0),
@@ -789,21 +799,22 @@ struct linked_list
         new_node->prev = target_node->index;
         target_node->next = new_node->index;
         new_node->value = value;
-        ++list_size;
+
         if (target_node->index == tail_)
         {   tail_ = new_node->index;
         }
+        // Done linking up node, we can increment list_size
+        ++list_size;
 
         return new_node;
     }
+
     PROC
     insert_before( t_node* target_node, T value ) -> t_node*
     {
         ERROR_GUARD( (target_node >= nodes.address(0)) && (target_node <= nodes.address( nodes.size_ )),
                      "A node from outside this container has been used as an argument" );
-        t_node* new_node = &nodes.push_tail( {} );
-        // Set index before proceeding
-        new_node->index = list_size;
+        t_node* new_node = allocate_node();
 
         if (target_node->prev >= 0)
         {   t_node& prev_node = nodes[ target_node->prev ];
@@ -813,10 +824,11 @@ struct linked_list
         new_node->next = target_node->index;
         target_node->prev = new_node->index;
         new_node->value = value;
-        ++list_size;
         if (target_node->index == head_)
         {   head_ = new_node->index;
         }
+        ++list_size;
+
         return new_node;
     }
 
@@ -848,17 +860,14 @@ struct linked_list
             nodes[ next_of ].prev = -1;
         }
 
-        // Clear node to made node detected as empty
-        *arg = {};
-        arg->prev = -1;
-        arg->next = -1;
+        // Done, we can deallocate node and reduce list size
+        deallocate_node( arg );
+        --list_size;
 
-        // ai marked as bad
-        // nodes.head_size--;
-        list_size--;
+
         ERROR_GUARD( (head_ == -1 && tail_ == -1) || (head_ == -1 && tail_ == -1) ||
                      (head_ >= 0 && tail_ >= 0),
-                     "Wut" );
+                     "Suspicious if this test fails" );
     }
 
     /** LOOKING links in node order from head to tail */
