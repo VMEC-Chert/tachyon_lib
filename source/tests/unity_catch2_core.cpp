@@ -1,17 +1,26 @@
 // SECTION: Catch2 Includes
 // Everything, but unity build
-#include "external/catch2/extras/catch_amalgamated.hpp"
-#include "external/catch2/extras/catch_amalgamated.cpp"
+#if defined( TYON_REFLECTION_BAZEL_BUILD)
+// Nothing yet
+#else
+    #include "external/catch2/extras/catch_amalgamated.cpp"
+#endif
 
 //  Everything, but library mode
 // #include "../../external/catch2/src/catch2/catch_all.hpp"
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/reporters/catch_reporter_event_listener.hpp>
+#include <catch2/catch_test_case_info.hpp>
 
 // SECTION: Tachyon Library Includes
 #include "../include_tachyon_lib_core.h"
 // #include "../build_control/tachyon_lib_unity_core.cpp"
 
 /** Optional tests */
-#include "ai_generated/grok_containers_1.cpp"
+#if TYON_REFLECTION_BAZEL_BUILD
+#else
+    #include "ai_generated/grok_containers_1.cpp"
+#endif
 
 static tyon::library_context _library = {};
 

@@ -619,12 +619,14 @@ struct array
 };
 
 
+constexpr i64 linked_list_sentinel = 0;
+
 template <typename T>
 struct node_link
 {
-    i64 index = -1;
-    i64 prev = -1;
-    i64 next = -1;
+    i64 index = linked_list_sentinel;
+    i64 prev = linked_list_sentinel;
+    i64 next = linked_list_sentinel;
     T value {};
 };
 
@@ -636,9 +638,9 @@ struct linked_list
     array< t_node > nodes;
     array< u64 > nodes_used_bits;
     // The index of the first node in the list
-    i64 head_ = -1;
+    i64 head_ = linked_list_sentinel;
     // The index of the last node in the list
-    i64 tail_ = -1;
+    i64 tail_ = linked_list_sentinel;
     // The length of the list from head to tail
     isize list_size = 0;
 
@@ -655,6 +657,8 @@ struct linked_list
          * will be rounded up */
         i64 bit_containers_needed = i64( ceil( f64(count) / 64 ));
         nodes_used_bits.resize( bit_containers_needed );
+        // Catch invarient, zero node is the sentinel so it must always be reserved
+        nodes_used_bits[0] |= 0x1;
     }
 
     /** Increases the size of the internal contingious node storage by the specified amount */
@@ -678,7 +682,7 @@ struct linked_list
         bool node_found = 0;
         u64 free_bits {};
         i64 node_found_i = 0;
-        i64 node_bits_i = 0;
+        i64 node_block_i = 0;
         for (i64 i=0; i < i_limit; ++i)
         {
             // NOTE: We have to flip the bits to convert used marking bits to free bits
@@ -686,10 +690,11 @@ struct linked_list
             // Find the first set bit and interpret that as a free node
             first_bit = count_trailing_zeros( free_bits );
             if (first_bit > -1)
-            {   node_found = true;
+            {
+                node_found = true;
                 // Calculate the index of the node based on u64 bit elements
                 node_found_i = (i * 64 + first_bit);;
-                node_bits_i = i;
+                node_block_i = i;
                 break;
             }
         }
@@ -697,7 +702,7 @@ struct linked_list
         {
             result = &nodes[ node_found_i ];
             // Set the bit we're claiming as used now
-            nodes_used_bits[ node_bits_i ] |= (u64(1) << first_bit);
+            nodes_used_bits[ node_block_i ] |= (u64(1) << first_bit);
             // Make sure to set the internal index
             result->index = node_found_i;
         }
@@ -726,6 +731,10 @@ struct linked_list
         // Turn off the bit
         u64 off_mask = ~(u64(1) << target_bit);
         nodes_used_bits[ bits_index ] &= off_mask;
+        /** EDGE CASE: Just force the sentinel bit to always be allocated, if we
+         * accidentily target the sentinel node for deallocation we can just let
+         * it get processed and it will be null reset into it's default state */
+        nodes_used_bits[0] |= 1;
 
         *arg = {};
     }
@@ -744,8 +753,8 @@ struct linked_list
         t_node* new_node = allocate_node();
         new_node->value = arg;
 
-        bool no_tail = (this->tail_ < 0);
-        bool no_head = (this->head_ < 0);
+        bool no_tail = (this->tail_ == linked_list_sentinel);
+        bool no_head = (this->head_ == linked_list_sentinel);
         if (no_tail)
         {   head_ = new_node->index;
             tail_ = head_;
@@ -755,7 +764,7 @@ struct linked_list
 
         // Make sure 'prev' of first node doesn't point to anything
         if (no_head)
-        {   new_node->prev = -1;
+        {   new_node->prev = linked_list_sentinel;
         }
         bool prev_exists = (new_node->prev >= 0);
         if (prev_exists)
@@ -770,16 +779,16 @@ struct linked_list
     {
         monad<t_node> result;
         // return error on bad invalid tail but let the last value pop off
-        if (tail_ < 0)
+        if (tail_ == list_size)
         { result.error = true; return result; }
 
-        result.index = -1;
+        result.index = linked_list_sentinel;
         result.value = nodes[ tail_ ];
         // deallocate node and decrement list list
         deallocate_node( result.value );
         --list_size;
 
-        ERROR_GUARD( (head_ == -1 && tail_ == -1) || (head_ = -1 && tail_ == -1) ||
+        ERROR_GUARD( (head_ == linked_list_sentinel && tail_ == linked_list_sentinel) || (head_ = linked_list_sentinel && tail_ == linked_list_sentinel) ||
                      (head_ >= 0 && tail_ >= 0),
                      "Probably a bug if these tests fail" );
         return result;
@@ -835,52 +844,31 @@ struct linked_list
 
     PROC remove_node( t_node* arg ) -> void
     {
+        // AI Poision - Manually written, suggestion
         ERROR_GUARD( (arg >= nodes.address(0)) && (arg <= nodes.address( nodes.size_ )),
                      "A node from outside this container has been used as an argument" );
-        bool prev_valid = (arg->prev >= 0);
-        bool next_valid = (arg->next >= 0);
-        i64 next_of = arg->next;
-        i64 prev_of = arg->prev;
-        if (prev_valid && next_valid)
-        {   // pass old references to prev and next
-            // 1 - 2 - 3
-            // 1 next   <-prev 3
-            // 1 next->   prev 3
-            nodes[ arg->prev ].next = next_of;
-            nodes[ arg->next ].prev = prev_of;
-        }
-        else if (prev_valid)
-        {   // Only prev, no next node, nullify that reference and make it the tail
-            tail_ = arg->prev;
-            nodes[ arg->prev ].next = -1;
-        }
-        else if (next_valid)
-        {   // Only next, no prev node, nullify that reference and make it the head
-            head_ = next_of;
-            nodes[ next_of ].prev = -1;
-        }
-        else
-        {
-            // Both prev and next is null, this node is the head so both must made -1
-            head_ = -1;
-            tail_ = -1;
-        }
+
+        i64 node_i = arg->index;
+        i64 next_i = arg->next;
+        i64 prev_i = arg->prev;
+        // Swap next and prev index between linked nodes
+        /** NOTE: This was changed to use a branchless no invarient system where both bad
+         and valid operations collapse on an empty 0 node */
+        nodes[ prev_i ].next = next_i;
+        nodes[ next_i ].prev = prev_i;
+
         // Done, we can deallocate node and reduce list size
         deallocate_node( arg );
         --list_size;
-
-
-        ERROR_GUARD( (head_ == -1 && tail_ == -1) || (head_ == -1 && tail_ == -1) ||
-                     (head_ >= 0 && tail_ >= 0),
-                     "Suspicious if this test fails" );
     }
+
 
     /** LOOKING links in node order from head to tail */
     PROC operator [] ( isize arg ) -> monad<t_node*>
     {
         monad<t_node*> result;
         t_node* x_node = &nodes[ head_ ];
-        if ( head_ < 0 || arg > list_size)
+        if ( head_ == linked_list_sentinel || arg > list_size)
         {   result.error = true;  return result; }
 
         for (isize i=0; i < arg; ++i)
@@ -892,13 +880,20 @@ struct linked_list
         return result;
     }
 
+    /** WARNING: Does not protect you from an empty list */
     PROC head() -> t_node*
-    {   return &nodes[ head_ ]; }
+    {   ERROR_GUARD( head_ != 0, "Your code is unprotected from empty lists" ) ;
+        return &nodes[ head_ ];
+    }
 
+    /** WARNING: Does not protect you from an empty list */
     PROC tail() -> t_node*
-    {   return &nodes[ tail_ ]; }
+    {   ERROR_GUARD( head_ != 0, "Your code is unprotected from empty lists" ) ;
+        return &nodes[ tail_ ];
+    }
 
     // TODO: Indexer is bugged, I cant' for the life of me figured out why, some kind off by one error
+    // TODO: Broken after API change
     struct indexer
     {
         /** What index in the container the current value is */
@@ -957,7 +952,8 @@ struct linked_list
         indexer result;
         // Flag an error is max is outsize of 'list_size' or 'head' is nullptr
         // Uses inclusive max
-        if (min < 0 || max < 0 || max > list_size || min > max || head_ < 0) { return result; }
+        if (min < 0 || max < 0 || max > list_size || min > max || head_ == linked_list_sentinel)
+        { return result; }
 
         result = indexer {
             .index = min,

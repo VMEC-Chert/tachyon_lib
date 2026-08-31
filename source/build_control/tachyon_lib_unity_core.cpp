@@ -21,7 +21,7 @@
     #include "tachyon_entity.cpp"
     #include "tachyon_containers.cpp"
     #include "tachyon_allocators.cpp"
-#elif
+#else
 #include "../include_tachyon_lib_core.h"
 
 #include "../tachyon_library.cpp"

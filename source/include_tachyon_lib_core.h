@@ -123,7 +123,7 @@
     #include "fmt/format.h"
     #include "fmt/color.h"
     #include "fmt/std.h"
-#elif
+#else
     #include "../external/fmt/include/fmt/format.h"
     #include "../external/fmt/include/fmt/color.h"
     #include "../external/fmt/include/fmt/std.h"
