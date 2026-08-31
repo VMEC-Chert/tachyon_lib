@@ -7,6 +7,21 @@
 
 // Required for windows DLL
 #define TYON_EXPORTS 1
+
+#if TYON_REFLECTION_BAZEL_BUILD
+    #include "include_tachyon_lib_core.h"
+
+    #include "tachyon_library.cpp"
+    #include "tachyon_threading.cpp"
+    #include "tachyon_math.cpp"
+    #include "tachyon_command.cpp"
+    #include "tachyon_platform_common.cpp"
+    #include "tachyon_platform_linux.cpp"
+    #include "tachyon_platform_windows.cpp"
+    #include "tachyon_entity.cpp"
+    #include "tachyon_containers.cpp"
+    #include "tachyon_allocators.cpp"
+#elif
 #include "../include_tachyon_lib_core.h"
 
 #include "../tachyon_library.cpp"
@@ -19,6 +34,9 @@
 #include "../tachyon_entity.cpp"
 #include "../tachyon_containers.cpp"
 #include "../tachyon_allocators.cpp"
+
+#endif
+
 
 #if (!TYON_FMTLIB_HEADER_ONLY)
     #include "../../extesornal/fmt/src/format.cc"

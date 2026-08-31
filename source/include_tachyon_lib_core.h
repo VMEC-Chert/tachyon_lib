@@ -118,9 +118,16 @@
 #pragma GCC diagnostic ignored "-Wreserved-macro-identifier"
 #pragma GCC diagnostic ignored "-Wswitch-default"
 #pragma clang diagnostic ignored "-Weverything"
-#include "../external/fmt/include/fmt/format.h"
-#include "../external/fmt/include/fmt/color.h"
-#include "../external/fmt/include/fmt/std.h"
+
+#if TYON_REFLECTION_BAZEL_BUILD
+    #include "fmt/format.h"
+    #include "fmt/color.h"
+    #include "fmt/std.h"
+#elif
+    #include "../external/fmt/include/fmt/format.h"
+    #include "../external/fmt/include/fmt/color.h"
+    #include "../external/fmt/include/fmt/std.h"
+#endif
 #pragma GCC diagnostic pop
 
 #include "include_tracy.h"
