@@ -10,6 +10,7 @@
 // #include "../../external/catch2/src/catch2/catch_all.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/reporters/catch_reporter_event_listener.hpp>
+#include <catch2/reporters/catch_reporter_registrars.hpp>
 #include <catch2/catch_test_case_info.hpp>
 
 // SECTION: Tachyon Library Includes
@@ -33,6 +34,7 @@ void test_init()
     tyon::library_context_init( &_library );
     tyon::g_logger->console_output_enabled = true;
     // tyon::library_process_cmdline_args( argc, argv );
+    TYON_LOG( "Finished initializing for catch2 test" );
 
 }
 
@@ -41,8 +43,8 @@ public:
     using EventListenerBase::EventListenerBase;
 
     void testRunStarting(Catch::TestRunInfo const&) override {
+                // Your global setup code here (e.g., Init Engine)
         test_init();
-        // Your global setup code here (e.g., Init Engine)
     }
 
     void testRunEnded(Catch::TestRunStats const&) override {

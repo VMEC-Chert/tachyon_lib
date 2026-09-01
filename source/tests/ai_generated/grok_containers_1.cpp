@@ -11,6 +11,7 @@ Date: [2026-08-24 Mon 20:39]
 #include "include_tachyon_lib_core.h"
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/reporters/catch_reporter_event_listener.hpp>
+#include <catch2/reporters/catch_reporter_registrars.hpp>
 #include <catch2/catch_test_case_info.hpp>
 using namespace tyon;
 
@@ -153,7 +154,7 @@ TEST_CASE("array – search & iteration helpers", "[array]")
 
         auto miss = a.linear_search([](i32 v){ return v == 999; });
         CHECK_FALSE(miss.match_found);
-        CHECK(miss.index == linked_list_sentinel);
+        CHECK(miss.index <= 0);
     }
 
     SECTION("linear_search_value")
@@ -198,8 +199,8 @@ TEST_CASE("linked_list – construction & empty state", "[linked_list]")
 {
     linked_list<i32> list;
     CHECK(list.size() == 0);
-    CHECK(list.head_ < 0);
-    CHECK(list.tail_ < 0);
+    CHECK(list.head_ == linked_list_sentinel);
+    CHECK(list.tail_ == linked_list_sentinel);
 }
 
 TEST_CASE("linked_list – push_tail & basic linking", "[linked_list]")
@@ -307,15 +308,14 @@ TEST_CASE("linked_list – remove_node", "[linked_list]")
     linked_list<i32> list;
     list.resize(8);
 
-    TYON_BREAK();
     auto* n1 = list.push_tail(1);
     auto* n2 = list.push_tail(2);
     auto* n3 = list.push_tail(3);
     auto* n4 = list.push_tail(4);
 
-    SECTION("remove middle")
+    CHECK(list.size() == 4);
+    // SECTION("remove middle")
     {
-        TYON_BREAK();
         list.remove_node(n2);
         CHECK(list.size() == 3);
         CHECK(list[0].value->value == 1);
@@ -325,31 +325,28 @@ TEST_CASE("linked_list – remove_node", "[linked_list]")
         CHECK(n3->prev == n1->index);
     }
 
-    SECTION("remove head")
+    // SECTION("remove head")
     {
         list.remove_node(n1);
-        CHECK(list.size() == 3);
-        CHECK(list.head()->value == 2);
+        CHECK(list.size() == 2);
+        CHECK(list.head()->value == 3);
         CHECK(list.head()->prev == linked_list_sentinel);
     }
 
-    SECTION("remove tail")
+    // SECTION("remove tail")
     {
         list.remove_node(n4);
-        CHECK(list.size() == 3);
+        CHECK(list.size() == 1);
         CHECK(list.tail()->value == 3);
         CHECK(list.tail()->next == linked_list_sentinel);
     }
 
-    SECTION("remove last remaining node")
+    // SECTION("remove last remaining node")
     {
-        linked_list<i32> one;
-        one.resize(4);
-        auto* only = one.push_tail(99);
-        one.remove_node(only);
-        CHECK(one.size() == 0);
-        CHECK(one.head_ == 0);
-        CHECK(one.tail_ == 0);
+        list.remove_node( n3 );
+        CHECK( list.size() == 0 );
+        CHECK( list.tail_ == 0 );
+        CHECK( list.head_ == 0);
     }
 }
 

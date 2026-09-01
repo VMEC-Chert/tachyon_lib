@@ -630,6 +630,14 @@ struct node_link
     T value {};
 };
 
+/** Intrusive Doubly Linked List
+
+    WARNING: You must allocate the node list before using
+    WARNING: You must not try to allocate more nodes than is available in the
+    list. This will cause pointer validaiton and it will NOT protect you.
+    NOTE: This list uses bitvectors to allocate and deallocate nodes.
+    TODO: This is moving towards a branchless version.
+*/
 template <typename T>
 struct linked_list
 {
@@ -853,10 +861,14 @@ struct linked_list
         i64 prev_i = arg->prev;
         // Swap next and prev index between linked nodes
         /** NOTE: This was changed to use a branchless no invarient system where both bad
-         and valid operations collapse on an empty 0 node */
+            and valid operations collapse on an empty 0 node.
+
+            NOTE: Changing the next and prev value of the 0 node since it's never read. */
         nodes[ prev_i ].next = next_i;
         nodes[ next_i ].prev = prev_i;
 
+        head_ = (head_ == node_i) ? next_i : head_;
+        tail_ = (tail_ == node_i) ? prev_i : tail_;
         // Done, we can deallocate node and reduce list size
         deallocate_node( arg );
         --list_size;
@@ -866,10 +878,11 @@ struct linked_list
     /** LOOKING links in node order from head to tail */
     PROC operator [] ( isize arg ) -> monad<t_node*>
     {
+        static i64 bad_accesses = 0;
         monad<t_node*> result;
         t_node* x_node = &nodes[ head_ ];
         if ( head_ == linked_list_sentinel || arg > list_size)
-        {   result.error = true;  return result; }
+        {   ++bad_accesses; result.error = true;  return result;}
 
         for (isize i=0; i < arg; ++i)
         {
