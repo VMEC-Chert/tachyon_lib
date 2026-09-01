@@ -10,4 +10,18 @@ module(
     version = "0.1.0"
 )
 
+# General C++ Rules
 bazel_dep(name = "rules_cc", version = "0.2.22")
+
+# For catch2
+# No version, local repository
+bazel_dep(name = "catch2", version = "3.15.1")
+local_path_override(
+    module_name = "catch2",
+    path = "ext/catch2",
+)
+# bazel_dep(name = "bazel_skylib", version = "1.7.1")
+# bazel_dep(name = "rules_license", version = "1.0.0")
+
+# System dependencies
+bazel_dep(name = "libuuid", version = "2.41.2")
