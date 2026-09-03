@@ -26,10 +26,15 @@ struct push_allocator
 
 struct heap_entry
 {
+    /** Actual address given out by the API, acts as an identifier */
     raw_pointer data;
+    /** Offset in bytes from block start */
     i64 position;
+    /** Absolute capaciy of this entry */
     i64 size;
+    /** Actual size used by an allocated object, 0 if unallocated. */
     i64 active_size;
+    /** If not 0 or 1 means the allocated object needs to be placed on a multiple address */
     i64 alignment;
     // User specified ID to disambiguate between different entries
     i32 id;

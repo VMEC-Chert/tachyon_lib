@@ -31,13 +31,58 @@ PROC memory_heap_allocator::allocate_raw( isize bytes, isize alignment ) -> raw_
     if (add_block)
     {
         TYON_LOG( "New heap block" );
-        block = &blocks.push_tail( {} );
-        block->data = malloc( 400_MiB );
-        block->size = std::max( 400_MiB, bytes + 100_MiB );
+        buffer new_block {};
+        new_block.data = malloc( 400_MiB );
+        new_block.size = std::max( 400_MiB, bytes + 100_MiB );
+
+        if (new_block.data == nullptr)
+        {   return nullptr; }
+         &blocks.push_tail( new_block );
+         free.push_tail( heap_entry {
+                 .data = new_block.data,
+                 .position = 0,
+                 .size = new_block.size,
+                 .alignment = 0,
+                 .id = 0
+             });
     }
     block = blocks.tail_address();
 
-    node_link<heap_entry>* new_node = used.push_tail( {} );
+    // node_link<heap_entry>* new_node = used.push_tail( {} );
+    i64 i_limit = free.size();
+    node_link<heap_entry>* x_node = free.head();
+    node_link<heap_entry>* found_node = nullptr;
+    i64 next_i = linked_list_sentinel;
+    i64 aligned_size = 0;
+    i64 padding = 0;
+    bool enough_bytes = false;
+
+    // Try to find an entry that has enoguh space
+    for (i32 i=0; i < i_limit; ++i)
+    {
+        padding = memory_padding( aligned_size, x_node->value.data );
+        aligned_sized = (bytes + padding);
+        enough_bytes = (x_node->size >aligned_sized);
+        if (enough_bytes)
+        {   found_node = x_node;
+            break;
+        }
+        next_i = x_node->next;
+        x_node = free_nodes.nodes[ i_next ].value;
+    }
+    if (found_node == false)
+    {
+        TYON_ERRORF( "Failed to find free node of aligned size {}", aligned_size );
+        return nullptr;
+    }
+
+    /** Okay we have enough space now we need to fill out allocation information
+        and calculate a usable address */
+    new_node = used.push_tail( x_node );
+    new_node->active_size = aligned_size;
+    new_node->address = (block->data + padding);
+    node_node->alignment = alignment;
+
     heap_entry* entry = &new_node->value;
     isize alignment_bytes = memory_padding( alignment, block->data + block->head_size );
     const i64 redzone_min_size = 64;
@@ -111,7 +156,7 @@ PROC memory_heap_allocator::allocate_raw( isize bytes, isize alignment ) -> raw_
 
         // Move entry to free list
         // NOTE: Do this before allocating to prevent pointer invalidation
-        free.push_tail( x_entry );
+        // free.push_tail( x_entry );
         used.remove_node( x_node );
 
         // Allocate new storage
