@@ -10,12 +10,22 @@ CONSTRUCTOR memory_heap_allocator::memory_heap_allocator()
     buffer* block = &blocks.push_tail( {} );
     block->data = malloc( 400_MiB );
     block->size = 400_MiB;
+
+    used.resize( max_tracked_allocations + 16 );
+    free.resize( max_tracked_allocations + 16 );
 }
 
 PROC memory_heap_allocator::allocate_raw( isize bytes, isize alignment ) -> raw_pointer
 {
     PROFILE_SCOPE_FUNCTION();
     std::scoped_lock _lock( this->lock );
+    bool exceeded_trackable_allocations = (used.list_size >= max_tracked_allocations);
+    if (exceeded_trackable_allocations)
+    {
+        TYON_ERRORF( "Exceeded trackable allocations {}", used.list_size );
+        return {};
+    };
+
     buffer* block = blocks.tail_address();
     bool add_block = (block->head_size + bytes + alignment > block->size);
     if (add_block)
@@ -26,6 +36,7 @@ PROC memory_heap_allocator::allocate_raw( isize bytes, isize alignment ) -> raw_
         block->size = std::max( 400_MiB, bytes + 100_MiB );
     }
     block = blocks.tail_address();
+
     node_link<heap_entry>* new_node = used.push_tail( {} );
     heap_entry* entry = &new_node->value;
     isize alignment_bytes = memory_padding( alignment, block->data + block->head_size );
@@ -51,8 +62,8 @@ PROC memory_heap_allocator::allocate_raw( isize bytes, isize alignment ) -> raw_
     memory_unpoison( result, bytes );
     block->head_size += used_bytes + 100;
     // Debug tracing
-    /* TYON_LOGF( "bytes alignment block head size {} {} {} {}",
-                  bytes, alignment, block->size, block->head_size ); */
+    TYON_LOGF( "address {} bytes {} alignment {} block_size {} head_size {}",
+               (void*)entry->data, entry->size, entry->alignment, block->size, block->head_size );
 
     return result;
 }
@@ -83,16 +94,18 @@ PROC memory_heap_allocator::allocate_raw( isize bytes, isize alignment ) -> raw_
             // DEBUG: Really really slow
             // TYON_LOGF( "Checking entry with address {} bytes {}",
                        // (void*)(x_entry.data), x_entry.size );
-            if (x_node->next == -1)
+            if (x_node->next == linked_list_sentinel)
             {   break; }
             x_node = &used.nodes[ x_node->next ];
         }
-        if (match == false) {
+        if (match == false)
+        {
             TYON_ERROR( "Serious allocation failiure reallocating memory" );
             TYON_ERRORF( "Could not find entry associated with addres: {}\n"
                          "bytes: {}\n"
                          "iterations: {}",
                          reference, bytes, i );
+            TYON_BREAK();
             return nullptr;
         }
 
@@ -122,16 +135,16 @@ PROC memory_heap_allocator::allocate_raw( isize bytes, isize alignment ) -> raw_
 
         std::scoped_lock _lock( this->lock );
         // Debug tracing
-        /* TYON_LOGF( "Deleted heap pointer {}", (void*)address ); */
+        TYON_LOGF( "Deleted heap pointer {}", (void*)address );
 
         heap_entry x_entry {};
-        node_link<heap_entry>* x_node = nullptr;
+        node_link<heap_entry>* x_node = used.tail();
         bool match = false;
         i64 index = 0;
         i64 size = used.nodes.size();
         for (i64 i=0; i < size; ++i)
         {
-            // Reverse walk to take advantance of allocation recency
+            // Reverse walk to take advantage of allocation recency
             index = (size - 1 - i);
             x_node = &used.nodes[ index ];
             x_entry = x_node->value;

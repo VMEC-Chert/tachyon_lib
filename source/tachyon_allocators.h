@@ -43,6 +43,8 @@ struct memory_heap_allocator final : i_allocator
     array<buffer> blocks;
     // Required for self-calls
     std::recursive_mutex lock;
+    i64 max_tracked_allocations = 10000;
+    allocator_info stats;
 
     CONSTRUCTOR memory_heap_allocator();
 
