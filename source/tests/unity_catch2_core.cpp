@@ -61,13 +61,16 @@ TEST_CASE( "Memory Alignment Helpers", "memory" )
 
     SECTION( "memory_padding" )
     {
-        // pointer version
+        // pointer version - unaligned
         CHECK( memory_padding( 4,  (void*)0xDEAD ) == 3 );
         CHECK( memory_padding( 16, (void*)0xF003 ) == 13 );
         CHECK( memory_padding( 2,  (void*)0x0ad3 ) == 1 );
         CHECK( memory_padding( 25, (void*)0x2afd ) == 20);
         CHECK( memory_padding( 4,  (void*)0x0021 ) == 3 );
 
+        // pointer - already aligned
+        CHECK( memory_padding( 4,  (void*)0x0020 ) == 0 );
+        CHECK( memory_padding( 4,  (void*)0xDEA4 ) == 0 );
         // int pointer version
         CHECK( memory_padding( 4,  (int*)0xDEAD ) == 3  );
         CHECK( memory_padding( 16, (int*)0xF003 ) == 13 );
