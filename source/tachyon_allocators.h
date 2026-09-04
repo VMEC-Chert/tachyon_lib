@@ -42,10 +42,6 @@ struct heap_entry
 
 struct memory_heap_allocator final : i_allocator
 {
-    // using entry
-    linked_list<heap_entry> used;
-    linked_list<heap_entry> free;
-    array<buffer> blocks;
     // Required for self-calls
     std::recursive_mutex lock;
     i64 max_tracked_allocations = 10000;
