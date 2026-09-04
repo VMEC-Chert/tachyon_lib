@@ -33,11 +33,11 @@ namespace tyon
 
     isize
     memory_padding( isize padding, isize size )
-    { return (padding - (size % padding) % padding); }
+    { return (padding - (size % padding)) % padding; }
 
     isize
     memory_padding( isize padding, void* target )
-    { return (padding - (u64(target) % padding) % padding); }
+    { return (padding - (u64(target) % padding)) % padding; }
 
     raw_pointer
     memory_allocate_raw( usize size )

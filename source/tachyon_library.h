@@ -429,9 +429,13 @@ namespace tyon
 
     // -- Memory Management Library --
 
+    /** Returns the padding in bytes that is required when size is aligned to
+     * 'padding' sized boundary */
     isize
     memory_padding( isize padding, isize size );
 
+    /** Returns the padding in bytes that is required when target is aligned to
+     * 'padding' sized boundary */
     isize
     memory_padding( isize padding, void* target );
 
