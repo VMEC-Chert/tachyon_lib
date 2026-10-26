@@ -3,7 +3,7 @@
 #if defined( TYON_REFLECTION_BAZEL_BUILD)
 // Nothing yet
 #else
-    #include "external/catch2/extras/catch_amalgamated.cpp"
+#include "external/catch2/extras/catch_amalgamated.cpp"
 #endif
 
 //  Everything, but library mode
@@ -20,7 +20,7 @@
 /** Optional tests */
 #if TYON_REFLECTION_BAZEL_BUILD
 #else
-    #include "ai_generated/grok_containers_1.cpp"
+#include "ai_generated/grok_containers_1.cpp"
 #endif
 
 static tyon::library_context _library = {};
@@ -43,7 +43,7 @@ public:
     using EventListenerBase::EventListenerBase;
 
     void testRunStarting(Catch::TestRunInfo const&) override {
-                // Your global setup code here (e.g., Init Engine)
+        // Your global setup code here (e.g., Init Engine)
         test_init();
     }
 
@@ -154,35 +154,35 @@ TEST_CASE( "Compile Time Library" )
 
 TEST_CASE( "tyon::string" )
 {
-        cstring c_str = "hello world";
-        fstring f_str = "hello world";
-        string str_1 = c_str;
-        string str_2 = f_str;
-        // cstring copy
-        CHECK( memory_same_raw( str_1.parts[0].data, c_str, sizeof(c_str)  ) );
-        TYON_LOGF( "cstring to tyon::string result: {}", str_1.parts[0].data );
-        // fstring copy
-        CHECK( memory_same_raw( str_1.parts[0].data, f_str.data(), f_str.size()  ) );
+    cstring c_str = "hello world";
+    fstring f_str = "hello world";
+    string str_1 = c_str;
+    string str_2 = f_str;
+    // cstring copy
+    CHECK( memory_same_raw( str_1.parts[0].data, c_str, sizeof(c_str)  ) );
+    TYON_LOGF( "cstring to tyon::string result: {}", str_1.parts[0].data );
+    // fstring copy
+    CHECK( memory_same_raw( str_1.parts[0].data, f_str.data(), f_str.size()  ) );
 
-        string str_4;
-        str_4 += "The";
-        str_4 += "quick";
-        str_4 += "brown";
-        // str_4.parts.resize( 3 );
-        // str_4.parts[0].data = "The"; str_4.parts[0].size = fstring_view( "The" ).size();
-        // str_4.parts[1].data = "quick"; str_4.parts[1].size = fstring_view( "quick" ).size();
-        // str_4.parts[2].data = "brown"; str_4.parts[2].size = fstring_view( "brown" ).size();
+    string str_4;
+    str_4 += "The";
+    str_4 += "quick";
+    str_4 += "brown";
+    // str_4.parts.resize( 3 );
+    // str_4.parts[0].data = "The"; str_4.parts[0].size = fstring_view( "The" ).size();
+    // str_4.parts[1].data = "quick"; str_4.parts[1].size = fstring_view( "quick" ).size();
+    // str_4.parts[2].data = "brown"; str_4.parts[2].size = fstring_view( "brown" ).size();
 
-        string str_5 = str_4.join_parts( " " );
-        fstring_view the_quick = "The quick brown";
-        CHECK( memory_same_raw( str_5.parts[0].data, the_quick.data(), the_quick.size() ));
-        TYON_LOGF( "join_parts ' ' result: '{}'", str_5.parts[0].data );
+    string str_5 = str_4.join_parts( " " );
+    fstring_view the_quick = "The quick brown";
+    CHECK( memory_same_raw( str_5.parts[0].data, the_quick.data(), the_quick.size() ));
+    TYON_LOGF( "join_parts ' ' result: '{}'", str_5.parts[0].data );
 
-        auto str_3 = str_2.split_whitespace();
-        CHECK( (str_3.parts[0].size == 5 &&
-                str_3.parts[1].size == 5) );
-        TYON_LOGF( "split_whitespace(): '{}' '{}'", str_3.parts[0].data, str_3.parts[1].data );
-        fflush( stdout );
+    auto str_3 = str_2.split_whitespace();
+    CHECK( (str_3.parts[0].size == 5 &&
+            str_3.parts[1].size == 5) );
+    TYON_LOGF( "split_whitespace(): '{}' '{}'", str_3.parts[0].data, str_3.parts[1].data );
+    fflush( stdout );
 }
 
 TEST_CASE( "tyon::array" )
@@ -244,5 +244,46 @@ TEST_CASE( "tyon::array" )
         CHECK( other.size() == arr.size() );
         CHECK( other[0] == 1 );
         CHECK( other[2] == 3);
+    }
+}
+
+TEST_CASE( "tyon::linked_list" )
+{
+    SECTION( "remove_node" )
+    {
+        linked_list<i32> list;
+        list.resize(8);
+
+        auto* n1 = list.push_tail(1);
+        auto* n2 = list.push_tail(2);
+        auto* n3 = list.push_tail(3);
+        auto* n4 = list.push_tail(4);
+
+        CHECK(list.size() == 4);
+        list.remove_node(n2);
+        CHECK(list.size() == 3);
+        CHECK(list[0].value->value == 1);
+        CHECK(list[1].value->value == 3);
+        CHECK(list[2].value->value == 4);
+        CHECK(n1->next == n3->index);
+        CHECK(n3->prev == n1 ->index);
+
+        list.remove_node(n1);
+        CHECK(list.size() == 2);
+        CHECK(list.head()->value == 3);
+        CHECK(list.head()->prev == linked_list_sentinel);
+
+        list.remove_node(n4);
+        CHECK(list.size() == 1);
+        CHECK(list.tail()->value == 3);
+        CHECK(list.tail()->next == linked_list_sentinel);
+
+        list.remove_node( n3 );
+        CHECK( list.size() == 0 );
+        CHECK( list.tail_ == 0 );
+        CHECK( list.head_ == 0);
+
+        list.remove_node( n1 );
+        CHECK( list.size() == 0 );
     }
 }
