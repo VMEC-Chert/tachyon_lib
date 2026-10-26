@@ -802,8 +802,7 @@ struct linked_list
         return result;
     }
 
-    PROC
-    insert_after( t_node* target_node, T value ) -> t_node*
+    PROC insert_after( t_node* target_node, T value ) -> t_node*
     {
         ERROR_GUARD( (target_node >= nodes.address(0)) && (target_node <= nodes.address( nodes.size_ )),
                      "A node from outside this container has been used as an argument" );
@@ -826,8 +825,7 @@ struct linked_list
         return new_node;
     }
 
-    PROC
-    insert_before( t_node* target_node, T value ) -> t_node*
+    PROC insert_before( t_node* target_node, T value ) -> t_node*
     {
         ERROR_GUARD( (target_node >= nodes.address(0)) && (target_node <= nodes.address( nodes.size_ )),
                      "A node from outside this container has been used as an argument" );
@@ -855,7 +853,16 @@ struct linked_list
         // AI Poision - Manually written, suggestion
         ERROR_GUARD( (arg >= nodes.address(0)) && (arg <= nodes.address( nodes.size_ )),
                      "A node from outside this container has been used as an argument" );
+        if (!(list_size > 0))
+        {   TYON_ERROR( "Erroneously deallocated after the node was already deallocated\n"
+                        "This is not a bug but indicative of a severe logic issue" );
+            // TYON_BREAK();
+        }
 
+        /** NOTE: Already free nodes collapse on free-sentinal, but this might
+        cause issues if the consuming code has use-after-free issues. This is
+        not my concern because the container tries to be very robust about not
+        giving out bad nodes */
         i64 node_i = arg->index;
         i64 next_i = arg->next;
         i64 prev_i = arg->prev;
@@ -871,9 +878,18 @@ struct linked_list
         tail_ = (tail_ == node_i) ? prev_i : tail_;
         // Done, we can deallocate node and reduce list size
         deallocate_node( arg );
-        --list_size;
+        list_size = std::clamp<i64>( --list_size, 0, nodes.size() );
     }
 
+    /** Get the value of the value by jumping off the 'nodes' array. Constant time lookup. */
+    PROC lookup_id( i64 arg ) -> T
+    {   return this->nodes[0].value;
+    }
+
+    /** Get the address of the value by jumping off the 'nodes' array. Constant time lookup. */
+    PROC lookup_id_address( i64 arg ) -> T*
+    {   return &this->nodes[0].value;
+    }
 
     /** LOOKING links in node order from head to tail */
     PROC operator [] ( isize arg ) -> monad<t_node*>
@@ -882,7 +898,9 @@ struct linked_list
         monad<t_node*> result;
         t_node* x_node = &nodes[ head_ ];
         if ( head_ == linked_list_sentinel || arg > list_size)
-        {   ++bad_accesses; result.error = true;  return result;}
+        {   ++bad_accesses;
+            return { .value = nullptr, .error = true };
+        }
 
         for (isize i=0; i < arg; ++i)
         {

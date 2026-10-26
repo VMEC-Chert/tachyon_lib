@@ -2018,8 +2018,8 @@ namespace tyon
 
         /** NOTE: Don't try to construct with 'pointer<T> foo = pointer'.
             C++ explicit construction rules don't allow this. */
-        explicit TYON_CUDA_SHARED
-        CONSTRUCTOR pointer( T* arg ) : data(arg), size_(0) {}
+        TYON_CUDA_SHARED
+        CONSTRUCTOR pointer( T* arg ) : data(arg), size_(1) {}
 
         explicit TYON_CUDA_SHARED
         CONSTRUCTOR pointer( T* arg, i64 count ) : data(arg), size_(count){}
