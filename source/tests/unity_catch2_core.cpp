@@ -287,3 +287,18 @@ TEST_CASE( "tyon::linked_list" )
         CHECK( list.size() == 0 );
     }
 }
+
+TEST_CASE( "math" )
+{
+    i32 x1 = 25;
+    i32 x2 = 100;
+    CHECK( transfer_quantity( &x1, &x2, 25 ) );
+    CHECK( x1 == 0 );
+    CHECK( x2 == 125 );
+
+     i32 y1 = 57;
+     i32 y2 = 20;
+    CHECK( transfer_quantity_all( &y1, &y2 ) );
+    CHECK( y1 == 0 );
+    CHECK( y2 == 77 );
+}

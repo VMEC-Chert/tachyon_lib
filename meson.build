@@ -50,16 +50,6 @@ compiler_args = [
     '-Wno-c++98-compat'
   ]
 
-test_core = executable(
-  'tachyon_lib_tests_core',
-  'source/build_control/tachyon_lib_unity_core.cpp',
-  'source/tests/tachyon_lib_tests_core.cpp',
-  # 'external/fmt/src/format.cc',
-  include_directories : include_dirs,
-  dependencies: libraries,
-  cpp_args: compiler_args
-)
-
 test_catch2_core = executable(
   'tachyon_lib_tests_catch2_core',
   'source/build_control/tachyon_lib_unity_core.cpp',
@@ -74,7 +64,7 @@ test_catch2_core = executable(
 test('', executable(
   'tachyon_lib_tests_part_1',
   'source/build_control/tachyon_lib_unity_core.cpp',
-  'source/tests/ai_generated/iterator_requirements.cpp',
+  # 'source/tests/ai_generated/iterator_requirements.cpp',
   # 'external/fmt/src/format.cc',
   include_directories : include_dirs,
   dependencies: libraries

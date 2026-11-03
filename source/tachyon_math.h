@@ -1467,4 +1467,29 @@ namespace tyon
             return result;
         }
 
+
+    template <typename T>
+    TYON_CUDA_SHARED constexpr
+    PROC transfer_quantity( T* sender, T* receiver, T quantity ) -> fresult
+    {
+        ERROR_GUARD( *sender >= 0, "Negative sender quantities are impossible" );
+        bool quantity_exceeds_sender = (quantity > *sender);
+        if (quantity_exceeds_sender) { return false; }
+        *sender -= quantity;
+        *receiver += quantity;
+        return true;
+    }
+
+    template <typename T>
+    TYON_CUDA_SHARED constexpr
+    PROC transfer_quantity_all( T* sender, T* receiver ) -> fresult
+    {
+        ERROR_GUARD( *sender >= 0, "Negative sender quantities are impossible" );
+        T quantity = *sender;
+        *sender = 0;
+        *receiver += quantity;
+        return true;
+    }
+
+
 }
