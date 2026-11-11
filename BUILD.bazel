@@ -45,7 +45,8 @@ cc_library(
         "source/build_control",
     ],
     defines = [
-        "TYON_REFLECTION_BAZEL_BUILD"
+        "TYON_REFLECTION_BAZEL_BUILD",
+        "TYON_FMTLIB_HEADER_ONLY=0"
     ],
     copts = [
         "-std=c++20",
