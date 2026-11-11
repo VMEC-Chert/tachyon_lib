@@ -1,0 +1,87 @@
+
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
+
+# TODO: This build file is clumsily written because I'm not show the exact
+# function of all the configurations yet.
+
+cc_library(
+    name = "tachyon_library",
+    visibility = ["//visibility:public"],
+    srcs = [
+        "source/tachyon_allocators.cpp",
+        "source/tachyon_command.cpp",
+        "source/tachyon_containers.cpp",
+        "source/tachyon_entity.cpp",
+        "source/tachyon_library.cpp",
+        "source/tachyon_math.cpp",
+        "source/tachyon_platform_common.cpp",
+        "source/tachyon_platform_linux.cpp",
+        "source/tachyon_platform_windows.cpp",
+        "source/tachyon_threading.cpp",
+    ],
+    hdrs = [
+        "source/include_tachyon_lib_core.h",
+        "source/include_tracy.h",
+        "source/include_warnings.h",
+        "source/tachyon_allocators.h",
+        "source/tachyon_assets.h",
+        "source/tachyon_code_helpers.h",
+        "source/tachyon_command.h",
+        "source/tachyon_containers.h",
+        "source/tachyon_entity.h",
+        "source/tachyon_internals.h",
+        "source/tachyon_library.h",
+        "source/tachyon_math.h",
+        "source/tachyon_platform_common.h",
+        "source/tachyon_platform_linux.h",
+        "source/tachyon_platform_windows.h",
+        "source/tachyon_reflection.h",
+        "source/tachyon_resources.h",
+        "source/tachyon_safety.h",
+        "source/tachyon_threading.h",
+        "external/fmt/include/fmt/args.h",
+        "external/fmt/include/fmt/base.h",
+        "external/fmt/include/fmt/chrono.h",
+        "external/fmt/include/fmt/color.h",
+        "external/fmt/include/fmt/compile.h",
+        "external/fmt/include/fmt/core.h",
+        "external/fmt/include/fmt/format.h",
+        "external/fmt/include/fmt/format-inl.h",
+        "external/fmt/include/fmt/os.h",
+        "external/fmt/include/fmt/ostream.h",
+        "external/fmt/include/fmt/printf.h",
+        "external/fmt/include/fmt/ranges.h",
+        "external/fmt/include/fmt/std.h",
+        "external/fmt/include/fmt/xchar.h",
+    ],
+    includes = [
+        "external/fmt/include",
+        "source",
+        "source/build_control",
+    ],
+    defines = [
+        "TYON_REFLECTION_BAZEL_BUILD"
+    ],
+    copts = [
+        "-std=c++20",
+        "-Wno-c++11-compat",
+        "-include",
+        "include_tachyon_lib_core.h",
+    ],
+    linkopts = [ "-luuid" ],
+    deps = [  ]
+)
+
+cc_test(
+    name = "tachyon_library_test",
+    srcs = [
+        "source/tests/unity_catch2_core.cpp",
+    ]
+    + glob( ["source/tests/ai_generated/*.cpp"] ),
+    deps = ["//:tachyon_library", '@catch2//:catch2_main'],
+    # Don't think I need linkstatic right now
+    # linkstatic = True,
+    copts = [
+    "-Wno-c++11-compat",
+    ]
+)
