@@ -2028,7 +2028,7 @@ namespace tyon
         CONSTRUCTOR pointer( void* arg, i64 count = 1 ) : data((T*)arg), size_(count) {}
 
         explicit TYON_CUDA_SHARED
-        COPY_CONSTRUCTOR pointer( t_self& arg ) : data(arg.data), size_(arg.size_) {}
+        COPY_CONSTRUCTOR pointer( const t_self& arg ) : data(arg.data), size_(arg.size_) {}
 
         TYON_CUDA_SHARED
         COPY_CONSTRUCTOR pointer( const std::nullptr_t& _arg ) : data(nullptr), size_(0) {}
@@ -2052,6 +2052,7 @@ namespace tyon
         /** Return a fat pointer copy with an offset applied, shrinking the size_ appropriately.
 
             NOTE: When a negative offset is passed pointer size_ will always be null. */
+        // TODO: Untested
         PROC operator+ ( i64 arg ) const -> t_self
         {   t_self result = t_self { data + arg, size_ - arg };
             if (this->size_ < 0 || arg < 0)
@@ -2061,9 +2062,11 @@ namespace tyon
             return t_self {result};
         }
 
+        // TODO: Untested
         PROC operator+ ( i32 arg ) const -> t_self { return (*this + i64(arg)); }
         PROC operator+= ( i64 arg ) const -> t_self& { return *this = (*this + arg); }
 
+        // TODO: Untested
         PROC slicing_move( t_self& other, i64 offset, i64 new_size = 0 ) -> t_self
         {   T* address = this->data + offset;
             i64 final_size = 0;
