@@ -39,23 +39,8 @@ cc_library(
         "source/tachyon_resources.h",
         "source/tachyon_safety.h",
         "source/tachyon_threading.h",
-        "external/fmt/include/fmt/args.h",
-        "external/fmt/include/fmt/base.h",
-        "external/fmt/include/fmt/chrono.h",
-        "external/fmt/include/fmt/color.h",
-        "external/fmt/include/fmt/compile.h",
-        "external/fmt/include/fmt/core.h",
-        "external/fmt/include/fmt/format.h",
-        "external/fmt/include/fmt/format-inl.h",
-        "external/fmt/include/fmt/os.h",
-        "external/fmt/include/fmt/ostream.h",
-        "external/fmt/include/fmt/printf.h",
-        "external/fmt/include/fmt/ranges.h",
-        "external/fmt/include/fmt/std.h",
-        "external/fmt/include/fmt/xchar.h",
     ],
     includes = [
-        "external/fmt/include",
         "source",
         "source/build_control",
     ],
@@ -69,7 +54,9 @@ cc_library(
         "include_tachyon_lib_core.h",
     ],
     linkopts = [ "-luuid" ],
-    deps = [  ]
+    deps = [
+        "@fmt",
+    ]
 )
 
 cc_test(
