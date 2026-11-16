@@ -373,8 +373,22 @@ namespace tyon
         return false;
     }
 
+    PROC time_periodic::check_restart() -> bool
+    {
+        time_monotonic check_time = time_now();
+        if (active && check_time > trigger_time)
+        {
+            drift = chrono::nanoseconds(check_time - trigger_time);
+            chrono::nanoseconds elapsed = check_time - reference_time;
+            chrono::nanoseconds next_trigger_offset = update_rate - (elapsed % update_rate);
+            trigger_time = check_time + next_trigger_offset;
+            return true;
+        }
+        return false;
+    }
+
     time_periodic::operator bool()
-    { return this->triggered(); }
+    {   return this->check_restart(); }
 
 
     CONSTRUCTOR time_stopwatch::time_stopwatch( fstring _name, fstring _description = "" )

@@ -36,6 +36,7 @@
     #include "../tachyon_entity.cpp"
     #include "../tachyon_containers.cpp"
     #include "../tachyon_allocators.cpp"
+    #include "../tachyon_config.cpp"
 
 #endif
 

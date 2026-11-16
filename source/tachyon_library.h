@@ -882,9 +882,12 @@ namespace tyon
 
         CONSTRUCTOR time_periodic( chrono::nanoseconds _update_rate );
 
-        /// Check to see if timer triggered or not
+        /** Check to see if timer triggered or not
+            DEPRECEATED */
         bool
         triggered();
+
+        PROC check_restart() -> bool;
 
         operator bool();
     };
