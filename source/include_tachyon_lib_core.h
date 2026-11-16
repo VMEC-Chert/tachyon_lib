@@ -172,6 +172,8 @@
 #include "tachyon_entity.h"
 #include "tachyon_resources.h"
 #include "tachyon_internals.h"
+
+#include "tachyon_config.h"
 #include "tachyon_assets.h"
 #include "tachyon_allocators.h"
 #include "tachyon_command.h"

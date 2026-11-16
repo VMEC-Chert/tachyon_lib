@@ -1,5 +1,9 @@
 
-load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
+load("@rules_cc//cc:defs.bzl",
+     "cc_binary",
+     "cc_library",
+     "cc_shared_library",
+     "cc_test")
 
 # TODO: This build file is clumsily written because I'm not show the exact
 # function of all the configurations yet.
@@ -7,8 +11,10 @@ load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
 cc_library(
     name = "tachyon_library",
     visibility = ["//visibility:public"],
+    linkstatic = True,
     srcs = [
         "source/tachyon_allocators.cpp",
+        "source/tachyon_config.cpp",
         "source/tachyon_command.cpp",
         "source/tachyon_containers.cpp",
         "source/tachyon_entity.cpp",
@@ -26,6 +32,7 @@ cc_library(
         "source/tachyon_allocators.h",
         "source/tachyon_assets.h",
         "source/tachyon_code_helpers.h",
+        "source/tachyon_config.h",
         "source/tachyon_command.h",
         "source/tachyon_containers.h",
         "source/tachyon_entity.h",
@@ -58,6 +65,13 @@ cc_library(
     deps = [
         "@fmt",
     ]
+)
+
+cc_shared_library(
+    name = "tachyon_library_shared",
+    shared_lib_name = "libtachyon_library.so",
+    deps = [":tachyon_library"],
+    visibility = ["//visibility:public"]
 )
 
 cc_test(
