@@ -5,13 +5,12 @@ namespace tyon
 
 PROC config_file_load_strings( fstring config_filename ) -> array<config_pair>
 {
-    array<config_pair> result;
     push_allocator _allocator_1 { g_thread->scratch };
     file config_file = file_load_binary( config_filename );
 
     // Search through newlines
     array<config_pair> config_options;
-    config_options.reserve( 100 );
+    config_options.change_allocation( 100 );
     array<i32> i_newlines;
     raw_pointer data = config_file.memory.data;
 
@@ -35,7 +34,9 @@ PROC config_file_load_strings( fstring config_filename ) -> array<config_pair>
             assignment_flag = false;
             line_ignored_flag = false;
             i_newlines.push_tail( i );
-            TYON_LOGF( "Config File Parsed: Name: '{}' Value: '{}'", x_option.name, x_option.value );
+
+            // DEBUG: logging
+            // TYON_LOGF( "Config File Parsed: Name: '{}' Value: '{}'", x_option.name, x_option.value );
             continue;
         }
         bool ignored_char = (line_ignored_flag || x_char == ' ' || x_char == '\r');
@@ -45,7 +46,8 @@ PROC config_file_load_strings( fstring config_filename ) -> array<config_pair>
         if (assignment_operator)
         {
             if (assignment_flag)
-            {   TYON_LOG( "Parse Error: On character {} of file {}", i, config_filename );
+            {
+                TYON_LOG( "Parse Error: On character {} of file {}", i, config_filename );
                 TYON_LOG( "Error: two assignment operators '=' in the same line, skipping line" );
                 line_ignored_flag = true;
                 continue;
@@ -59,9 +61,7 @@ PROC config_file_load_strings( fstring config_filename ) -> array<config_pair>
         x_string.push_back( x_char );
     }
     // Restore parent allocator
-    push_allocator _allocator_2 { _allocator_1.previous_allocator };
-    result = config_options;
-    return result;
+    return config_options;
 }
 
 int foo()

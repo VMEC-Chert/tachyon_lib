@@ -184,19 +184,29 @@ struct array
     {
         i_memory_allocator* allocator = (data.allocator() ? data.allocator() : g_allocator);
         T* new_storage = allocator->allocate_raw( count * sizeof(T), alignof(T) );
+        T* old_storage = data;
         ERROR_GUARD( new_storage != nullptr, "Allocation failed" );
         // TODO: Does this really make sense to placement new the full range?
         // This could just be the active range
         new(new_storage) T[count] {};
-        if (data)
+        if (old_storage)
         {
-            for (i32 i=0; i < std::min( size(), count ); ++i )
+            // Copy over active range
+            i64 new_size = std::min( size(), count );
+            for (i64 i=0; i < new_size; ++i )
             {
                 new_storage[i] = std::move( data[i] );
+            }
+            // Destroy all old range to ensure proper cleanup
+            // TODO: Can be made fast for no-destructor friendly types
+            i64 old_size = data.size_;
+            for (i64 i=0; i < old_size; ++i )
+            {
                 std::destroy_at( &this->data[i] );
             }
-            allocator->deallocate( (void*)(data) );
+            allocator->deallocate( (void*)(old_storage) );
         }
+        // Fallthrough and assign new storage even if data is nullptr (first allocation)
         if (new_storage)
         {
             data.data = new_storage;
@@ -345,10 +355,10 @@ struct array
         // Make sure we leave good data for before trying to use copy operators...
         // This flagged up as a major issue with std::string usage
         // I tried to call reset() here but its redundant as change_allocation() will init anew.
-        this->cleanup();
-        this->head_size = rhs.head_size;
+        // Copy reservation size and head_size exactly for predictable copy
         this->change_allocation( rhs.size_ );
-        for (i64 i=0; i < rhs.head_size; ++i )
+        this->head_size = std::min( rhs.head_size, rhs.size_);
+        for (i64 i=0; i < this->head_size; ++i )
         {
             data[i] = rhs.data[i];
         }
@@ -376,7 +386,7 @@ struct array
     clear()
     {
         // Default init old
-        new(data) T[size_]{};
+        new(data) T[head_size]{};
     }
 
     // std::vector compat
@@ -796,7 +806,7 @@ struct linked_list
         deallocate_node( result.value );
         --list_size;
 
-        ERROR_GUARD( (head_ == linked_list_sentinel && tail_ == linked_list_sentinel) || (head_ = linked_list_sentinel && tail_ == linked_list_sentinel) ||
+        ERROR_GUARD( (head_ == linked_list_sentinel && tail_ == linked_list_sentinel) || (head_ == linked_list_sentinel && tail_ == linked_list_sentinel) ||
                      (head_ >= 0 && tail_ >= 0),
                      "Probably a bug if these tests fail" );
         return result;
