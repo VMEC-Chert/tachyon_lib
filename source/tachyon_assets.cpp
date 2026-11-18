@@ -1,6 +1,7 @@
 
 namespace tyon
 {
+#pragma pack(push, 1)
 struct bmp_rgba_header
 {
 
