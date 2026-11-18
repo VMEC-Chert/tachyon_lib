@@ -68,4 +68,6 @@ namespace tyon
 
     bool
     asset_execute_loader( asset* arg );
+
+    PROC asset_image_save_bmp( image<rgba>* arg ) -> fresult;
 }

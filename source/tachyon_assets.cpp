@@ -28,7 +28,6 @@ struct bmp_rgba_header
 };
 #pragma pack(pop)
 
-inline
 PROC asset_image_save_bmp( image<rgba>* arg ) -> fresult
 {
     push_allocator _al1 {g_thread->scratch };
@@ -60,10 +59,17 @@ PROC asset_image_save_bmp( image<rgba>* arg ) -> fresult
         // LCS_CALIBRATED_RGB
         .colorspace = 0x73524742u,
     };
-
+    // Allocate storage
     file output_file { .filename = "test_text.bmp" };
     output_file.memory.data = memory_allocate_raw( size_bytes );
     output_file.memory.size = size_bytes;
+
+    // Copy to storage
+    raw_pointer data = output_file.memory.data;
+    i64 image_offset = (sizeof(bmp_rgba_header));
+    memory_copy_raw( data, &header, sizeof(bmp_rgba_header) );
+    memory_copy_raw( data + image_offset, arg->data, size_bytes );
+
     bool write_ok = file_write_binary( &output_file );
     if (! write_ok)
     {   TYON_ERRORF( "Failed to write bmp file '{}'", output_file.filename );
