@@ -3,6 +3,8 @@
 /*
 
 # Whitelist folders
+!data/
+!config
 !source/
 !scripts/
 !source/**
