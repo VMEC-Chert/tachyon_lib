@@ -14,6 +14,7 @@ cc_library(
     linkstatic = True,
     srcs = [
         "source/tachyon_allocators.cpp",
+        "source/tachyon_assets.cpp",
         "source/tachyon_config.cpp",
         "source/tachyon_command.cpp",
         "source/tachyon_containers.cpp",
