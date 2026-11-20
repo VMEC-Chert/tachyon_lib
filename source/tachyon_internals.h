@@ -168,9 +168,9 @@ struct logger
     struct library_context
     {
         bool initialized = false;
-        /** I swear to god I have to quite an operating system just to kill the
+        /** I swear to god I have to create an operating system just to kill the
             ginormous penalty of asking for a large amount of memory nicely */
-        memory_stack_allocator global_allocator = memory_stack_allocator( 400_MiB );
+        i_allocator* global_allocator = nullptr;
         std::mutex global_allocator_lock;
         // Temporary. Needs to be removed when we have a proper global allocator
         std::mutex taint_allocator_lock;

@@ -163,6 +163,7 @@ namespace tyon
     using fresult = bool;
 
     FORWARD struct memory_stack_allocator;
+    FORWARD struct memory_system_allocator;
     FORWARD struct i_allocator;
     FORWARD struct null_type;
     FORWARD struct raw_pointer;
@@ -223,7 +224,7 @@ namespace tyon
     TYON_API extern tyon::time_monotonic g_program_epoch;
     TYON_API extern bool g_little_endian;
     TYON_API extern i32 g_log_largest_category;
-    TYON_API extern memory_stack_allocator* g_root_allocator;
+    TYON_API extern i_allocator* g_root_allocator;
     TYON_API extern thread_local i_allocator* g_allocator;
     TYON_API extern memory_stack_allocator* g_taint_allocator;
     /** Root allocator lock */
