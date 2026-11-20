@@ -952,7 +952,7 @@ namespace tyon
     {
         // static_assert( default_value == default_value,
                        // "Default value cannot work correctly if comparison is not valid" );
-        T value;
+        T value = {};
         // Non-zero on error value
         fresult error = false;
 
