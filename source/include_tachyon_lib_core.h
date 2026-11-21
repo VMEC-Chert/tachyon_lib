@@ -45,6 +45,7 @@
 // -- stdlib / STL --
 #include <algorithm>
 #include <atomic>
+#include <bit>
 #include <cctype>
 #include <chrono>
 #include <csignal>

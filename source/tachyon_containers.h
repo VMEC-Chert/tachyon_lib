@@ -36,25 +36,27 @@ struct generic_search_result
     bool match_found = false;
 };
 
-#if (REFLECTION_LITTLE_ENDIAN)
-/** A standard rgba color container.
+/** A standard rgba color container. Using native endian format
 */
-struct rgba
+struct alignas(u32) rgba
 {
-    union {
-        struct { u8 a; u8 b; u8 g; u8 r; };
-        u32 hex;
-    };
-};
+#if (REFLECTION_LITTLE_ENDIAN)
+    u8 a = 0; u8 b = 0; u8 g = 0; u8 r = 0;
 #else
-struct rgba
-{
-    union {
-        struct { u8 r; u8 g; u8 b; u8 a };
-        u32 hex = 0;
-    };
-};
+    u8 r = 0; u8 g = 0; u8 b = 0; u8 a = 0;
 #endif // REFLECTION_LITTLE_ENDIAN
+    constexpr CONSTRUCTOR rgba() = default;
+
+    constexpr CONSTRUCTOR rgba( u8 r_, u8 g_, u8 b_, u8 a_ = 0xff )
+    {   r = r_; g = g_; b = b_; a = a_; }
+
+    // NOTE: Should work reguardless of endianness
+    constexpr
+    CONSTRUCTOR rgba( u32 arg ) { *this = std::bit_cast<rgba>( arg ); }
+
+    constexpr
+    PROC hex() -> u32 { return std::bit_cast<u32>( *this ); }
+};
 static_assert( sizeof(rgba) == 4, "Can't do packed operations if size is off" );
 
 struct rgba_byte_ordered
@@ -74,6 +76,160 @@ struct argb
     u8 b=0, g=0, r=0, a=0;
 };
 static_assert( sizeof(bgra) == 4, "Can't do packed operations if size is off" );
+
+namespace rgba_color
+{
+    // SECTION: CSS Colours
+    constexpr u32 aliceblue            = 0xf0f8ffff;
+    constexpr u32 antiquewhite         = 0xfaebd7ff;
+    constexpr u32 aqua                 = 0x00ffffff;
+    constexpr u32 aquamarine           = 0x7fffd4ff;
+    constexpr u32 azure                = 0xf0ffffff;
+    constexpr u32 beige                = 0xf5f5dcff;
+    constexpr u32 bisque               = 0xffe4c4ff;
+    constexpr u32 black                = 0x000000ff;
+    constexpr u32 blanchedalmond       = 0xffebcdff;
+    constexpr u32 blue                 = 0x0000ffff;
+    constexpr u32 blueviolet           = 0x8a2be2ff;
+    constexpr u32 brown                = 0xa52a2aff;
+    constexpr u32 burlywood            = 0xdeb887ff;
+    constexpr u32 cadetblue            = 0x5f9ea0ff;
+    constexpr u32 chartreuse           = 0x7fff00ff;
+    constexpr u32 chocolate            = 0xd2691eff;
+    constexpr u32 coral                = 0xff7f50ff;
+    constexpr u32 cornflowerblue       = 0x6495edff;
+    constexpr u32 cornsilk             = 0xfff8dcff;
+    constexpr u32 crimson              = 0xdc143cff;
+    constexpr u32 cyan                 = 0x00ffffff;
+    constexpr u32 darkblue             = 0x00008bff;
+    constexpr u32 darkcyan             = 0x008b8bff;
+    constexpr u32 darkgoldenrod        = 0xb8860bff;
+    constexpr u32 darkgray             = 0xa9a9a9ff;
+    constexpr u32 darkgreen            = 0x006400ff;
+    constexpr u32 darkgrey             = 0xa9a9a9ff;
+    constexpr u32 darkkhaki            = 0xbdb76bff;
+    constexpr u32 darkmagenta          = 0x8b008bff;
+    constexpr u32 darkolivegreen       = 0x556b2fff;
+    constexpr u32 darkorange           = 0xff8c00ff;
+    constexpr u32 darkorchid           = 0x9932ccff;
+    constexpr u32 darkred              = 0x8b0000ff;
+    constexpr u32 darksalmon           = 0xe9967aff;
+    constexpr u32 darkseagreen         = 0x8fbc8fff;
+    constexpr u32 darkslateblue        = 0x483d8bff;
+    constexpr u32 darkslategray        = 0x2f4f4fff;
+    constexpr u32 darkslategrey        = 0x2f4f4fff;
+    constexpr u32 darkturquoise        = 0x00ced1ff;
+    constexpr u32 darkviolet           = 0x9400d3ff;
+    constexpr u32 deeppink             = 0xff1493ff;
+    constexpr u32 deepskyblue          = 0x00bfffff;
+    constexpr u32 dimgray              = 0x696969ff;
+    constexpr u32 dimgrey              = 0x696969ff;
+    constexpr u32 dodgerblue           = 0x1e90ffff;
+    constexpr u32 firebrick            = 0xb22222ff;
+    constexpr u32 floralwhite          = 0xfffaf0ff;
+    constexpr u32 forestgreen          = 0x228b22ff;
+    constexpr u32 fuchsia              = 0xff00ffff;
+    constexpr u32 gainsboro            = 0xdcdcdcff;
+    constexpr u32 ghostwhite           = 0xf8f8ffff;
+    constexpr u32 gold                 = 0xffd700ff;
+    constexpr u32 goldenrod            = 0xdaa520ff;
+    constexpr u32 gray                 = 0x808080ff;
+    constexpr u32 green                = 0x008000ff;
+    constexpr u32 greenyellow          = 0xadff2fff;
+    constexpr u32 grey                 = 0x808080ff;
+    constexpr u32 honeydew             = 0xf0fff0ff;
+    constexpr u32 hotpink              = 0xff69b4ff;
+    constexpr u32 indianred            = 0xcd5c5cff;
+    constexpr u32 indigo               = 0x4b0082ff;
+    constexpr u32 ivory                = 0xfffff0ff;
+    constexpr u32 khaki                = 0xf0e68cff;
+    constexpr u32 lavender             = 0xe6e6faff;
+    constexpr u32 lavenderblush        = 0xfff0f5ff;
+    constexpr u32 lawngreen            = 0x7cfc00ff;
+    constexpr u32 lemonchiffon         = 0xfffacdff;
+    constexpr u32 lightblue            = 0xadd8e6ff;
+    constexpr u32 lightcoral           = 0xf08080ff;
+    constexpr u32 lightcyan            = 0xe0ffffff;
+    constexpr u32 lightgoldenrodyellow = 0xfafad2ff;
+    constexpr u32 lightgray            = 0xd3d3d3ff;
+    constexpr u32 lightgreen           = 0x90ee90ff;
+    constexpr u32 lightgrey            = 0xd3d3d3ff;
+    constexpr u32 lightpink            = 0xffb6c1ff;
+    constexpr u32 lightsalmon          = 0xffa07aff;
+    constexpr u32 lightseagreen        = 0x20b2aaff;
+    constexpr u32 lightskyblue         = 0x87cefaff;
+    constexpr u32 lightslategray       = 0x778899ff;
+    constexpr u32 lightslategrey       = 0x778899ff;
+    constexpr u32 lightsteelblue       = 0xb0c4deff;
+    constexpr u32 lightyellow          = 0xffffe0ff;
+    constexpr u32 lime                 = 0x00ff00ff;
+    constexpr u32 limegreen            = 0x32cd32ff;
+    constexpr u32 linen                = 0xfaf0e6ff;
+    constexpr u32 magenta              = 0xff00ffff;
+    constexpr u32 maroon               = 0x800000ff;
+    constexpr u32 mediumaquamarine     = 0x66cdaaff;
+    constexpr u32 mediumblue           = 0x0000cdff;
+    constexpr u32 mediumorchid         = 0xba55d3ff;
+    constexpr u32 mediumpurple         = 0x9370dbff;
+    constexpr u32 mediumseagreen       = 0x3cb371ff;
+    constexpr u32 mediumslateblue      = 0x7b68eeff;
+    constexpr u32 mediumspringgreen    = 0x00fa9aff;
+    constexpr u32 mediumturquoise      = 0x48d1ccff;
+    constexpr u32 mediumvioletred      = 0xc71585ff;
+    constexpr u32 midnightblue         = 0x191970ff;
+    constexpr u32 mintcream            = 0xf5fffaff;
+    constexpr u32 mistyrose            = 0xffe4e1ff;
+    constexpr u32 moccasin             = 0xffe4b5ff;
+    constexpr u32 navajowhite          = 0xffdeadff;
+    constexpr u32 navy                 = 0x000080ff;
+    constexpr u32 oldlace              = 0xfdf5e6ff;
+    constexpr u32 olive                = 0x808000ff;
+    constexpr u32 olivedrab            = 0x6b8e23ff;
+    constexpr u32 orange               = 0xffa500ff;
+    constexpr u32 orangered            = 0xff4500ff;
+    constexpr u32 orchid               = 0xda70d6ff;
+    constexpr u32 palegoldenrod        = 0xeee8aaff;
+    constexpr u32 palegreen            = 0x98fb98ff;
+    constexpr u32 paleturquoise        = 0xafeeeeff;
+    constexpr u32 palevioletred        = 0xdb7093ff;
+    constexpr u32 papayawhip           = 0xffefd5ff;
+    constexpr u32 peachpuff            = 0xffdab9ff;
+    constexpr u32 peru                 = 0xcd853fff;
+    constexpr u32 pink                 = 0xffc0cbff;
+    constexpr u32 plum                 = 0xdda0ddff;
+    constexpr u32 powderblue           = 0xb0e0e6ff;
+    constexpr u32 purple               = 0x800080ff;
+    constexpr u32 rebeccapurple        = 0x663399ff;
+    constexpr u32 red                  = 0xff0000ff;
+    constexpr u32 rosybrown            = 0xbc8f8fff;
+    constexpr u32 royalblue            = 0x4169e1ff;
+    constexpr u32 saddlebrown          = 0x8b4513ff;
+    constexpr u32 salmon               = 0xfa8072ff;
+    constexpr u32 sandybrown           = 0xf4a460ff;
+    constexpr u32 seagreen             = 0x2e8b57ff;
+    constexpr u32 seashell             = 0xfff5eeff;
+    constexpr u32 sienna               = 0xa0522dff;
+    constexpr u32 silver               = 0xc0c0c0ff;
+    constexpr u32 skyblue              = 0x87ceebff;
+    constexpr u32 slateblue            = 0x6a5acdff;
+    constexpr u32 slategray            = 0x708090ff;
+    constexpr u32 slategrey            = 0x708090ff;
+    constexpr u32 snow                 = 0xfffafaff;
+    constexpr u32 springgreen          = 0x00ff7fff;
+    constexpr u32 steelblue            = 0x4682b4ff;
+    constexpr u32 tan                  = 0xd2b48cff;
+    constexpr u32 teal                 = 0x008080ff;
+    constexpr u32 thistle              = 0xd8bfd8ff;
+    constexpr u32 tomato               = 0xff6347ff;
+    constexpr u32 transparent          = 0x00000000;
+    constexpr u32 turquoise            = 0x40e0d0ff;
+    constexpr u32 violet               = 0xee82eeff;
+    constexpr u32 wheat                = 0xf5deb3ff;
+    constexpr u32 white                = 0xffffffff;
+    constexpr u32 whitesmoke           = 0xf5f5f5ff;
+    constexpr u32 yellow               = 0xffff00ff;
+    constexpr u32 yellowgreen          = 0x9acd32ff;
+}
 
 template <typename t_color_out, typename t_color_in>
 PROC image_color_reorder_inplace( image<t_color_in> arg ) -> image<t_color_out>
