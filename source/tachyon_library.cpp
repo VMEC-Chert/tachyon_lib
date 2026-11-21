@@ -841,6 +841,7 @@ namespace tyon
         if (arg->global_allocator == nullptr)
         {
             arg->global_allocator = new memory_system_allocator();
+            arg->global_allocator = new memory_stack_allocator( 400_MiB );
         }
         g_root_allocator = arg->global_allocator;
         g_allocator = arg->global_allocator;
