@@ -66,9 +66,6 @@ struct logger
     fstring log_filename = "latest.log";
     FILE* log_file = nullptr;
 
-    void
-    write_error_simple( fstring message );
-
     PROC write_message(
         fstring category,
         fstring message,
