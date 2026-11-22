@@ -760,12 +760,19 @@ namespace tyon
         i64 prev_index = (entry_index -1);
         fstring_view previous_message = (prev_index >= 0 ?
                                          fstring_view{entries[ prev_index ].message} : "");
+        /** NOTE(mallchad): I try to be clever here and a set a small
+         * tolerancethreshold of changed bytes to consider a string "similar
+         * enough" but this muted valid similar messages, particularly with
+         * Vulkan, don't bother. */
         i64 differing_bytes = std::memcmp(
             previous_message.data(), message.data(), std::min(previous_message.size(), message.size()) );
-        differing_bytes = absolute( differing_bytes );
-        i64 repeat_message_max_different_chars = 5;
-        bool repeat_message = (differing_bytes < repeat_message_max_different_chars);
-        if (repeat_message) { ++repeat_message_count; } else { repeat_message_count = 0; }
+        bool repeat_message = (differing_bytes == 0);
+        if (repeat_message) { ++repeat_message_count; }
+        else // Repeat end
+        {
+            fmt::print( "\n" );
+            repeat_message_count = 0;
+        }
 
         {
             i64 nanoseconds = time_to_epoch_nanoseconds( entry.timestamp );
@@ -788,6 +795,7 @@ namespace tyon
                         entry.message );
                     if (console_output_enabled)
                     {
+                        // command_ansi_control( ansi_control::cursor_move_home );
                         fmt::print( fmt::emphasis::bold | fmt::fg(fmt::color::red), "{} \n",
                                     formatted_message );
                     }
@@ -798,14 +806,19 @@ namespace tyon
                         "[{}][{}] {}", nanoseconds, entry.category, entry.message );
                     if (console_output_enabled && repeat_message)
                     {
-                        command_ansi_control( ansi_control::cursor_move_up, 1 );
                         command_ansi_control( ansi_control::line_clear_entire );
-                        fmt::print( "{} [repeat {}] \n",
-                                    formatted_message, repeat_message_count );
-                        command_ansi_control( ansi_control::cursor_move_down, 1 );
+                        command_ansi_control( ansi_control::cursor_move_home );
+                        fmt::print( "[repeat {}]", repeat_message_count );
+                        /** Reset to home again even though we don't have to to
+                         * minimize disruption due to the cursor position being
+                         * disrupted. May happen if somebody else prints to the
+                         * console. It's OKAY if the repeat line is interupted
+                         * but NOT okay if the actual log line is unreadable */
+                        command_ansi_control( ansi_control::cursor_move_home );
                     }
                     else if (console_output_enabled)
-                    {   fmt::print( "{} \n", formatted_message ); }
+                    {
+                        fmt::print( "{} \n", formatted_message ); }
             }
             fflush( stdout );
 

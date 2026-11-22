@@ -20,7 +20,11 @@ namespace tyon
         cursor_move_up,
         cursor_move_down,
 
-        scroll_region_set,
+        scroll_up,
+        scroll_down,
+        /** NOTE: Was named to margin-top-down, dunno if this is the right
+         * now. It seems to be barely usable anyway */
+        /* scroll_region_set, */
         /** NOTE: Requires an unreasonable amount of parameters, will leave here
          * but this very likely should be a special case */
         /* ansi_color */

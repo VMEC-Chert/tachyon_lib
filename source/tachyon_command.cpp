@@ -100,6 +100,8 @@ namespace tyon
             case ansi_control::cursor_move_down: code = fmt::format( "\x1b[{}B", arg ); break;
             case ansi_control::reset: code = "\033[0m" ; break;
             case ansi_control::margin_top_bottom: code = fmt::format( "\033[{};{}r", arg, arg2 ); break;
+            case ansi_control::scroll_up: code = fmt::format( "\033[{}S", arg ); break;
+            case ansi_control::scroll_down: code = fmt::format( "\033[{}T)", arg ); break;
             default: break;
         }
         command_print_q( code );
