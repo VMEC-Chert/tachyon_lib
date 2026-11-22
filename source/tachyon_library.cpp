@@ -750,12 +750,21 @@ namespace tyon
         std::swap( g_logger, g_switch_logger );
 
         log_entry& entry = entries.push_tail( {} );
+        i64 entry_index = (entries.size() - 1);
         entry.type = type;
         entry.category = category;
         entry.message = message,
         entry.timestamp = time_now_utc();
         // TODO: Add call point
         // entry.call_point = call_point
+        i64 prev_index = (entry_index -1);
+        fstring_view previous_message = (prev_index >= 0 ?
+                                         fstring_view{entries[ prev_index ].message} : "");
+        i64 differing_bytes = std::memcmp(
+            previous_message.data(), message.data(), std::min(previous_message.size(), message.size()) );
+        i64 repeat_message_max_different_chars = 5;
+        bool repeat_message = (differing_bytes < repeat_message_max_different_chars);
+        if (repeat_message) { ++repeat_message_count; } else { repeat_message_count = 0; }
 
         {
             i64 nanoseconds = time_to_epoch_nanoseconds( entry.timestamp );
@@ -772,27 +781,32 @@ namespace tyon
             {
                 case e_log_entry::error:
                     formatted_message = fmt::format(
-                        "[{0}][{1}] \n\tLocation: {2} @ {3}:{4}:{5} \n\t{6} \n",
+                        "[{0}][{1}] \n\tLocation: {2} @ {3}:{4}:{5} \n\t{6}",
                         nanoseconds, entry.category, call_point.function_name(),
                         call_point.file_name(), call_point.line(), call_point.column(),
                         entry.message );
                     if (console_output_enabled)
                     {
-                        fmt::print( fmt::emphasis::bold | fmt::fg(fmt::color::red), "{}",
+                        fmt::print( fmt::emphasis::bold | fmt::fg(fmt::color::red), "{} \n",
                                     formatted_message );
                     }
                     break;
 
                 default:
                     formatted_message = fmt::format(
-                        "[{}][{}] {} \n", nanoseconds, entry.category, entry.message );
-                    if (console_output_enabled)
-                    {   fmt::print( "{}", formatted_message ); }
+                        "[{}][{}] {}", nanoseconds, entry.category, entry.message );
+                    if (console_output_enabled && repeat_message)
+                    {   fmt::print( "\x1B[1A\x1BK{} [repeat {}] \r\n",
+                                    formatted_message, repeat_message_count );
+                    }
+                    else if (console_output_enabled)
+                    {   fmt::print( "{} \n", formatted_message ); }
             }
             fflush( stdout );
 
             if (string_output_enabled)
             {
+                formatted_message += '\n';
                 // Write to log file if possible
                 if (log_file == nullptr)
                 { log_file = fopen( this->log_filename.c_str(), "w" ); }

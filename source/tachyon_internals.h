@@ -61,6 +61,7 @@ struct logger
     array<log_entry> entries;
     bool console_output_enabled = true;
     bool string_output_enabled = true;
+    i64 repeat_message_count = 0;
 
     std::mutex write_lock;
     fstring log_filename = "latest.log";
