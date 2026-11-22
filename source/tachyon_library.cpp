@@ -763,7 +763,6 @@ namespace tyon
         i64 differing_bytes = std::memcmp(
             previous_message.data(), message.data(), std::min(previous_message.size(), message.size()) );
         differing_bytes = absolute( differing_bytes );
-        fmt::print( "differing bytes {}", differing_bytes );
         i64 repeat_message_max_different_chars = 5;
         bool repeat_message = (differing_bytes < repeat_message_max_different_chars);
         if (repeat_message) { ++repeat_message_count; } else { repeat_message_count = 0; }
