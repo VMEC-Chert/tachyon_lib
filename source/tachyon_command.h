@@ -18,7 +18,61 @@ namespace tyon
         cursor_move_forwards,
         cursor_move_backwards,
         cursor_move_up,
-        cursor_move_down
+        cursor_move_down,
+
+        scroll_region_set,
+        /** NOTE: Requires an unreasonable amount of parameters, will leave here
+         * but this very likely should be a special case */
+        /* ansi_color */
+
+        reset,
+        bold_on,
+        bold_off,
+        faint,
+        italic,
+        italic_off,
+        underline,
+        underline_off,
+        bold_underline_off,
+        blink,
+        blink_off,
+        invert_color,
+        invert_color_ff,
+        /** NOTE: Hides text, potentially dangerous */
+        hidden,
+        hidden_off,
+        /** SECTION: NOTE: Not widely supported
+            https://cis106.com/bash/ANSI_escape_sequences/
+        */
+        strikethrough,
+        primary_font,
+        /** 1-9 */
+        alternate_font,
+
+        /** Simple Color Codes, more wildely supported */
+        black,
+        red,
+        green,
+        yellow,
+        blue,
+        magenta,
+        cyan,
+        white,
+        /* Foreground color, 256 color or true colour **/
+        color,
+        /** Background color 256 color or true colour
+         * 256 is not that useful, superseeded by 24-bit / truecolor. Maybe
+         * be useful for compat */
+        color_background,
+        color_background_reset,
+
+        // SECTION: Not widely supported
+        fraktur,
+        framed,
+        encircles,
+
+        /** Set Top and Bottom Margins */
+        margin_top_bottom,
     };
 
     /** Console command types */
@@ -107,7 +161,7 @@ namespace tyon
 
     PROC command_list_commands( command* arg ) -> void;
 
-    PROC command_ansi_control( ansi_control type, i32 arg = 0 ) -> void;
+    PROC command_ansi_control( ansi_control type, i32 arg = 0, i32 arg2 = 0 ) -> void;
 
     /** Non-blocking stdin processing */
     PROC command_read_console() -> void;

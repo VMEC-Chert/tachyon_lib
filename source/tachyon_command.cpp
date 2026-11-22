@@ -72,7 +72,7 @@ namespace tyon
         }
     }
 
-    PROC command_ansi_control( ansi_control type, i32 arg ) -> void
+    PROC command_ansi_control( ansi_control type, i32 arg, i32 arg2 ) -> void
     {
         /** NOTE: Windows supports only the \x1b ANSI escape code and Linux supports both that and \033 */
         fstring code;
@@ -98,6 +98,8 @@ namespace tyon
             case ansi_control::cursor_move_backwards: code = fmt::format( "\x1b[{}D", arg ); break;
             case ansi_control::cursor_move_up: code = fmt::format( "\x1b[{}A", arg ); break;
             case ansi_control::cursor_move_down: code = fmt::format( "\x1b[{}B", arg ); break;
+            case ansi_control::reset: code = "\033[0m" ; break;
+            case ansi_control::margin_top_bottom: code = fmt::format( "\033[{};{}r", arg, arg2 ); break;
             default: break;
         }
         command_print_q( code );
