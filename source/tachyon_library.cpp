@@ -762,6 +762,8 @@ namespace tyon
                                          fstring_view{entries[ prev_index ].message} : "");
         i64 differing_bytes = std::memcmp(
             previous_message.data(), message.data(), std::min(previous_message.size(), message.size()) );
+        differing_bytes = absolute( differing_bytes );
+        fmt::print( "differing bytes {}", differing_bytes );
         i64 repeat_message_max_different_chars = 5;
         bool repeat_message = (differing_bytes < repeat_message_max_different_chars);
         if (repeat_message) { ++repeat_message_count; } else { repeat_message_count = 0; }
@@ -796,8 +798,12 @@ namespace tyon
                     formatted_message = fmt::format(
                         "[{}][{}] {}", nanoseconds, entry.category, entry.message );
                     if (console_output_enabled && repeat_message)
-                    {   fmt::print( "\x1B[1A\x1BK{} [repeat {}] \r\n",
+                    {
+                        command_ansi_control( ansi_control::cursor_move_up, 1 );
+                        command_ansi_control( ansi_control::line_clear_entire );
+                        fmt::print( "{} [repeat {}] \n",
                                     formatted_message, repeat_message_count );
+                        command_ansi_control( ansi_control::cursor_move_down, 1 );
                     }
                     else if (console_output_enabled)
                     {   fmt::print( "{} \n", formatted_message ); }
