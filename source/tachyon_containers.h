@@ -300,18 +300,23 @@ struct array
     bool autofree = true;
 
     /** Default Constructor */
+    constexpr
     CONSTRUCTOR array() {}
 
+    constexpr
     CONSTRUCTOR array( std::initializer_list<T> arg )
     {
         this->change_allocation( arg.size() );
         head_size = arg.size();
         isize i = 0;
         for (auto x : arg ) { data[i] = x; ++i; }
-        ERROR_GUARD( i <= this->size_,
+        if (std::is_constant_evaluated() == false)
+        {   ERROR_GUARD( i <= this->size_,
                      "Index overran initializer list, memory is likely corrupted" );
+        }
     }
 
+    constexpr
     CONSTRUCTOR array( std::vector<T>& arg )
     {
         this->change_allocation( arg.size() );
@@ -320,12 +325,14 @@ struct array
         for (auto x : arg )
         {   data[i] = x; ++i;
         }
-        ERROR_GUARD( i <= this->size_,
+        if (std::is_constant_evaluated() == false)
+        {   ERROR_GUARD( i <= this->size_,
                      "Index overran initializer list, memory is likely corrupted" );
+        }
     }
 
-    bool
-    change_allocation( i_memory_allocator* allocator, isize count )
+    constexpr
+    PROC change_allocation( i_memory_allocator* allocator, isize count ) -> bool
     {
         data.allocator_set( allocator );
         return change_allocation( count );
@@ -335,8 +342,8 @@ struct array
 
         it uses the storage allocator, or 'g_allocator' if none is provided
     */
-    bool
-    change_allocation( isize count )
+    constexpr
+    PROC change_allocation( isize count ) -> bool
     {
         i_memory_allocator* allocator = (data.allocator() ? data.allocator() : g_allocator);
         T* new_storage = allocator->allocate_raw( count * sizeof(T), alignof(T) );
@@ -379,8 +386,8 @@ struct array
         return true;
     }
 
-    bool
-    change_allocation_raw( isize count )
+    constexpr
+    PROC change_allocation_raw( isize count ) -> bool
     {
         i_memory_allocator* allocator = (data.allocator ? data.allocator : g_allocator);
         T* new_storage = allocator->allocate_raw( count * sizeof(T), alignof(T) );
@@ -402,8 +409,8 @@ struct array
         return true;
     }
 
-    bool
-    FUNCTION allocate( i_memory_allocator* allocator, isize count )
+    constexpr
+    PROC FUNCTION allocate( i_memory_allocator* allocator, isize count ) -> bool
     {
         // TODO: BROKEN
         data = allocator->allocate_raw( count * sizeof(T) );
@@ -412,19 +419,13 @@ struct array
         return (data != nullptr);
     }
 
-    template<typename t_allocator>
-    bool
-    FUNCTION deallocate( t_allocator* allocator )
-    {
-        allocator->deallocate( data );
-        size_ = 0;
-        head_size = 0;
-        head = 0;
-
-        return true;
-    }
+    // template<typename t_allocator> constexpr
+    // PROC deallocate( t_allocator* allocator ) -> bool
+    // {
+    // }
 
     /// Pushes a new item at off the tail (head + head_size) and increments 'head_size'
+    constexpr
     PROC push_tail( T& item ) -> T&
     {
         if (bounded && (head + head_size >= size_))
@@ -438,8 +439,8 @@ struct array
         return data[ index ];
     }
 
-    T&
-    FUNCTION push_tail( T&& item )
+    constexpr
+    PROC push_tail( T&& item ) -> T&
     {
         if (bounded && (head + head_size >= size_))
         {
@@ -453,8 +454,8 @@ struct array
     }
 
     /// Pushes a new item at off the tail (head + head_size) and increments 'head_size'
-    bool
-    FUNCTION push_tail_unbounded( T item )
+    constexpr
+    PROC push_tail_unbounded( T item ) -> bool
     {
         ERROR_GUARD(head + head_size < size_, "Tried to push outside of allocated capacity" );
         if (bounded && (head + head_size >= size_))

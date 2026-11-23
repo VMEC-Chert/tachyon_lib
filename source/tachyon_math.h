@@ -85,12 +85,12 @@ namespace tyon
 
             T_real x2, y2;
 
-            if (x >= static_cast<T_real>(0.0)) 
+            if (x >= static_cast<T_real>(0.0))
             {
                 x2 = w;
                 y2 = y / (static_cast<T_real>(2.0) * w);
-            } 
-            else 
+            }
+            else
             {
                 x2 = std::abs(y) / (static_cast<T_real>(2.0) * w);
                 y2 = (y >= static_cast<T_real>(0.0)) ? w : -w;
@@ -107,7 +107,7 @@ namespace tyon
 
             if (x == static_cast<T_real>(0.0) && y == static_cast<T_real>(0.0))
             {
-                if (n == static_cast<T_real>(0.0)) 
+                if (n == static_cast<T_real>(0.0))
                 {
                     return complex_type<T_real, T_imag>{ static_cast<T_real>(1.0), static_cast<T_imag>(0.0) };
                 }
@@ -119,14 +119,14 @@ namespace tyon
 
             T_real abs_r = tyon::complex_modulus(z);
             T_real arg = tyon::complex_arg(z);
-            
+
             T_real r_n = pow(abs_r, n);
             T_real theta_n = n * arg;
 
             T_real cos_theta, sin_theta;
 
             #ifdef __CUDA_ARCH__
-                sincos(theta_n, &sin_theta, &cos_theta); 
+                sincos(theta_n, &sin_theta, &cos_theta);
             #else
                 cos_theta = cos(theta_n);
                 sin_theta = sin(theta_n);
@@ -269,7 +269,7 @@ namespace tyon
         // ################
         // ### Vector-2 ###
         // ################
-        // Structs 
+        // Structs
         struct v2_f32
         {
             f32 x;
@@ -280,7 +280,7 @@ namespace tyon
             TYON_CUDA_SHARED CONSTRUCTOR inline v2_f32( f32 x, f32 y);
         };
 
-        // Constructors 
+        // Constructors
         TYON_CUDA_SHARED CONSTRUCTOR inline v2_f32::v2_f32() : x(0.0f), y(0.0f) {}
         TYON_CUDA_SHARED CONSTRUCTOR inline v2_f32::v2_f32( f32 arg) : x(arg), y(arg) {}
         TYON_CUDA_SHARED CONSTRUCTOR inline v2_f32::v2_f32( f32 x, f32 y) : x(x), y(y) {}
@@ -421,7 +421,7 @@ namespace tyon
         // ################
         // ### Vector-3 ###
         // ################
-        // Structs 
+        // Structs
         struct v3_f32
         {
             f32 x;
@@ -433,7 +433,7 @@ namespace tyon
             TYON_CUDA_SHARED constexpr CONSTRUCTOR inline v3_f32( f32 x, f32 y, f32 z);
         };
 
-        // Constructors 
+        // Constructors
         TYON_CUDA_SHARED constexpr CONSTRUCTOR inline v3_f32::v3_f32() : x(0.0f), y(0.0f), z(0.0f) {}
         TYON_CUDA_SHARED constexpr CONSTRUCTOR inline v3_f32::v3_f32( f32 arg) : x(arg), y(arg), z(arg) {}
         TYON_CUDA_SHARED constexpr CONSTRUCTOR inline v3_f32::v3_f32( f32 x, f32 y, f32 z) : x(x), y(y), z(z) {}
@@ -579,7 +579,7 @@ namespace tyon
         // ################
         // ### Vector-4 ###
         // ################
-        // Structs 
+        // Structs
         struct v4_f32
         {
             f32 x;
@@ -592,7 +592,7 @@ namespace tyon
             TYON_CUDA_SHARED CONSTRUCTOR inline v4_f32( f32 x, f32 y, f32 z, f32 w);
         };
 
-        // Constructors 
+        // Constructors
         TYON_CUDA_SHARED CONSTRUCTOR inline v4_f32::v4_f32() : x(0.0f), y(0.0f), z(0.0f), w(0.0f) {}
         TYON_CUDA_SHARED CONSTRUCTOR inline v4_f32::v4_f32( f32 arg) : x(arg), y(arg), z(arg) {}
         TYON_CUDA_SHARED CONSTRUCTOR inline v4_f32::v4_f32( f32 x, f32 y, f32 z, f32 w) : x(x), y(y), z(z), w(w) {}
@@ -1049,7 +1049,7 @@ namespace tyon
             TYON_CUDA_SHARED
             PROC operator-(const matrix4_f64 m0, const matrix4_f64 m1) -> matrix4_f64;
 
-            // Scalar Subtraction 
+            // Scalar Subtraction
             TYON_CUDA_SHARED
             PROC operator-(const matrix2_f32 m0, const f32 s0) -> matrix2_f32;
 
@@ -1140,7 +1140,7 @@ namespace tyon
             PROC operator*(const matrix4_f64 m0, const f64 s0) -> matrix4_f64;
 
             TYON_CUDA_SHARED
-            PROC operator*(const f32 s0, const matrix4_f64 m0) -> matrix4_f64; 
+            PROC operator*(const f32 s0, const matrix4_f64 m0) -> matrix4_f64;
 
 
 
@@ -1258,30 +1258,166 @@ namespace tyon
         return {};
     }
 
+    constexpr
+    PROC v3_f32_fru( f32 forward, f32 right, f32 up ) -> v3_f32
+    {   return v3{ forward, right, up };
+    }
+
+    constexpr
+    PROC v3_f32_luf( f32 left, f32 up, f32 forward ) -> v3_f32
+    {
+        return v3_32 { forward, -left, up };
+    }
+
     // TODO: Add front face???
-    constexpr
+    inline
     PROC geometry_rectangle( v3_f32 size ) -> array<v3_f32>
-    {}
+    {
+        array<v3_f32> result;
+        f32 angle = 0;
+        f32 next_angle = 0;
+        f32 segment_arc = (6.283185307 / segments);
+        v3_f32 point;
+        v3_f32 point2;
+        for (i32 i_segment=0; i_segment < segments; ++i_segment)
+        {
+            // We make points clockwise but wind the triangles anti-clockwise (front-face)
+            next_angle += segment_arc;
 
-    constexpr
+            point = {
+                0.0,                  // Forward axis not used, 2D
+                sinf(angle) * radius, // opposite is Up/Down axis
+                cosf(angle) * radius // adjacent is Right/Left axis
+            };
+            point2 = {
+                0.0,
+                sinf(next_angle) * radius, // opposite is Up/Down axis
+                cosf(next_angle) * radius // adjacent is Right/Left axis
+            };
+            /* We make the first vertex on the outside the first vertex of each
+               triangle don't overlap in the middle for debugging convenience */
+            result.push_back( point );
+            result.push_back( v3_f32{0.0} );
+            result.push_back( point2 );
+
+            angle += segment_arc;
+        }
+        return result;
+    }
+
+    inline
     PROC geometry_circle( f32 radius, f32 segments ) -> array<v3_f32>
-    {}
+    {
+        array<v3_f32> result;
+        f32 angle = 0;
+        f32 next_angle = 0;
+        f32 segment_arc = (6.283185307 / segments);
+        v3_f32 point;
+        v3_f32 point2;
+        for (i32 i_segment=0; i_segment < segments; ++i_segment)
+        {
+            // We make points clockwise but wind the triangles anti-clockwise (front-face)
+            next_angle += segment_arc;
 
-    constexpr
+            point = {
+                0.0,                  // Forward axis not used, 2D
+                sinf(angle) * radius, // opposite is Up/Down axis
+                cosf(angle) * radius // adjacent is Right/Left axis
+            };
+            point2 = {
+                0.0,
+                sinf(next_angle) * radius, // opposite is Up/Down axis
+                cosf(next_angle) * radius // adjacent is Right/Left axis
+            };
+            /* We make the first vertex on the outside the first vertex of each
+               triangle don't overlap in the middle for debugging convenience */
+            result.push_back( point );
+            result.push_back( v3_f32{0.0} );
+            result.push_back( point2 );
+
+            angle += segment_arc;
+        }
+        return result;
+    }
+
+    inline
     PROC geometry_elipse( f32 major_radius, f32 minor_radius, f32 segments ) -> array<v3_f32>
-    {}
+    {
+        return {};
+    }
 
-    constexpr
-    PROC geometry_cube( f32 width ) -> array<v3_f32>
-    {}
+    inline
+    PROC geometry_cube( f32 width, f32 height = 0, f32 depth = 0 ) -> array<v3_f32>
+    {
+        // Half width
+        f32 w = width/2;
+        f32 h = (height ? height/2 : w);
+        f32 d = (depth ? depth/2 : h);
+        // Counter-Clickwise faces
+        array<v3_f32> result = {
+            // front top-right tri
+            v3_f32_fru( -d, -w, h ),           // 1
+            v3_f32_fru( -d,  w, -h ),          // 2
+            v3_f32_fru( -d,  w, h ),           // 3
+            // front bottom-left tri
+            v3_f32_fru( -d,  -w, h ),          // 4
+            v3_f32_fru( -d,  -w, -h ),         // 5
+            v3_f32_fru( -d,  w, -h ),          // 6
+            // left bottom-right
+            v3_f32_fru( -d,  -w, h ),          // 7
+            v3_f32_fru( d,  -w, -h ),          // 8
+            v3_f32_fru( -d,  -w, -h ),         // 9
+            // left top-right
+            v3_f32_fru( -d,  -w, h ),          // 10
+            v3_f32_fru( d,  -w, h ),            // 11
+            v3_f32_fru( d,  -w, -h ),           // 12
+            // top left-forward
+            v3_f32_fru( -d, -w, h ),
+            v3_f32_fru( d, w, h ),
+            v3_f32_fru( d, -w, h ),
+            // top right-backward
+            v3_f32_fru( -d,  -w, h ),
+            v3_f32_fru( -d,  w, h ),
+            v3_f32_fru( d,  w, h ),
+            // right top-left
+            v3_f32_fru( d,  w, h ),
+            v3_f32_fru( -d,  w, h ),
+            v3_f32_fru( -d,  w, -h ),
+            // right bottom-right
+            v3_f32_fru( d,  w, h ),
+            v3_f32_fru( -d,  w, -h ),
+            v3_f32_fru( d,  w, -h ),
+            // back bottom-left
+            v3_f32_fru( d,  w, h ),
+            v3_f32_fru( d,  w, -h ),
+            v3_f32_fru( d,  -w, -h ),
+            // back top-right
+            v3_f32_fru( d,  w, h ),       // 28
+            v3_f32_fru( d, -w, -h ),
+            v3_f32_fru( d, -w, h ),
+            // bottom right-back
+            v3_f32_fru( d, -w, -h ),
+            v3_f32_fru( d, w, -h ),
+            v3_f32_fru( -d, w, -h ),
+            // bottom left-forward
+            v3_f32_fru( d, -w, -h ),
+            v3_f32_fru( -d, w, -h ),
+            v3_f32_fru( -d, -w, -h ),
+        };
+        return result;
+    }
 
-    constexpr
+    inline
     PROC geometry_sphere( f32 radius ) -> array<v3_f32>
-    {}
+    {
+        return {};
+    }
 
-    constexpr
+    inline
     PROC geometry_torus( f32 radius_ring, f32 radius_cross, f32 segments )
-    {}
+    {
+        return {};
+    }
 
 
     struct geometry_torus_args
@@ -1292,19 +1428,19 @@ namespace tyon
         f32 twist = 0 ;
         f32 twist_phase = 0;
     };
-    constexpr
+    inline
     PROC geometry_torus_generic( geometry_torus_args args )
     {}
 
-    constexpr
+    inline
     PROC geometry_spine() -> array<v3_f32>
     {}
 
-    constexpr
+    inline
     PROC geometry_pipe() -> array<v3_f32>
     {}
 
-    constexpr
+    inline
     PROC geometry_extrude_2d( array )
     {}
 

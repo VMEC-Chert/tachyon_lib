@@ -492,12 +492,17 @@ namespace tyon
         {
             PROFILE_SCOPE_FUNCTION();
             T* result = nullptr;
-            i64 size_bytes = (sizeof(T) * count);
-            i64 alignment = memory_padding( alignof(T), result );
-            result = allocate_raw( size_bytes + alignment );
-
-            // Default allocate storage
-            new(result) T[count] {};
+            if (std::is_constant_evaluated() == false)
+            {
+                i64 size_bytes = (sizeof(T) * count);
+                i64 alignment = memory_padding( alignof(T), result );
+                result = allocate_raw( size_bytes + alignment );
+            }
+            else {
+                // Default allocate storage
+                new(result) T[count] {};
+                result = new T[count];
+            }
             return result;
         }
 
