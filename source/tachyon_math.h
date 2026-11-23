@@ -428,15 +428,15 @@ namespace tyon
             f32 y;
             f32 z;
 
-            TYON_CUDA_SHARED CONSTRUCTOR inline v3_f32();
-            TYON_CUDA_SHARED CONSTRUCTOR inline v3_f32( f32 arg );
-            TYON_CUDA_SHARED CONSTRUCTOR inline v3_f32( f32 x, f32 y, f32 z);
+            TYON_CUDA_SHARED constexpr CONSTRUCTOR inline v3_f32();
+            TYON_CUDA_SHARED constexpr CONSTRUCTOR inline v3_f32( f32 arg );
+            TYON_CUDA_SHARED constexpr CONSTRUCTOR inline v3_f32( f32 x, f32 y, f32 z);
         };
 
         // Constructors 
-        TYON_CUDA_SHARED CONSTRUCTOR inline v3_f32::v3_f32() : x(0.0f), y(0.0f), z(0.0f) {}
-        TYON_CUDA_SHARED CONSTRUCTOR inline v3_f32::v3_f32( f32 arg) : x(arg), y(arg), z(arg) {}
-        TYON_CUDA_SHARED CONSTRUCTOR inline v3_f32::v3_f32( f32 x, f32 y, f32 z) : x(x), y(y), z(z) {}
+        TYON_CUDA_SHARED constexpr CONSTRUCTOR inline v3_f32::v3_f32() : x(0.0f), y(0.0f), z(0.0f) {}
+        TYON_CUDA_SHARED constexpr CONSTRUCTOR inline v3_f32::v3_f32( f32 arg) : x(arg), y(arg), z(arg) {}
+        TYON_CUDA_SHARED constexpr CONSTRUCTOR inline v3_f32::v3_f32( f32 x, f32 y, f32 z) : x(x), y(y), z(z) {}
 
         // Operators
         // Addition
@@ -898,13 +898,13 @@ namespace tyon
             f32 m31; f32 m32; f32 m33; f32 m34;
             f32 m41; f32 m42; f32 m43; f32 m44;
 
-            TYON_CUDA_SHARED
+            TYON_CUDA_SHARED constexpr
             CONSTRUCTOR matrix4_f32();
-            TYON_CUDA_SHARED
+            TYON_CUDA_SHARED constexpr
             CONSTRUCTOR matrix4_f32( f32 arg );
-            TYON_CUDA_SHARED
+            TYON_CUDA_SHARED constexpr
             CONSTRUCTOR matrix4_f32( f32 m11, f32 m12, f32 m13, f32 m14, f32 m21, f32 m22, f32 m23, f32 m24, f32 m31, f32 m32, f32 m33, f32 m34, f32 m41, f32 m42, f32 m43, f32 m44);
-            TYON_CUDA_SHARED
+            TYON_CUDA_SHARED constexpr
             explicit CONSTRUCTOR matrix4_f32( f64 arg );
         };
 
@@ -1228,7 +1228,99 @@ namespace tyon
             TYON_CUDA_SHARED
             PROC transpose_matrix(const matrix4_f64 m) -> matrix4_f64;
 
+    constexpr
+    PROC matrix_transform( transform_3d arg) -> matrix4_f32
+    {
+        return {};
+    }
 
+    constexpr
+    PROC matrix_translation( v3_f32 arg) -> matrix4_f32
+    {
+        return {};
+    }
+
+    constexpr
+    PROC matrix_rotation( v3_f32 arg) -> matrix4_f32
+    {
+        return {};
+    }
+
+    constexpr
+    PROC matrix_scale( v3_f32 arg) -> matrix4_f32
+    {
+        return {};
+    }
+
+    constexpr
+    PROC matrix_camera_view( transform_3d ) -> matrix4_f32
+    {
+        return {};
+    }
+
+    // TODO: Add front face???
+    constexpr
+    PROC geometry_rectangle( v3_f32 size ) -> array<v3_f32>
+    {}
+
+    constexpr
+    PROC geometry_circle( f32 radius, f32 segments ) -> array<v3_f32>
+    {}
+
+    constexpr
+    PROC geometry_elipse( f32 major_radius, f32 minor_radius, f32 segments ) -> array<v3_f32>
+    {}
+
+    constexpr
+    PROC geometry_cube( f32 width ) -> array<v3_f32>
+    {}
+
+    constexpr
+    PROC geometry_sphere( f32 radius ) -> array<v3_f32>
+    {}
+
+    constexpr
+    PROC geometry_torus( f32 radius_ring, f32 radius_cross, f32 segments )
+    {}
+
+
+    struct geometry_torus_args
+    {
+        array<v3_f32> ring_shape;
+        f32 radius_ring = 0;
+        f32 ring_segments = 0;
+        f32 twist = 0 ;
+        f32 twist_phase = 0;
+    };
+    constexpr
+    PROC geometry_torus_generic( geometry_torus_args args )
+    {}
+
+    constexpr
+    PROC geometry_spine() -> array<v3_f32>
+    {}
+
+    constexpr
+    PROC geometry_pipe() -> array<v3_f32>
+    {}
+
+    constexpr
+    PROC geometry_extrude_2d( array )
+    {}
+
+    PROC geometry_extrude_3d( array<v3_f32> geometry, array<i32> target_faces )
+    {
+    }
+
+    // TODO: Sphere
+    Torus
+    Cylinder
+Cone
+    Cuboid
+    N Base Pyramid
+    Triangular Prism
+
+    N Prism
 
         // Conversion
             // Spherical coordinates
