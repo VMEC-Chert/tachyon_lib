@@ -1239,7 +1239,7 @@ namespace tyon
             // Row 1
             s.x * cosf(r.y)*cosf(r.z),
             s.y * cosf(r.x)*sinf(r.z) + cosf(r.z)*sinf(r.x)*sinf(r.y),
-            s.z sinf(r.x)*sinf(r.z) - cosf(r.x)*cosf(r.z)*sinf(r.y),
+            s.z * sinf(r.x)*sinf(r.z) - cosf(r.x)*cosf(r.z)*sinf(r.y),
             t.x,
             // Row 2
             s.x -cosf(r.y)*sinf(r.z),
@@ -1279,9 +1279,9 @@ namespace tyon
     constexpr
     PROC matrix_translation( v3_f32 arg) -> matrix4_f32
     {   auto t = arg;
-        return matrix4_f32 { 1.0, 0.0, 0.0, tx,
-                             0.0, 1.0, 0.0, t.y
-                             0.0, 0.0, 1.0, t.z
+        return matrix4_f32 { 1.0, 0.0, 0.0, t.x,
+                             0.0, 1.0, 0.0, t.y,
+                             0.0, 0.0, 1.0, t.z,
                              0.0, 0.0, 0.0, 1.0 };
     }
 
@@ -1309,15 +1309,14 @@ namespace tyon
             0,
             // Row 4
             0, 0, 0, 1 };
-        return rotation_matrix;
     }
 
     constexpr
     PROC matrix_scale( v3_f32 arg ) -> matrix4_f32
     {   auto s = arg;
         return matrix4_f32 { s.x, 0.0, 0.0, 0.0,
-                             0.0, s.y, 0.0, 0.0
-                             0.0, 0.0, s.z, 0.0
+                             0.0, s.y, 0.0, 0.0,
+                             0.0, 0.0, s.z, 0.0,
                              0.0, 0.0, 0.0, 1.0 };
     }
 
