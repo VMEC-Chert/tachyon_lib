@@ -275,8 +275,8 @@ namespace tyon
             f32 x;
             f32 y;
 
-            TYON_CUDA_SHARED constepxr CONSTRUCTOR v2_f32();
-            TYON_CUDA_SHARED cosntexpr CONSTRUCTOR v2_f32( f32 arg );
+            TYON_CUDA_SHARED constexpr CONSTRUCTOR v2_f32();
+            TYON_CUDA_SHARED constexpr CONSTRUCTOR v2_f32( f32 arg );
             TYON_CUDA_SHARED constexpr CONSTRUCTOR v2_f32( f32 x, f32 y);
         };
 
@@ -437,6 +437,21 @@ namespace tyon
         TYON_CUDA_SHARED constexpr CONSTRUCTOR v3_f32::v3_f32() : x(0.0f), y(0.0f), z(0.0f) {}
         TYON_CUDA_SHARED constexpr CONSTRUCTOR v3_f32::v3_f32( f32 arg) : x(arg), y(arg), z(arg) {}
         TYON_CUDA_SHARED constexpr CONSTRUCTOR v3_f32::v3_f32( f32 x, f32 y, f32 z) : x(x), y(y), z(z) {}
+
+    // Forward Right-Up (FRU) xyz Unreal Engine
+    constexpr PROC world_up() -> v3_f32 {      return { 0.0, 0.0, 1.0 }; }
+    constexpr PROC world_forward() -> v3_f32 {  return { 1.0, 0.0, 0.0 }; }
+    constexpr PROC world_right() -> v3_f32 {    return { 0.0, 1.0, 0.0 }; }
+    constexpr PROC world_down() -> v3_f32 {     return { 0.0, 0.0,-1.0 }; }
+    constexpr PROC world_backward() -> v3_f32 { return {-1.0, 0.0, 0.0 }; }
+    constexpr PROC world_left() -> v3_f32 {     return { 0.0,-1.0, 0.0 }; }
+
+    constexpr PROC screen_up() -> v3_f32 {       return world_up(); }
+    constexpr PROC screen_forward() -> v3_f32 {  return world_forward(); }
+    constexpr PROC screen_right() -> v3_f32 {    return world_right(); }
+    constexpr PROC screen_down() -> v3_f32 {     return world_down(); }
+    constexpr PROC screen_backward() -> v3_f32 { return world_backward(); }
+    constexpr PROC screen_left() -> v3_f32 {     return world_left(); }
 
         // Operators
         // Addition
@@ -971,36 +986,6 @@ namespace tyon
             v3_f32 size;
         };
 
-    struct scene_camera
-    {
-        transform_3d transform;
-        v2_f32 sensor_size;
-        f32 near_clip;
-        f32 far_clip;
-
-        /** NOTE: Direction vector functions incoherent for objects that aren't
-         * in the local space of the camera, which is to say parented to the
-         * camera. Transform it into world space if you want real usage */
-        /** Create local normalized foward vector */
-
-        constexpr PROC forward() -> v3_f32
-        {   matrix_create_rotation( transform.rotation ) * world_forward(); }
-        // Create local normalized up vector
-        cosntexpr PROC up() -> v3_f32
-        { matrix_create_rotation( transform.rotation ) * world_up(); }
-        // Create local normalized right vector
-        cosntexpr PROC right() -> v3_f32;
-        {   matrix_create_rotation( transform.rotation ) * world_right(); }
-        constexpr PROC backward() -> v3_f32
-        {   matrix_create_rotation( transform.rotation ) * -world_backward(); }
-        // Create local normalized up vector
-        cosntexpr PROC down() -> v3_f32
-        { matrix_create_rotation( transform.rotation ) * world_down(); }
-        // Create local normalized right vector
-        cosntexpr PROC right() -> v3_f32;
-        {   matrix_create_rotation( transform.rotation ) * world_right(); }
-    };
-
     /** Operators */
         // Vector-Matrix
             TYON_CUDA_SHARED
@@ -1379,6 +1364,36 @@ namespace tyon
     //                          0.0, 0.0, 0.0, 1.0 };
     // }
 
+    struct scene_camera
+    {
+        transform_3d transform;
+        v2_f32 sensor_size;
+        f32 near_clip;
+        f32 far_clip;
+
+        /** NOTE: Direction vector functions incoherent for objects that aren't
+         * in the local space of the camera, which is to say parented to the
+         * camera. Transform it into world space if you want real usage */
+        /** Create local normalized foward vector */
+
+        constexpr PROC forward() -> v3_f32
+        {   matrix_rotation( transform.rotation ) * world_forward(); }
+        // Create local normalized up vector
+        constexpr PROC up() -> v3_f32
+        {   matrix_rotation( transform.rotation ) * world_up(); }
+        // Create local normalized right vector
+        constexpr PROC right() -> v3_f32
+        {   matrix_rotation( transform.rotation ) * world_right(); }
+        constexpr PROC backward() -> v3_f32
+        {   matrix_rotation( transform.rotation ) * world_backward(); }
+        // Create local normalized up vector
+        constexpr PROC down() -> v3_f32
+        {   matrix_rotation( transform.rotation ) * world_down(); }
+        // Create local normalized right vector
+        constexpr PROC left() -> v3_f32
+        {   matrix_rotation( transform.rotation ) * world_left(); }
+    };
+
     /** (Inverse Translation * Inverse Rotation) */
     constexpr
     PROC matrix_view( transform_3d arg ) -> matrix4_f32
@@ -1424,22 +1439,6 @@ namespace tyon
     {
         return v3_f32 { forward, -left, up };
     }
-
-    // Forward Right-Up (FRU) xyz Unreal Engine
-    constexpr PROC world_up() -> v3_f32 {      return { 0.0, 0.0, 1.0 }; }
-    constexpr PROC world_forward() -> v3_f32 {  return { 1.0, 0.0, 0.0 }; }
-    constexpr PROC world_right() -> v3_f32 {    return { 0.0, 1.0, 0.0 }; }
-    constexpr PROC world_down() -> v3_f32 {     return { 0.0, 0.0,-1.0 }; }
-    constexpr PROC world_backward() -> v3_f32 { return {-1.0, 0.0, 0.0 }; }
-    constexpr PROC world_left() -> v3_f32 {     return { 0.0,-1.0, 0.0 }; }
-
-    constexpr PROC screen_up() -> v3_f32 {       return world_up(); }
-    constexpr PROC screen_forward() -> v3_f32 {  return world_forward(); }
-    constexpr PROC screen_right() -> v3_f32 {    return world_right(); }
-    constexpr PROC screen_down() -> v3_f32 {     return world_down(); }
-    constexpr PROC screen_backward() -> v3_f32 { return world_backward(); }
-    constexpr PROC screen_left() -> v3_f32 {     return world_left(); }
-
 
     // TODO: Add front face???
     inline
