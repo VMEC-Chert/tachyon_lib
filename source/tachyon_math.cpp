@@ -3,40 +3,40 @@ namespace tyon
 {
     /** Types */
         // Matrices
-        TYON_CUDA_SHARED
+        TYON_CUDA_SHARED cosntexpr
         CONSTRUCTOR matrix2_f32::matrix2_f32() : m11(0.0f), m12(0.0f), m21(0.0f), m22(0.0f) {}
-        TYON_CUDA_SHARED
+        TYON_CUDA_SHARED constexpr
         CONSTRUCTOR matrix2_f32::matrix2_f32( f32 arg ) : m11(arg), m12(arg), m21(arg), m22(arg) {}
-        TYON_CUDA_SHARED
+        TYON_CUDA_SHARED constexpr
         CONSTRUCTOR matrix2_f32::matrix2_f32( f32 m11, f32 m12, f32 m21, f32 m22) : m11(m11), m12(m12), m21(m21), m22(m22) {}
-        TYON_CUDA_SHARED
+        TYON_CUDA_SHARED constexpr
         CONSTRUCTOR matrix2_f32::matrix2_f32( f64 arg ) {}
 
-        TYON_CUDA_SHARED
+        TYON_CUDA_SHARED constexpr
         CONSTRUCTOR matrix2_f64::matrix2_f64() : m11(0.0), m12(0.0), m21(0.0), m22(0.0) {}
-        TYON_CUDA_SHARED
+        TYON_CUDA_SHARED constexpr
         CONSTRUCTOR matrix2_f64::matrix2_f64( f64 arg ) : m11(arg), m12(arg), m21(arg), m22(arg) {}
-        TYON_CUDA_SHARED
+        TYON_CUDA_SHARED constexpr
         CONSTRUCTOR matrix2_f64::matrix2_f64( f64 m11, f64 m12, f64 m21, f64 m22) : m11(m11), m12(m12), m21(m21), m22(m22) {}
-        TYON_CUDA_SHARED
+        TYON_CUDA_SHARED constexpr
         CONSTRUCTOR matrix2_f64::matrix2_f64( f32 arg ) {}
 
-        TYON_CUDA_SHARED
+        TYON_CUDA_SHARED constexpr
         CONSTRUCTOR matrix3_f32::matrix3_f32() : m11(0.0f), m12(0.0f), m13(0.0f), m21(0.0f), m22(0.0f), m23(0.0f), m31(0.0f), m32(0.0f), m33(0.0f) {}
-        TYON_CUDA_SHARED
+        TYON_CUDA_SHARED constexpr
         CONSTRUCTOR matrix3_f32::matrix3_f32( f32 arg ) : m11(arg), m12(arg), m13(arg), m21(arg), m22(arg), m23(arg), m31(arg), m32(arg), m33(arg) {}
-        TYON_CUDA_SHARED
+        TYON_CUDA_SHARED constexpr
         CONSTRUCTOR matrix3_f32::matrix3_f32( f32 m11, f32 m12, f32 m13, f32 m21, f32 m22, f32 m23, f32 m31, f32 m32, f32 m33) : m11(m11), m12(m12), m13(m13), m21(m21), m22(m22), m23(m23), m31(m31), m32(m32), m33(m33) {}
-        TYON_CUDA_SHARED
+        TYON_CUDA_SHARED constexpr
         CONSTRUCTOR matrix3_f32::matrix3_f32( f64 arg ) {}
 
-        TYON_CUDA_SHARED
+        TYON_CUDA_SHARED constexpr
         CONSTRUCTOR matrix3_f64::matrix3_f64() : m11(0.0), m12(0.0), m13(0.0), m21(0.0), m22(0.0), m23(0.0), m31(0.0), m32(0.0), m33(0.0) {}
-        TYON_CUDA_SHARED
+        TYON_CUDA_SHARED constexpr
         CONSTRUCTOR matrix3_f64::matrix3_f64( f32 arg ) : m11(arg), m12(arg), m13(arg), m21(arg), m22(arg), m23(arg), m31(arg), m32(arg), m33(arg) {}
-        TYON_CUDA_SHARED
+        TYON_CUDA_SHARED constexpr
         CONSTRUCTOR matrix3_f64::matrix3_f64( f32 m11, f32 m12, f32 m13, f32 m21, f32 m22, f32 m23, f32 m31, f32 m32, f32 m33) : m11(m11), m12(m12), m13(m13), m21(m21), m22(m22), m23(m23), m31(m31), m32(m32), m33(m33) {}
-        TYON_CUDA_SHARED
+        TYON_CUDA_SHARED constexpr
         CONSTRUCTOR matrix3_f64::matrix3_f64( f64 arg ) {}
 
         TYON_CUDA_SHARED constexpr
@@ -48,13 +48,13 @@ namespace tyon
         TYON_CUDA_SHARED constexpr
         CONSTRUCTOR matrix4_f32::matrix4_f32( f64 arg ) {}
 
-        TYON_CUDA_SHARED
+        TYON_CUDA_SHARED constexpr
         CONSTRUCTOR matrix4_f64::matrix4_f64() : m11(0.0), m12(0.0), m13(0.0), m14(0.0), m21(0.0), m22(0.0), m23(0.0), m24(0.0), m31(0.0), m32(0.0), m33(0.0), m34(0.0), m41(0.0), m42(0.0), m43(0.0), m44(0.0) {}
-        TYON_CUDA_SHARED
+        TYON_CUDA_SHARED constexpr
         CONSTRUCTOR matrix4_f64::matrix4_f64( f64 arg ) : m11(arg), m12(arg), m13(arg), m14(arg), m21(arg), m22(arg), m23(arg), m24(arg), m31(arg), m32(arg), m33(arg), m34(arg), m41(arg), m42(arg), m43(arg), m44(arg) {}
-        TYON_CUDA_SHARED
+        TYON_CUDA_SHARED constexpr
         CONSTRUCTOR matrix4_f64::matrix4_f64( f64 m11, f64 m12, f64 m13, f64 m14, f64 m21, f64 m22, f64 m23, f64 m24, f64 m31, f64 m32, f64 m33, f64 m34, f64 m41, f64 m42, f64 m43, f64 m44) : m11(m11), m12(m12), m13(m13), m14(m14), m21(m21), m22(m22), m23(m23), m24(m24), m31(m31), m32(m32), m33(m33), m34(m34), m41(m41), m42(m42), m43(m43), m44(m44) {}
-        TYON_CUDA_SHARED
+        TYON_CUDA_SHARED constexpr
         CONSTRUCTOR matrix4_f64::matrix4_f64( f32 arg ) {}
 
 
