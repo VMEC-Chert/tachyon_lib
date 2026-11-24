@@ -275,15 +275,15 @@ namespace tyon
             f32 x;
             f32 y;
 
-            TYON_CUDA_SHARED CONSTRUCTOR inline v2_f32();
-            TYON_CUDA_SHARED CONSTRUCTOR inline v2_f32( f32 arg );
-            TYON_CUDA_SHARED CONSTRUCTOR inline v2_f32( f32 x, f32 y);
+            TYON_CUDA_SHARED constepxr CONSTRUCTOR v2_f32();
+            TYON_CUDA_SHARED cosntexpr CONSTRUCTOR v2_f32( f32 arg );
+            TYON_CUDA_SHARED constexpr CONSTRUCTOR v2_f32( f32 x, f32 y);
         };
 
         // Constructors
-        TYON_CUDA_SHARED CONSTRUCTOR inline v2_f32::v2_f32() : x(0.0f), y(0.0f) {}
-        TYON_CUDA_SHARED CONSTRUCTOR inline v2_f32::v2_f32( f32 arg) : x(arg), y(arg) {}
-        TYON_CUDA_SHARED CONSTRUCTOR inline v2_f32::v2_f32( f32 x, f32 y) : x(x), y(y) {}
+        TYON_CUDA_SHARED constexpr CONSTRUCTOR v2_f32::v2_f32() : x(0.0f), y(0.0f) {}
+        TYON_CUDA_SHARED constexpr CONSTRUCTOR v2_f32::v2_f32( f32 arg) : x(arg), y(arg) {}
+        TYON_CUDA_SHARED constexpr CONSTRUCTOR v2_f32::v2_f32( f32 x, f32 y) : x(x), y(y) {}
 
         // Operators
         // Addition
@@ -428,15 +428,15 @@ namespace tyon
             f32 y;
             f32 z;
 
-            TYON_CUDA_SHARED constexpr CONSTRUCTOR inline v3_f32();
-            TYON_CUDA_SHARED constexpr CONSTRUCTOR inline v3_f32( f32 arg );
-            TYON_CUDA_SHARED constexpr CONSTRUCTOR inline v3_f32( f32 x, f32 y, f32 z);
+            TYON_CUDA_SHARED constexpr CONSTRUCTOR v3_f32();
+            TYON_CUDA_SHARED constexpr CONSTRUCTOR v3_f32( f32 arg );
+            TYON_CUDA_SHARED constexpr CONSTRUCTOR v3_f32( f32 x, f32 y, f32 z);
         };
 
         // Constructors
-        TYON_CUDA_SHARED constexpr CONSTRUCTOR inline v3_f32::v3_f32() : x(0.0f), y(0.0f), z(0.0f) {}
-        TYON_CUDA_SHARED constexpr CONSTRUCTOR inline v3_f32::v3_f32( f32 arg) : x(arg), y(arg), z(arg) {}
-        TYON_CUDA_SHARED constexpr CONSTRUCTOR inline v3_f32::v3_f32( f32 x, f32 y, f32 z) : x(x), y(y), z(z) {}
+        TYON_CUDA_SHARED constexpr CONSTRUCTOR v3_f32::v3_f32() : x(0.0f), y(0.0f), z(0.0f) {}
+        TYON_CUDA_SHARED constexpr CONSTRUCTOR v3_f32::v3_f32( f32 arg) : x(arg), y(arg), z(arg) {}
+        TYON_CUDA_SHARED constexpr CONSTRUCTOR v3_f32::v3_f32( f32 x, f32 y, f32 z) : x(x), y(y), z(z) {}
 
         // Operators
         // Addition
@@ -587,15 +587,15 @@ namespace tyon
             f32 z;
             f32 w;
 
-            TYON_CUDA_SHARED CONSTRUCTOR inline v4_f32();
-            TYON_CUDA_SHARED CONSTRUCTOR inline v4_f32( f32 arg );
-            TYON_CUDA_SHARED CONSTRUCTOR inline v4_f32( f32 x, f32 y, f32 z, f32 w);
+            TYON_CUDA_SHARED constexpr CONSTRUCTOR v4_f32();
+            TYON_CUDA_SHARED constexpr CONSTRUCTOR v4_f32( f32 arg );
+            TYON_CUDA_SHARED constexpr CONSTRUCTOR v4_f32( f32 x, f32 y, f32 z, f32 w);
         };
 
         // Constructors
-        TYON_CUDA_SHARED CONSTRUCTOR inline v4_f32::v4_f32() : x(0.0f), y(0.0f), z(0.0f), w(0.0f) {}
-        TYON_CUDA_SHARED CONSTRUCTOR inline v4_f32::v4_f32( f32 arg) : x(arg), y(arg), z(arg) {}
-        TYON_CUDA_SHARED CONSTRUCTOR inline v4_f32::v4_f32( f32 x, f32 y, f32 z, f32 w) : x(x), y(y), z(z), w(w) {}
+        TYON_CUDA_SHARED constexpr CONSTRUCTOR v4_f32::v4_f32() : x(0.0f), y(0.0f), z(0.0f), w(0.0f) {}
+        TYON_CUDA_SHARED constexpr CONSTRUCTOR v4_f32::v4_f32( f32 arg) : x(arg), y(arg), z(arg) {}
+        TYON_CUDA_SHARED constexpr CONSTRUCTOR v4_f32::v4_f32( f32 x, f32 y, f32 z, f32 w) : x(x), y(y), z(z), w(w) {}
 
         // Operators
         // Addition
@@ -834,14 +834,14 @@ namespace tyon
             f32 m11; f32 m12;
             f32 m21; f32 m22;
 
-            TYON_CUDA_SHARED
+            TYON_CUDA_SHARED constexpr
             CONSTRUCTOR matrix2_f32();
-            TYON_CUDA_SHARED
+            TYON_CUDA_SHARED constexpr
             CONSTRUCTOR matrix2_f32( f32 arg );
-            TYON_CUDA_SHARED
+            TYON_CUDA_SHARED constexpr
             CONSTRUCTOR matrix2_f32( f32 m11, f32 m12, f32 m21, f32 m22);
-            TYON_CUDA_SHARED
-            explicit CONSTRUCTOR matrix2_f32( f64 arg );
+            TYON_CUDA_SHARED explicit constexpr
+            CONSTRUCTOR matrix2_f32( f64 arg );
         };
 
         struct matrix2_f64
@@ -849,14 +849,14 @@ namespace tyon
             f64 m11; f64 m12;
             f64 m21; f64 m22;
 
-            TYON_CUDA_SHARED
+            TYON_CUDA_SHARED constexpr
             CONSTRUCTOR matrix2_f64();
-            TYON_CUDA_SHARED
+            TYON_CUDA_SHARED constexpr
             CONSTRUCTOR matrix2_f64( f64 arg );
-            TYON_CUDA_SHARED
+            TYON_CUDA_SHARED constexpr
             CONSTRUCTOR matrix2_f64( f64 m11, f64 m12, f64 m21, f64 m22);
-            TYON_CUDA_SHARED
-            explicit CONSTRUCTOR matrix2_f64( f32 arg );
+            TYON_CUDA_SHARED explicit constexpr
+            CONSTRUCTOR matrix2_f64( f32 arg );
         };
 
         struct matrix3_f32
@@ -865,14 +865,20 @@ namespace tyon
             f32 m21; f32 m22; f32 m23;
             f32 m31; f32 m32; f32 m33;
 
-            TYON_CUDA_SHARED
+            TYON_CUDA_SHARED constexpr
             CONSTRUCTOR matrix3_f32();
-            TYON_CUDA_SHARED
+
+            TYON_CUDA_SHARED constexpr
             CONSTRUCTOR matrix3_f32( f32 arg );
+
+            TYON_CUDA_SHARED constexpr
+            CONSTRUCTOR matrix3_f32(
+                f32 m11, f32 m12, f32 m13,
+                f32 m21, f32 m22, f32 m23,
+                f32 m31, f32 m32, f32 m33
+            );
             TYON_CUDA_SHARED
-            CONSTRUCTOR matrix3_f32( f32 m11, f32 m12, f32 m13, f32 m21, f32 m22, f32 m23, f32 m31, f32 m32, f32 m33);
-            TYON_CUDA_SHARED
-            explicit CONSTRUCTOR matrix3_f32( f64 arg );
+            explicit constexpr CONSTRUCTOR matrix3_f32( f64 arg );
         };
 
         struct matrix3_f64
@@ -881,14 +887,21 @@ namespace tyon
             f64 m21; f64 m22; f64 m23;
             f64 m31; f64 m32; f64 m33;
 
-            TYON_CUDA_SHARED
+            TYON_CUDA_SHARED constexpr
             CONSTRUCTOR matrix3_f64();
-            TYON_CUDA_SHARED
+
+            TYON_CUDA_SHARED constexpr
             CONSTRUCTOR matrix3_f64( f32 arg );
-            TYON_CUDA_SHARED
-            CONSTRUCTOR matrix3_f64( f32 m11, f32 m12, f32 m13, f32 m21, f32 m22, f32 m23, f32 m31, f32 m32, f32 m33);
-            TYON_CUDA_SHARED
-            explicit CONSTRUCTOR matrix3_f64( f64 arg );
+
+            TYON_CUDA_SHARED constexpr
+            CONSTRUCTOR matrix3_f64(
+                f32 m11, f32 m12, f32 m13,
+                f32 m21, f32 m22, f32 m23,
+                f32 m31, f32 m32, f32 m33
+            );
+
+            TYON_CUDA_SHARED explicit
+            CONSTRUCTOR matrix3_f64( f64 arg );
         };
 
         struct matrix4_f32
@@ -900,10 +913,17 @@ namespace tyon
 
             TYON_CUDA_SHARED constexpr
             CONSTRUCTOR matrix4_f32();
+
             TYON_CUDA_SHARED constexpr
             CONSTRUCTOR matrix4_f32( f32 arg );
+
             TYON_CUDA_SHARED constexpr
-            CONSTRUCTOR matrix4_f32( f32 m11, f32 m12, f32 m13, f32 m14, f32 m21, f32 m22, f32 m23, f32 m24, f32 m31, f32 m32, f32 m33, f32 m34, f32 m41, f32 m42, f32 m43, f32 m44);
+            CONSTRUCTOR matrix4_f32(
+                f32 m11, f32 m12, f32 m13, f32 m14,
+                f32 m21, f32 m22, f32 m23, f32 m24,
+                f32 m31, f32 m32, f32 m33, f32 m34,
+                f32 m41, f32 m42, f32 m43, f32 m44
+            );
             TYON_CUDA_SHARED constexpr
             explicit CONSTRUCTOR matrix4_f32( f64 arg );
         };
@@ -916,13 +936,13 @@ namespace tyon
             f64 m41; f64 m42; f64 m43; f64 m44;
 
             TYON_CUDA_SHARED
-            CONSTRUCTOR matrix4_f64();
+            constexpr CONSTRUCTOR matrix4_f64();
             TYON_CUDA_SHARED
-            CONSTRUCTOR matrix4_f64( f64 arg );
+            constexpr CONSTRUCTOR matrix4_f64( f64 arg );
             TYON_CUDA_SHARED
-            CONSTRUCTOR matrix4_f64( f64 m11, f64 m12, f64 m13, f64 m14, f64 m21, f64 m22, f64 m23, f64 m24, f64 m31, f64 m32, f64 m33, f64 m34, f64 m41, f64 m42, f64 m43, f64 m44);
+            constexpr CONSTRUCTOR matrix4_f64( f64 m11, f64 m12, f64 m13, f64 m14, f64 m21, f64 m22, f64 m23, f64 m24, f64 m31, f64 m32, f64 m33, f64 m34, f64 m41, f64 m42, f64 m43, f64 m44);
             TYON_CUDA_SHARED
-            explicit CONSTRUCTOR matrix4_f64( f32 arg );
+            explicit constexpr CONSTRUCTOR matrix4_f64( f32 arg );
         };
 
         struct transform_2d
@@ -950,6 +970,36 @@ namespace tyon
             v3_f32 position;
             v3_f32 size;
         };
+
+    struct scene_camera
+    {
+        transform_3d transform;
+        v2_f32 sensor_size;
+        f32 near_clip;
+        f32 far_clip;
+
+        /** NOTE: Direction vector functions incoherent for objects that aren't
+         * in the local space of the camera, which is to say parented to the
+         * camera. Transform it into world space if you want real usage */
+        /** Create local normalized foward vector */
+
+        constexpr PROC forward() -> v3_f32
+        {   matrix_create_rotation( transform.rotation ) * world_forward(); }
+        // Create local normalized up vector
+        cosntexpr PROC up() -> v3_f32
+        { matrix_create_rotation( transform.rotation ) * world_up(); }
+        // Create local normalized right vector
+        cosntexpr PROC right() -> v3_f32;
+        {   matrix_create_rotation( transform.rotation ) * world_right(); }
+        constexpr PROC backward() -> v3_f32
+        {   matrix_create_rotation( transform.rotation ) * -world_backward(); }
+        // Create local normalized up vector
+        cosntexpr PROC down() -> v3_f32
+        { matrix_create_rotation( transform.rotation ) * world_down(); }
+        // Create local normalized right vector
+        cosntexpr PROC right() -> v3_f32;
+        {   matrix_create_rotation( transform.rotation ) * world_right(); }
+    };
 
     /** Operators */
         // Vector-Matrix
@@ -1331,8 +1381,38 @@ namespace tyon
 
     /** (Inverse Translation * Inverse Rotation) */
     constexpr
-    PROC matrix_camera_view( transform_3d arg ) -> matrix4_f32
+    PROC matrix_view( transform_3d arg ) -> matrix4_f32
     {   return matrix_translation( arg.translation ) * matrix_rotation( arg.rotation); }
+
+    constexpr
+    PROC matrix_projection_orthographic( scene_camera arg ) -> matrix4_f32
+    {
+        // Clip Plane Dimensions
+        /* Near */  f32 n = arg.near_clip;
+        /* Far */   f32 f = arg.far_clip;
+        // NOTE: aspect divide doesn't seem to be nessesary
+        /* Right */ f32 r = (arg.sensor_size.x / 2.0f);
+        /* Left */  f32 l = -r;
+        /* Top */   f32 t = (arg.sensor_size.y / 2.0f);
+        /* Bottom */f32 b = -t;
+
+        /* This is rearranged for z up, x forward, y right, Unreal/Tachyon coordinates
+
+           NOTE: This used to be X right to make it a bit like screen coordinates,
+           but I think that's a bit stupid and using forward-up-right declerations
+           is much more user friendly. Additionally it means coordinate versions are
+           done in one time constants, not constantly throughout the code.
+
+           NOTE: This is also a Vulkan specific function. It generates a Vulkan
+           compatible projection but the coordinate rearrangement to NDC is performed
+           later. This does format depth in 0-1.0 however.*/
+        return matrix4_f32 {
+            1/(f-n),    0.0f,       0.0f,       -n/(f-n),
+            0.0f,       2/(r-l),    0.0f,       -(r+l) / (r-l),
+            0.0f,       0.0f,       2/(t-b),    -(t+b)/(t-b),
+            0.0f,       0.0f,       0.0f,       1.0f
+        };
+    }
 
     constexpr
     PROC v3_f32_fru( f32 forward, f32 right, f32 up ) -> v3_f32
@@ -1344,6 +1424,22 @@ namespace tyon
     {
         return v3_f32 { forward, -left, up };
     }
+
+    // Forward Right-Up (FRU) xyz Unreal Engine
+    constexpr PROC world_up() -> v3_f32 {      return { 0.0, 0.0, 1.0 }; }
+    constexpr PROC world_forward() -> v3_f32 {  return { 1.0, 0.0, 0.0 }; }
+    constexpr PROC world_right() -> v3_f32 {    return { 0.0, 1.0, 0.0 }; }
+    constexpr PROC world_down() -> v3_f32 {     return { 0.0, 0.0,-1.0 }; }
+    constexpr PROC world_backward() -> v3_f32 { return {-1.0, 0.0, 0.0 }; }
+    constexpr PROC world_left() -> v3_f32 {     return { 0.0,-1.0, 0.0 }; }
+
+    constexpr PROC screen_up() -> v3_f32 {       return world_up(); }
+    constexpr PROC screen_forward() -> v3_f32 {  return world_forward(); }
+    constexpr PROC screen_right() -> v3_f32 {    return world_right(); }
+    constexpr PROC screen_down() -> v3_f32 {     return world_down(); }
+    constexpr PROC screen_backward() -> v3_f32 { return world_backward(); }
+    constexpr PROC screen_left() -> v3_f32 {     return world_left(); }
+
 
     // TODO: Add front face???
     inline
