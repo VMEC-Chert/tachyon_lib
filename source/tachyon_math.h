@@ -1231,8 +1231,50 @@ namespace tyon
     constexpr
     PROC matrix_transform( transform_3d arg) -> matrix4_f32
     {
-        return {};
+        auto t = arg.translation;
+        auto r = arg.rotation;
+        auto s = arg.scale;
+        // // Euler Combined 3 Axis Translation Rotation Scale Matrix (Column-Major)
+        return matrix4_f32 {
+            // Column 1
+            s * cosf(r.y)*cosf(r.z),
+            cosf(r.x)*sinf(r.z) + cosf(r.z)*sinf(r.x)*sinf(r.y),
+            sinf(r.x)*sinf(r.z) - cosf(r.x)*cosf(r.z)*sinf(r.y),
+            t.x,
+            // Column 2
+            -cosf(r.y)*sinf(r.z),
+            s* cosf(r.x)*cosf(r.z) - sinf(r.x)*sinf(r.y)*sinf(r.z),
+            cosf(r.x)*sinf(r.y)*sinf(r.z) + cosf(r.z)*sinf(r.x),
+            t.y,
+            // Column 3
+            sinf(r.y),
+            s * -cosf(r.y)*sinf(r.x),
+            cosf(r.x)*cosf(r.y),
+            t.z,
+            // Column 4
+            0, 0, 0, 1
+        };
     }
+
+//     PROC matrix_rotation_arbitrary( vf3) -> matrix4_f32
+// {
+//     matrix{ cosf(ar) + (a.x*a.x) * (1 - cosf(ar)),
+//         a.x*a.y * (1 - cosf(ar)) - a.z*sinf(ar),
+//         a.x*a.z * (1 - cosf(ar)) + a.y*sinf(ar),
+//         0,
+
+//         a.y*a.x * (1 - cosf(ar)) + a.z*sinf(ar),
+//         cosf(ar) + (a.y*a.y) * (1 - cosf(ar)),
+//         a.y*a.z * (1 - cosf(ar)) - a.x*sinf(ar),
+//         0,
+
+//         a.z*a.x * (1 - cosf(ar)) - a.y*sinf(ar),
+//         a.z*a.y * (1 - cosf(ar)) + a.z*sinf(ar), // <-- see note below
+//         cosf(ar) + (a.z*a.z) * (1 - cosf(ar)),
+//         0,
+
+//         0, 0, 0, 1 };
+// }
 
     constexpr
     PROC matrix_translation( v3_f32 arg) -> matrix4_f32
@@ -1241,16 +1283,48 @@ namespace tyon
     }
 
     constexpr
-    PROC matrix_rotation( v3_f32 arg) -> matrix4_f32
+    PROC matrix_rotation( v3_f32 arg ) -> matrix4_f32
     {
-        return {};
+        v3_f32 r = arg;
+        // // Euler Combined 3 Axis Rotation Matrix (Column-Major)
+        return matrix4_f32 {
+            // Column 1
+            cosf(r.y)*cosf(r.z),
+            cosf(r.x)*sinf(r.z) + cosf(r.z)*sinf(r.x)*sinf(r.y),
+            sinf(r.x)*sinf(r.z) - cosf(r.x)*cosf(r.z)*sinf(r.y),
+            0,
+            // Column 2
+            -cosf(r.y)*sinf(r.z),
+            cosf(r.x)*cosf(r.z) - sinf(r.x)*sinf(r.y)*sinf(r.z),
+            cosf(r.x)*sinf(r.y)*sinf(r.z) + cosf(r.z)*sinf(r.x),
+            0,
+            // Column 3
+            sinf(r.y),
+            -cosf(r.y)*sinf(r.x),
+            cosf(r.x)*cosf(r.y),
+            0,
+            // Column 4
+            0, 0, 0, 1 };
+        return rotation_matrix;
     }
 
     constexpr
-    PROC matrix_scale( v3_f32 arg) -> matrix4_f32
-    {
-        return {};
+    PROC matrix_scale( v3_f32 arg ) -> matrix4_f32
+    {   auto s = arg;
+        return matrix4_f32 { s.x, 0.0, 0.0, 0.0,
+                             0.0, s.y, 0.0, 0.0
+                             0.0, 0.0, s.z, 0.0
+                             0.0, 0.0, 0.0, 1.0 };
     }
+
+    // constexpr
+    // PROC matrix_shear( v3_f32 arg ) -> matrix4_f32
+    // {
+    //     return matrix4_f32 { 1.0, 0.0, 0.0, 0.0,
+    //                          0.0, 1.0, 0.0, 0.0,
+    //                          0.0, 0.0, 1.0, 0.0,
+    //                          0.0, 0.0, 0.0, 1.0 };
+    // }
 
     constexpr
     PROC matrix_camera_view( transform_3d ) -> matrix4_f32
