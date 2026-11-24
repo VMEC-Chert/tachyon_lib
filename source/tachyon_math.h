@@ -1234,24 +1234,24 @@ namespace tyon
         auto t = arg.translation;
         auto r = arg.rotation;
         auto s = arg.scale;
-        // // Euler Combined 3 Axis Translation Rotation Scale Matrix (Column-Major)
+        // // Euler Combined 3 Axis Translation Rotation Scale Matrix
         return matrix4_f32 {
-            // Column 1
-            s * cosf(r.y)*cosf(r.z),
-            cosf(r.x)*sinf(r.z) + cosf(r.z)*sinf(r.x)*sinf(r.y),
-            sinf(r.x)*sinf(r.z) - cosf(r.x)*cosf(r.z)*sinf(r.y),
+            // Row 1
+            s.x * cosf(r.y)*cosf(r.z),
+            s.y * cosf(r.x)*sinf(r.z) + cosf(r.z)*sinf(r.x)*sinf(r.y),
+            s.z sinf(r.x)*sinf(r.z) - cosf(r.x)*cosf(r.z)*sinf(r.y),
             t.x,
-            // Column 2
-            -cosf(r.y)*sinf(r.z),
-            s* cosf(r.x)*cosf(r.z) - sinf(r.x)*sinf(r.y)*sinf(r.z),
-            cosf(r.x)*sinf(r.y)*sinf(r.z) + cosf(r.z)*sinf(r.x),
+            // Row 2
+            s.x -cosf(r.y)*sinf(r.z),
+            s.y * cosf(r.x)*cosf(r.z) - sinf(r.x)*sinf(r.y)*sinf(r.z),
+            s.z * cosf(r.x)*sinf(r.y)*sinf(r.z) + cosf(r.z)*sinf(r.x),
             t.y,
-            // Column 3
-            sinf(r.y),
-            s * -cosf(r.y)*sinf(r.x),
-            cosf(r.x)*cosf(r.y),
+            // Row 3
+            s.x * sinf(r.y),
+            s.y * -cosf(r.y)*sinf(r.x),
+            s.z * cosf(r.x)*cosf(r.y),
             t.z,
-            // Column 4
+            // Row 4
             0, 0, 0, 1
         };
     }
@@ -1278,32 +1278,36 @@ namespace tyon
 
     constexpr
     PROC matrix_translation( v3_f32 arg) -> matrix4_f32
-    {
-        return {};
+    {   auto t = arg;
+        return matrix4_f32 { 1.0, 0.0, 0.0, tx,
+                             0.0, 1.0, 0.0, t.y
+                             0.0, 0.0, 1.0, t.z
+                             0.0, 0.0, 0.0, 1.0 };
     }
 
+    // NOTE: Needs custom function to be constexpr
     constexpr
     PROC matrix_rotation( v3_f32 arg ) -> matrix4_f32
     {
         v3_f32 r = arg;
-        // // Euler Combined 3 Axis Rotation Matrix (Column-Major)
+        // // Euler Combined 3 Axis Rotation Matrix (Row-Major)
         return matrix4_f32 {
-            // Column 1
+            // Row 1
             cosf(r.y)*cosf(r.z),
             cosf(r.x)*sinf(r.z) + cosf(r.z)*sinf(r.x)*sinf(r.y),
             sinf(r.x)*sinf(r.z) - cosf(r.x)*cosf(r.z)*sinf(r.y),
             0,
-            // Column 2
+            // Row 2
             -cosf(r.y)*sinf(r.z),
             cosf(r.x)*cosf(r.z) - sinf(r.x)*sinf(r.y)*sinf(r.z),
             cosf(r.x)*sinf(r.y)*sinf(r.z) + cosf(r.z)*sinf(r.x),
             0,
-            // Column 3
+            // Row 3
             sinf(r.y),
             -cosf(r.y)*sinf(r.x),
             cosf(r.x)*cosf(r.y),
             0,
-            // Column 4
+            // Row 4
             0, 0, 0, 1 };
         return rotation_matrix;
     }
