@@ -1329,11 +1329,10 @@ namespace tyon
     //                          0.0, 0.0, 0.0, 1.0 };
     // }
 
+    /** (Inverse Translation * Inverse Rotation) */
     constexpr
-    PROC matrix_camera_view( transform_3d ) -> matrix4_f32
-    {
-        return {};
-    }
+    PROC matrix_camera_view( transform_3d arg ) -> matrix4_f32
+    {   return matrix_translation( arg.translation ) * matrix_rotation( arg.rotation); }
 
     constexpr
     PROC v3_f32_fru( f32 forward, f32 right, f32 up ) -> v3_f32
