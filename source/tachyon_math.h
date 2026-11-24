@@ -1260,54 +1260,48 @@ namespace tyon
 
     constexpr
     PROC v3_f32_fru( f32 forward, f32 right, f32 up ) -> v3_f32
-    {   return v3{ forward, right, up };
+    {   return v3_f32{ forward, right, up };
     }
 
     constexpr
     PROC v3_f32_luf( f32 left, f32 up, f32 forward ) -> v3_f32
     {
-        return v3_32 { forward, -left, up };
+        return v3_f32 { forward, -left, up };
     }
 
     // TODO: Add front face???
     inline
     PROC geometry_rectangle( v3_f32 size ) -> array<v3_f32>
     {
-        array<v3_f32> result;
-        f32 angle = 0;
-        f32 next_angle = 0;
-        f32 segment_arc = (6.283185307 / segments);
-        v3_f32 point;
-        v3_f32 point2;
-        for (i32 i_segment=0; i_segment < segments; ++i_segment)
-        {
-            // We make points clockwise but wind the triangles anti-clockwise (front-face)
-            next_angle += segment_arc;
+        f32 w = size.x/2;
+        f32 h = size.y/2;
+        // Counter clockwise
+        array<v3_f32> result = {
+            { 0.0, -w,  h },
+            { 0.0,  w, -h },
+            { 0.0,  w,  h },
 
-            point = {
-                0.0,                  // Forward axis not used, 2D
-                sinf(angle) * radius, // opposite is Up/Down axis
-                cosf(angle) * radius // adjacent is Right/Left axis
-            };
-            point2 = {
-                0.0,
-                sinf(next_angle) * radius, // opposite is Up/Down axis
-                cosf(next_angle) * radius // adjacent is Right/Left axis
-            };
-            /* We make the first vertex on the outside the first vertex of each
-               triangle don't overlap in the middle for debugging convenience */
-            result.push_back( point );
-            result.push_back( v3_f32{0.0} );
-            result.push_back( point2 );
-
-            angle += segment_arc;
-        }
+            { 0.0, -w,  h },
+            { 0.0, -w, -h },
+            { 0.0,  w, -h },
+        };
         return result;
     }
 
-    inline
-    PROC geometry_circle( f32 radius, f32 segments ) -> array<v3_f32>
+    enum class e_triangulation : i32
     {
+        grid,
+        fan,
+        strip,
+        ear_clipping
+    };
+
+    inline
+    PROC geometry_circle(
+        f32 radius, f32 segments, e_triangulation triangulation = e_triangulation::fan )
+    -> array<v3_f32>
+    {
+        ERROR_GUARD( triangulation == e_triangulation::fan, "" );
         array<v3_f32> result;
         f32 angle = 0;
         f32 next_angle = 0;
@@ -1372,37 +1366,37 @@ namespace tyon
             v3_f32_fru( d,  -w, h ),            // 11
             v3_f32_fru( d,  -w, -h ),           // 12
             // top left-forward
-            v3_f32_fru( -d, -w, h ),
-            v3_f32_fru( d, w, h ),
-            v3_f32_fru( d, -w, h ),
+            v3_f32_fru( -d, -w, h ),            // 13
+            v3_f32_fru( d, w, h ),              // 14
+            v3_f32_fru( d, -w, h ),             // 15
             // top right-backward
-            v3_f32_fru( -d,  -w, h ),
-            v3_f32_fru( -d,  w, h ),
-            v3_f32_fru( d,  w, h ),
+            v3_f32_fru( -d,  -w, h ),           // 16
+            v3_f32_fru( -d,  w, h ),            // 17
+            v3_f32_fru( d,  w, h ),             // 18
             // right top-left
-            v3_f32_fru( d,  w, h ),
-            v3_f32_fru( -d,  w, h ),
-            v3_f32_fru( -d,  w, -h ),
+            v3_f32_fru( d,  w, h ),             // 19
+            v3_f32_fru( -d,  w, h ),            // 20
+            v3_f32_fru( -d,  w, -h ),           // 21
             // right bottom-right
-            v3_f32_fru( d,  w, h ),
-            v3_f32_fru( -d,  w, -h ),
-            v3_f32_fru( d,  w, -h ),
+            v3_f32_fru( d,  w, h ),             // 22
+            v3_f32_fru( -d,  w, -h ),           // 23
+            v3_f32_fru( d,  w, -h ),            // 24
             // back bottom-left
-            v3_f32_fru( d,  w, h ),
-            v3_f32_fru( d,  w, -h ),
-            v3_f32_fru( d,  -w, -h ),
+            v3_f32_fru( d,  w, h ),             // 25
+            v3_f32_fru( d,  w, -h ),            // 26
+            v3_f32_fru( d,  -w, -h ),           // 27
             // back top-right
-            v3_f32_fru( d,  w, h ),       // 28
-            v3_f32_fru( d, -w, -h ),
-            v3_f32_fru( d, -w, h ),
+            v3_f32_fru( d,  w, h ),             // 28
+            v3_f32_fru( d, -w, -h ),            // 29
+            v3_f32_fru( d, -w, h ),             // 30
             // bottom right-back
-            v3_f32_fru( d, -w, -h ),
-            v3_f32_fru( d, w, -h ),
-            v3_f32_fru( -d, w, -h ),
+            v3_f32_fru( d, -w, -h ),            // 31
+            v3_f32_fru( d, w, -h ),             // 32
+            v3_f32_fru( -d, w, -h ),            // 33
             // bottom left-forward
-            v3_f32_fru( d, -w, -h ),
-            v3_f32_fru( -d, w, -h ),
-            v3_f32_fru( -d, -w, -h ),
+            v3_f32_fru( d, -w, -h ),            // 34
+            v3_f32_fru( -d, w, -h ),            // 35
+            v3_f32_fru( -d, -w, -h ),           // 36
         };
         return result;
     }
@@ -1414,7 +1408,7 @@ namespace tyon
     }
 
     inline
-    PROC geometry_torus( f32 radius_ring, f32 radius_cross, f32 segments )
+    PROC geometry_torus( f32 radius_ring, f32 radius_cross, f32 segments ) -> array<v3_f32>
     {
         return {};
     }
@@ -1429,34 +1423,43 @@ namespace tyon
         f32 twist_phase = 0;
     };
     inline
-    PROC geometry_torus_generic( geometry_torus_args args )
-    {}
+    PROC geometry_torus_generic( geometry_torus_args args ) -> array<v3_f32>
+    {
+        return {};
+    }
 
     inline
     PROC geometry_spine() -> array<v3_f32>
-    {}
+    {
+        return {};
+    }
 
     inline
     PROC geometry_pipe() -> array<v3_f32>
-    {}
+    {
+        return {};
+    }
 
     inline
-    PROC geometry_extrude_2d( array )
-    {}
-
-    PROC geometry_extrude_3d( array<v3_f32> geometry, array<i32> target_faces )
+    PROC geometry_extrude_2d( array<v3_f32> geometry ) -> array<v3_f32>
     {
+        return {};
+    }
+
+    inline
+    PROC geometry_extrude_faces( array<v3_f32> geometry, array<i32> target_faces ) -> array<v3_f32>
+    {
+        return {};
     }
 
     // TODO: Sphere
-    Torus
-    Cylinder
-Cone
-    Cuboid
-    N Base Pyramid
-    Triangular Prism
-
-    N Prism
+    // TODO: Torus
+    // TODO: Cylinder
+    // TODO: Cone
+    // TODO: Cuboid
+    // TODO: N Base Pyramid
+    // TODO: Triangular Prism
+    // TODO: N Prism
 
         // Conversion
             // Spherical coordinates

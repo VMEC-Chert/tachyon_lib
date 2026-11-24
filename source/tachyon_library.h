@@ -487,13 +487,13 @@ namespace tyon
 
     struct i_allocator
     {
-        template <typename T>
-        T* allocate( isize count )
+        template <typename T> constexpr
+        PROC allocate( isize count ) -> T*
         {
-            PROFILE_SCOPE_FUNCTION();
             T* result = nullptr;
             if (std::is_constant_evaluated() == false)
             {
+                PROFILE_SCOPE_FUNCTION();
                 i64 size_bytes = (sizeof(T) * count);
                 i64 alignment = memory_padding( alignof(T), result );
                 result = allocate_raw( size_bytes + alignment );
