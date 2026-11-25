@@ -1512,7 +1512,7 @@ namespace tyon
 
     // TODO: Add front face???
     inline
-    PROC geometry_rectangle( v3_f32 size ) -> array<v3_f32>
+    PROC geometry_rectangle( v2_f32 size ) -> array<v3_f32>
     {
         f32 w = size.x/2;
         f32 h = size.y/2;
