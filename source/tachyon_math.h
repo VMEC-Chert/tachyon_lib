@@ -358,14 +358,14 @@ namespace tyon
         }
 
         // Functions
-        TYON_CUDA_SHARED inline PROC vector_dot_product(const v2_f32 v0, const v2_f32 v1)
+        TYON_CUDA_SHARED inline PROC vector_dot(const v2_f32 v0, const v2_f32 v1)
         {
             return (v0.x * v1.x) + (v0.y * v1.y);
         }
 
         TYON_CUDA_SHARED inline PROC angle_radians(const v2_f32 v0, const v2_f32 v1)
         {
-            return std::acosf(vector_dot_product(v0, v1));
+            return std::acosf(vector_dot(v0, v1));
         }
 
         TYON_CUDA_SHARED inline PROC vector_normalize(const v2_f32 v)
@@ -375,12 +375,12 @@ namespace tyon
 
         TYON_CUDA_SHARED inline PROC vector_reflect(const v2_f32 d, const v2_f32 n)
         {
-            return (d - (2.0f * n * vector_dot_product(d, n)));
+            return (d - (2.0f * n * vector_dot(d, n)));
         }
 
         TYON_CUDA_SHARED inline PROC vector_refract(const v2_f32 d, const v2_f32 n, const f32 eta_0, const f32 eta_1)
         {
-                f32 cos_theta_i = vector_dot_product(d, n);
+                f32 cos_theta_i = vector_dot(d, n);
                 f32 eta_relative = eta_0 / eta_1;
                 f32 sin2_theta_t = eta_relative * eta_relative * (1.0f - cos_theta_i * cos_theta_i);
                 return (eta_relative * cos_theta_i - std::sqrtf(1.0f - sin2_theta_t)) * n - eta_relative * d;
@@ -388,7 +388,7 @@ namespace tyon
 
         TYON_CUDA_SHARED inline PROC vector_project(const v2_f32 v0, const v2_f32 v1)
         {
-            return (vector_dot_product(v0, v1) * v1) / vector_dot_product(v1, v1);
+            return (vector_dot(v0, v1) * v1) / vector_dot(v1, v1);
         }
 
         TYON_CUDA_SHARED inline PROC v_barycentric(const v2_f32 p0, const v2_f32 p1, const v2_f32 p2, const v2_f32 barycentric_coordinates)
@@ -526,19 +526,19 @@ namespace tyon
         }
 
         // Functions
-        TYON_CUDA_SHARED inline PROC vector_dot_product(const v3_f32 v0, const v3_f32 v1)
+        TYON_CUDA_SHARED inline PROC vector_dot(const v3_f32 v0, const v3_f32 v1)
         {
             return (v0.x * v1.x) + (v0.y * v1.y) + (v0.z * v1.z);
         }
 
-        TYON_CUDA_SHARED inline PROC vector_cross_product(const v3_f32 v0, const v3_f32 v1)
+        TYON_CUDA_SHARED inline PROC vector_cross(const v3_f32 v0, const v3_f32 v1)
         {
             return v3_f32( v0.y*v1.z - v0.z*v1.y , v0.z*v1.x - v0.x*v1.z , v0.x*v1.y - v0.y*v1.x );
         }
 
         TYON_CUDA_SHARED inline PROC angle_radians(const v3_f32 v0, const v3_f32 v1)
         {
-            return std::acosf(vector_dot_product(v0, v1));
+            return std::acosf(vector_dot(v0, v1));
         }
 
         TYON_CUDA_SHARED inline PROC vector_normalize(const v3_f32 v)
@@ -548,12 +548,12 @@ namespace tyon
 
         TYON_CUDA_SHARED inline PROC vector_reflect(const v3_f32 d, const v3_f32 n)
         {
-            return (d - (2.0f * n * vector_dot_product(d, n)));
+            return (d - (2.0f * n * vector_dot(d, n)));
         }
 
         TYON_CUDA_SHARED inline PROC vector_refract(const v3_f32 d, const v3_f32 n, const f32 eta_0, const f32 eta_1)
         {
-                f32 cos_theta_i = vector_dot_product(d, n);
+                f32 cos_theta_i = vector_dot(d, n);
                 f32 eta_relative = eta_0 / eta_1;
                 f32 sin2_theta_t = eta_relative * eta_relative * (1.0f - cos_theta_i * cos_theta_i);
                 return (eta_relative * cos_theta_i - std::sqrtf(1.0f - sin2_theta_t)) * n - eta_relative * d;
@@ -561,7 +561,7 @@ namespace tyon
 
         TYON_CUDA_SHARED inline PROC vector_project(const v3_f32 v0, const v3_f32 v1)
         {
-            return (vector_dot_product(v0, v1) * v1) / vector_dot_product(v1, v1);
+            return (vector_dot(v0, v1) * v1) / vector_dot(v1, v1);
         }
 
         TYON_CUDA_SHARED inline PROC v_barycentric(const v3_f32 p0, const v3_f32 p1, const v3_f32 p2, const v2_f32 barycentric_coordinates)
@@ -695,14 +695,14 @@ namespace tyon
         }
 
         // Functions
-        TYON_CUDA_SHARED inline PROC vector_dot_product(const v4_f32 v0, const v4_f32 v1)
+        TYON_CUDA_SHARED inline PROC vector_dot(const v4_f32 v0, const v4_f32 v1)
         {
             return (v0.x * v1.x) + (v0.y * v1.y) + (v0.z * v1.z) + (v0.w * v1.w);
         }
 
         TYON_CUDA_SHARED inline PROC angle_radians(const v4_f32 v0, const v4_f32 v1)
         {
-            return std::acosf(vector_dot_product(v0, v1));
+            return std::acosf(vector_dot(v0, v1));
         }
 
         TYON_CUDA_SHARED inline PROC vector_normalize(const v4_f32 v)
@@ -712,12 +712,12 @@ namespace tyon
 
         TYON_CUDA_SHARED inline PROC vector_reflect(const v4_f32 d, const v4_f32 n)
         {
-            return (d - (2.0f * n * vector_dot_product(d, n)));
+            return (d - (2.0f * n * vector_dot(d, n)));
         }
 
         TYON_CUDA_SHARED inline PROC vector_refract(const v4_f32 d, const v4_f32 n, const f32 eta_0, const f32 eta_1)
         {
-                f32 cos_theta_i = vector_dot_product(d, n);
+                f32 cos_theta_i = vector_dot(d, n);
                 f32 eta_relative = eta_0 / eta_1;
                 f32 sin2_theta_t = eta_relative * eta_relative * (1.0f - cos_theta_i * cos_theta_i);
                 return (eta_relative * cos_theta_i - std::sqrtf(1.0f - sin2_theta_t)) * n - eta_relative * d;
@@ -725,7 +725,7 @@ namespace tyon
 
         TYON_CUDA_SHARED inline PROC vector_project(const v4_f32 v0, const v4_f32 v1)
         {
-            return (vector_dot_product(v0, v1) * v1) / vector_dot_product(v1, v1);
+            return (vector_dot(v0, v1) * v1) / vector_dot(v1, v1);
         }
 
         TYON_CUDA_SHARED inline PROC v_barycentric(const v4_f32 p0, const v4_f32 p1, const v4_f32 p2, const v2_f32 barycentric_coordinates)
@@ -936,21 +936,36 @@ namespace tyon
             f32 m31; f32 m32; f32 m33; f32 m34;
             f32 m41; f32 m42; f32 m43; f32 m44;
 
-            TYON_CUDA_SHARED constexpr
-            CONSTRUCTOR matrix4_f32();
 
             TYON_CUDA_SHARED constexpr
-            CONSTRUCTOR matrix4_f32( f32 arg );
-
+            CONSTRUCTOR matrix4_f32()
+                : m11(0.0f), m12(0.0f), m13(0.0f), m14(0.0f),
+                  m21(0.0f), m22(0.0f), m23(0.0f), m24(0.0f),
+                  m31(0.0f), m32(0.0f), m33(0.0f), m34(0.0f),
+                  m41(0.0f), m42(0.0f), m43(0.0f), m44(0.0f) {}
+            TYON_CUDA_SHARED constexpr
+            CONSTRUCTOR matrix4_f32( f32 arg )
+                : m11(arg), m12(arg), m13(arg), m14(arg),
+                  m21(arg), m22(arg), m23(arg), m24(arg),
+                  m31(arg), m32(arg), m33(arg), m34(arg),
+                  m41(arg), m42(arg), m43(arg), m44(arg) {}
             TYON_CUDA_SHARED constexpr
             CONSTRUCTOR matrix4_f32(
-                f32 m11, f32 m12, f32 m13, f32 m14,
-                f32 m21, f32 m22, f32 m23, f32 m24,
-                f32 m31, f32 m32, f32 m33, f32 m34,
-                f32 m41, f32 m42, f32 m43, f32 m44
-            );
+                f32 m11, f32 m12, f32 m13, f32 m14, f32 m21, f32 m22, f32 m23, f32 m24,
+                f32 m31, f32 m32, f32 m33, f32 m34, f32 m41, f32 m42, f32 m43, f32 m44 )
+                : m11(m11), m12(m12), m13(m13), m14(m14),
+                  m21(m21), m22(m22), m23(m23), m24(m24),
+                  m31(m31), m32(m32), m33(m33), m34(m34),
+                  m41(m41), m42(m42), m43(m43), m44(m44) {}
+
             TYON_CUDA_SHARED constexpr
-            explicit CONSTRUCTOR matrix4_f32( f64 arg );
+            CONSTRUCTOR matrix4_f32( f64 arg )
+                : m11(arg), m12(arg), m13(arg), m14(arg),
+                  m21(arg), m22(arg), m23(arg), m24(arg),
+                  m31(arg), m32(arg), m33(arg), m34(arg),
+                  m41(arg), m42(arg), m43(arg), m44(arg) {}
+
+
         };
 
         struct matrix4_f64
@@ -1321,6 +1336,38 @@ namespace tyon
             0, 0, 0, 1
         };
     }
+
+    constexpr
+    PROC matrix_unreal_to_opengl() -> matrix4_f32
+    {   return  { 1., 0., 0., 0.,
+                  0., 0., 1., 0.,
+                  0., -1., 0., 0.,
+                  0., 0., 0., 1. };
+    }
+
+    /* x+ to z+ (forward)
+       y+ to x+ (right)
+       z+ to y- (up)
+
+       NOTE: I got this very wrong before, I was trying to remap the xyz
+       coordinates into their respective positions in Vulkan NDC coordinates,
+       flipping the axis as necessary, this is NOT what I should have been doing. I
+       should have been swapping the axis based on the *cardinal directions* I
+       wanted. You may consider this North, West and Up, but in our semantics (and
+       industry semantics) it is Forward-Right-Up (xyz in our system, z -y x in
+       Vulkan NDC). Getting this wrong lead to the camera being rotated 90 degrees,
+       and it is not trivial to debug why this is the case. */
+    constexpr
+    PROC matrix_unreal_to_vulkan() -> matrix4_f32
+    {   return { 0., 1.,  0., 0.,
+                 0., 0., -1., 0.,
+                 1., 0.,  0., 0.,
+                 0., 0.,  0., 1. };
+    }
+
+    constexpr
+    PROC matrix_convert_unreal_to_vulkan( matrix4_f32 arg ) -> matrix4_f32
+    {   return arg * matrix_unreal_to_vulkan(); }
 
 //     PROC matrix_rotation_arbitrary( vf3) -> matrix4_f32
 // {
