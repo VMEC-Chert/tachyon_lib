@@ -36,14 +36,14 @@ PROC asset_image_save_bmp( image<rgba>* arg ) -> fresult
     push_allocator _al1 {g_thread->scratch };
     i64 redzone = 64;
     i64 size_bytes = arg->size_bytes();
-    i64 file_size = (size_bytes + sizeof(bmp_rgba_header) + redzone);
-    i64 image_offset = (sizeof(bmp_rgba_header));
+    i64 file_size = clamp_u32(size_bytes + sizeof(bmp_rgba_header) + redzone);
+    i64 image_offset = clamp_u32(sizeof(bmp_rgba_header));
 
     bmp_rgba_header header {
         .signature = { 'B', 'M' },
         .file_size = file_size,
         ._reserved = 0,
-        .data_offset = image_offset,
+        .data_offset = clamp_u32(image_offset),
         // BITMAPV4HEADER info header (108 bytes)
         .info_header_size = 108,
         .image_width = arg->size.x,
