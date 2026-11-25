@@ -3,7 +3,7 @@ namespace tyon
 {
     /** Types */
         // Matrices
-        TYON_CUDA_SHARED cosntexpr
+        TYON_CUDA_SHARED constexpr
         CONSTRUCTOR matrix2_f32::matrix2_f32() : m11(0.0f), m12(0.0f), m21(0.0f), m22(0.0f) {}
         TYON_CUDA_SHARED constexpr
         CONSTRUCTOR matrix2_f32::matrix2_f32( f32 arg ) : m11(arg), m12(arg), m21(arg), m22(arg) {}

@@ -925,7 +925,7 @@ namespace tyon
                 f32 m31, f32 m32, f32 m33
             );
 
-            TYON_CUDA_SHARED explicit
+            TYON_CUDA_SHARED constexpr explicit
             CONSTRUCTOR matrix3_f64( f64 arg );
         };
 
@@ -1374,11 +1374,21 @@ namespace tyon
     //                          0.0, 0.0, 0.0, 1.0 };
     // }
 
+    constexpr
     PROC matrix_transform_v3( matrix4_f32 transform, v3_f32 point ) -> v3_f32
     {   return (transform * v4_f32 { point, 1.0f }).xyz(); }
 
+    /** Ignores translation since its a direction vector */
+    constexpr
+    PROC matrix_transform_direction_v3( matrix4_f32 transform, v3_f32 direction ) ->v3_f32
+    {   return (transform * v4_f32 { point, 1.0f }).xyz(); }
+
+    constexpr
     PROC matrix_rotate_v3( v3_f32 rotation, v3_f32 target ) -> v3_f32
     {   return matrix_transform_v3( matrix_rotation( rotation ), target ); }
+
+    constexpr
+    PROC matrix_project_v3( )
 
     struct scene_camera
     {
@@ -1448,11 +1458,11 @@ namespace tyon
     constexpr
     PROC matrix_projection_perspective( scene_camera arg ) -> matrix4_f32
     {
-        f32 camera_width = std::round( sensor_size.x );
-        f32 aspect_ratio_vh = sensor_size.y / sensor_size.x;
+        f32 camera_width = std::round( arg.sensor_size.x );
+        f32 aspect_ratio_vh = arg.sensor_size.y / arg.sensor_size.x;
         // Clip Plane Dimensions
-        /* Near */  f32 n = this->near_clip;
-        /* Far */   f32 f = this->far_clip;
+        /* Near */  f32 n = arg.near_clip;
+        /* Far */   f32 f = arg.far_clip;
         /* Right */ f32 r = -(camera_width / 2.0f) / aspect_ratio_vh;
         /* Left */  f32 l = -r;
         /* Top */   f32 t = (camera_width / 2.0f);
@@ -1460,14 +1470,12 @@ namespace tyon
 
         // TODO: Temporary fix cuz too lazy to transpose algorithm.
         // TODO:. Well... This is for NDC coordinates...
-        matrix result = matrix{
+        return matrix4_f32 {
             (2.f*n) / (r-l),       0.f,               0.0f,         0,
             0.f,                   (2.f*n) / (t-b),   0.0f,         0,
             (r+l) / (r-l),         (t+b)/(t-b),    -(f+n)/(f-n),    -1,
             0.f,                   0.f,        -(2.f*f*n)/(f-n),    0
-        }.transpose();
-
-        return result;
+        };
     }
 
     constexpr
