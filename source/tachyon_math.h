@@ -1,6 +1,9 @@
 
 #pragma once
 
+// Make sure math structs are tightly packed for easy use with serialization
+#pragma pack(push, 1)
+
 namespace tyon
 {
     /** Types & Templates */
@@ -2019,4 +2022,5 @@ namespace tyon
     format_as( v2_f32 arg )
     { return fmt::format( "[{:.5} {:.5}]", arg.x, arg.y ); }
 
+#pragma pack(pop)
 }

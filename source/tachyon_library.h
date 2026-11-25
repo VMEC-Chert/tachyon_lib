@@ -497,10 +497,12 @@ namespace tyon
                 i64 size_bytes = (sizeof(T) * count);
                 i64 alignment = memory_padding( alignof(T), result );
                 result = allocate_raw( size_bytes + alignment );
-            }
-            else {
-                // Default allocate storage
+                // Placement New - default allocate storage
                 new(result) T[count] {};
+            }
+            else
+            {
+                // Constant evaluation, just call normal new
                 result = new T[count];
             }
             return result;
