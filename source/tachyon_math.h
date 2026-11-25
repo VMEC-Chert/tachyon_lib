@@ -970,6 +970,27 @@ namespace tyon
             explicit constexpr CONSTRUCTOR matrix4_f64( f32 arg );
         };
 
+    // // Inline to reduce duplicates across a program
+    // template <typename T> constexpr inline T identity_define;
+    // template <> constexpr inline matrix4_f32 identity_define<matrix4_f32> = { 1.0, 0.0, 0.0, 0.0,
+    //                                                               0.0, 1.0, 0.0, 0.0,
+    //                                                               0.0, 0.0, 1.0, 0.0,
+    //                                                               0.0, 0.0, 0.0, 1.0 };
+    // struct identity_t
+    // {
+    //     template <typename T>
+    //     constexpr operator T() const { return identity_define<T>; }
+    // };
+    // constexpr inline identity_t identity;
+
+    constexpr
+    PROC matrix4_f32_identity() -> matrix4_f32
+    {   return { 1.0, 0.0, 0.0, 0.0,
+                 0.0, 1.0, 0.0, 0.0,
+                 0.0, 0.0, 1.0, 0.0,
+                 0.0, 0.0, 0.0, 1.0 };
+    }
+
         struct transform_2d
         {
           v2_f32 translation;
@@ -1381,14 +1402,14 @@ namespace tyon
     /** Ignores translation since its a direction vector */
     constexpr
     PROC matrix_transform_direction_v3( matrix4_f32 transform, v3_f32 direction ) ->v3_f32
-    {   return (transform * v4_f32 { point, 1.0f }).xyz(); }
+    {   return (transform * v4_f32 { direction, 1.0f }).xyz(); }
 
     constexpr
     PROC matrix_rotate_v3( v3_f32 rotation, v3_f32 target ) -> v3_f32
     {   return matrix_transform_v3( matrix_rotation( rotation ), target ); }
 
-    constexpr
-    PROC matrix_project_v3( )
+    // constexpr
+    // PROC matrix_project_v3( )
 
     struct scene_camera
     {
@@ -1942,5 +1963,13 @@ namespace tyon
         return true;
     }
 
+    // usng fstring = std::string;;
+    constexpr fstring
+    format_as( v3_f32 arg )
+    { return fmt::format( "[{:.5} {:.5} {:.5}]", arg.x, arg.y, arg.z ); }
+
+    inline fstring
+    format_as( v2_f32 arg )
+    { return fmt::format( "[{:.5} {:.5}]", arg.x, arg.y ); }
 
 }
