@@ -25,7 +25,8 @@ local_path_override(
     module_name = "catch2",
     path = "ext/catch2",
 )
-# bazel_dep(name = "bazel_skylib", version = "1.7.1")
+# Initially Used by library.bzl
+bazel_dep(name = "bazel_skylib", version = "1.7.1")
 # bazel_dep(name = "rules_license", version = "1.0.0")
 
 # SECTION: System dependencies
