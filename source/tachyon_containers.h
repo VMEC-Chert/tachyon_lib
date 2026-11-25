@@ -295,7 +295,6 @@ struct array
     isize size_ = 0;
     isize head = 0;
     isize head_size = 0;
-    bool bounded = true;
     // Enforce RAII
     bool autofree = true;
 
@@ -428,7 +427,7 @@ struct array
     constexpr
     PROC push_tail( T& item ) -> T&
     {
-        if (bounded && (head + head_size >= size_))
+        if (head + head_size >= size_)
         {
             // Greedy, 2x allocation
             bool resize_ok = change_allocation( std::max<isize>(size_, 1) * 2 );
@@ -442,7 +441,7 @@ struct array
     constexpr
     PROC push_tail( T&& item ) -> T&
     {
-        if (bounded && (head + head_size >= size_))
+        if (head + head_size >= size_)
         {
             // Greedy, 2x allocation
             bool resize_ok = change_allocation( std::max<isize>(size_, 1) * 2 );
@@ -458,7 +457,7 @@ struct array
     PROC push_tail_unbounded( T item ) -> bool
     {
         ERROR_GUARD(head + head_size < size_, "Tried to push outside of allocated capacity" );
-        if (bounded && (head + head_size >= size_))
+        if (head_size >= size_)
         { return false; }
         data[ head + (head_size++) ] = item;
         return true;
@@ -467,7 +466,7 @@ struct array
     PROC pop_tail() -> monad<T>
     {
         monad<T> result;
-        if (bounded && (head_size == 0))
+        if (head_size == 0)
         { return { .value = {}, .error = true }; }
 
         result.value = data[ head + head_size - 1 ];
