@@ -1321,19 +1321,19 @@ namespace tyon
         // // Euler Combined 3 Axis Translation Rotation Scale Matrix
         return matrix4_f32 {
             // Row 1
-            s.x * cosf(r.y)*cosf(r.z),
-            s.y * cosf(r.x)*sinf(r.z) + cosf(r.z)*sinf(r.x)*sinf(r.y),
-            s.z * sinf(r.x)*sinf(r.z) - cosf(r.x)*cosf(r.z)*sinf(r.y),
+            s.x * ( cosf(r.y)*cosf(r.z) ),
+            s.y * ( cosf(r.x)*sinf(r.z) + cosf(r.z)*sinf(r.x)*sinf(r.y) ),
+            s.z * ( sinf(r.x)*sinf(r.z) - cosf(r.x)*cosf(r.z)*sinf(r.y) ),
             t.x,
             // Row 2
-            s.x -cosf(r.y)*sinf(r.z),
-            s.y * cosf(r.x)*cosf(r.z) - sinf(r.x)*sinf(r.y)*sinf(r.z),
-            s.z * cosf(r.x)*sinf(r.y)*sinf(r.z) + cosf(r.z)*sinf(r.x),
+            s.x * ( -cosf(r.y)*sinf(r.z) ),
+            s.y * ( cosf(r.x)*cosf(r.z) - sinf(r.x)*sinf(r.y)*sinf(r.z) ),
+            s.z * ( cosf(r.x)*sinf(r.y)*sinf(r.z) + cosf(r.z)*sinf(r.x) ),
             t.y,
             // Row 3
-            s.x * sinf(r.y),
-            s.y * -cosf(r.y)*sinf(r.x),
-            s.z * cosf(r.x)*cosf(r.y),
+            s.x * ( sinf(r.y) ),
+            s.y * ( -cosf(r.y)*sinf(r.x) ),
+            s.z * ( cosf(r.x)*cosf(r.y) ),
             t.z,
             // Row 4
             0, 0, 0, 1
@@ -1370,7 +1370,7 @@ namespace tyon
 
     constexpr
     PROC matrix_convert_unreal_to_vulkan( matrix4_f32 arg ) -> matrix4_f32
-    {   return arg * matrix_unreal_to_vulkan(); }
+    {   return matrix_unreal_to_vulkan() * arg; }
 
 //     PROC matrix_rotation_arbitrary( vf3) -> matrix4_f32
 // {
@@ -1637,7 +1637,7 @@ namespace tyon
         // Half width
         f32 w = width/2;
         f32 h = (height ? height/2 : w);
-        f32 d = (depth ? depth/2 : h);
+        f32 d = (depth ? depth/2 : w);
         // Counter-Clickwise faces
         array<v3_f32> result = {
             // front top-right tri
